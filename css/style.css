@@ -371,12 +371,101 @@ body {
   box-shadow: none;
 }
 
+.segmented-control-muted {
+  background: color-mix(in srgb, var(--surface-1) 84%, transparent);
+  border-color: var(--border-subtle);
+}
+
+.segmented-control-muted > .btn.is-selected,
+.segmented-control-muted > .btn.is-selected:hover {
+  background: var(--surface-4);
+  border-color: transparent;
+  color: var(--foreground);
+  box-shadow: none;
+}
+
+.tab-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 36px;
+  padding: 3px;
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface-1) 88%, transparent);
+  border: 1px solid var(--border-subtle);
+}
+
+.tab-control-item {
+  min-height: 30px;
+  padding: 0 var(--space-3);
+  border-radius: calc(var(--radius-lg) - 3px);
+  border: 0;
+  background: transparent;
+  color: var(--foreground-secondary);
+  font: var(--button-font);
+  cursor: pointer;
+  white-space: nowrap;
+  appearance: none;
+  -webkit-appearance: none;
+  transition:
+    background var(--duration-fast) var(--easing-default),
+    color var(--duration-fast) var(--easing-default);
+}
+
+.tab-control-item:hover {
+  background: var(--state-hover);
+  color: var(--foreground);
+}
+
+.tab-control-item.is-selected,
+.tab-control-item.is-selected:hover {
+  background: var(--surface-4);
+  color: var(--foreground);
+}
+
+.tab-control-item:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--button-focus-ring);
+}
+
+.toolbar-control {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.toolbar-control .btn {
+  box-shadow: none;
+}
+
+.toolbar-readout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  min-height: var(--button-height-sm);
+  color: var(--foreground-muted);
+  font: var(--text-body-sm);
+  white-space: nowrap;
+}
+
 .panel-shell {
   background: var(--panel-shell-bg);
   border: 1px solid var(--panel-shell-border);
   border-radius: var(--panel-shell-radius);
   box-shadow: var(--panel-shell-shadow);
   backdrop-filter: blur(14px);
+}
+
+.panel-shell-quiet {
+  background: var(--surface-2);
+  border-color: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.panel-shell-quiet > .panel-shell-header {
+  border-bottom-color: transparent;
 }
 
 .panel-shell-header {
@@ -417,6 +506,22 @@ body {
   justify-content: space-between;
   gap: 8px;
   padding: 0 12px;
+}
+
+.layout-header-filled {
+  background: color-mix(in srgb, var(--background) 94%, transparent);
+  border-bottom: 0;
+  backdrop-filter: blur(14px);
+}
+
+.layout-surface-fill {
+  background: color-mix(in srgb, var(--surface-1) 72%, transparent);
+  border: 0;
+}
+
+.layout-surface-fill-strong {
+  background: color-mix(in srgb, var(--surface-1) 82%, transparent);
+  border: 0;
 }
 
 .layout-header-left,

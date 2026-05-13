@@ -137,6 +137,12 @@ components:
     textColor: "{colors.foreground}"
     rounded: "{rounded.xl}"
     padding: 16px
+  panel-shell-quiet:
+    backgroundColor: "{colors.surface-2}"
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.xl}"
+    border: "none"
+    elevation: "none"
   card:
     backgroundColor: "{colors.surface-1}"
     textColor: "{colors.foreground}"
@@ -406,6 +412,16 @@ Buttons should be grouped into a small, stable set:
 
 Do not invent page-local button archetypes unless they are first proven in preview pages and absorbed into tokens.
 
+### Tabs and Segments
+
+Tabs are navigation, not commit actions.
+
+- Page-level tabs use `.tab-control` and `.tab-control-item`
+- A selected tab uses a neutral elevated surface, not the white primary-action fill
+- In-panel path or mode filters use `.segmented-control.segmented-control-muted`
+- Canvas tools such as `Fit` and zoom values use `.toolbar-control` / `.toolbar-readout`
+- Reserve `.btn-solid` for the single primary workflow commit action
+
 ### Inputs
 
 Inputs must feel like tool inputs, not consumer rounded pills by default.
@@ -425,6 +441,8 @@ All modules should use a consistent shell language:
 - consistent border alpha
 - stable elevation hierarchy
 - similar header/body/footer rhythm
+
+For major workbench regions, prefer `.panel-shell.panel-shell-quiet`: a neutral filled section with no visible border. Use stronger borders only for selected rows, interactive controls, warnings, or inspector cards.
 
 ### Code Editors
 

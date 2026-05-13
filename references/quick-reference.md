@@ -90,9 +90,21 @@ Use the body font stack (`--font-sans`) by default. Use `--font-mono` only for c
 
 Do **not** create new `.xxx-btn`, `.cta`, `.action-button` classes. Map everything to the four roles above.
 
+### Tabs and segmented controls
+
+| Class | When to use |
+|---|---|
+| `.tab-control`, `.tab-control-item` | Page-level navigation such as Workbench / Review / Health. Selected tab uses neutral surface, not primary action fill. |
+| `.segmented-control` | Strong mode choice where selected state should be high-contrast. |
+| `.segmented-control.segmented-control-muted` | Secondary in-panel filters such as Memory path / Compute path / Control path. |
+| `.toolbar-control`, `.toolbar-readout` | Local canvas tools such as Fit / zoom readout. |
+
+Do not use `.btn-solid` or white selected buttons for tabs. Reserve white fill for the primary commit action.
+
 ### Panels & cards
 
 - `.panel-shell` — outermost panel container with header / body
+- `.panel-shell.panel-shell-quiet` — main workbench section surface; neutral fill, no visual border
 - `.panel-shell-header`, `.panel-shell-title`, `.panel-shell-meta`, `.panel-shell-close`
 - `.panel-shell-body`
 - `.card-demo`, `.card-demo-header`, `.card-demo-title`, `.card-demo-description`, `.card-demo-content`, `.card-demo-footer` — content card primitives
