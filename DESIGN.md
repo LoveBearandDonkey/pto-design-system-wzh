@@ -302,6 +302,10 @@ Current pattern sources:
 - `patterns/memory-architecture/pattern.html`
 - `patterns/memory-architecture/pattern.css`
 - `patterns/memory-architecture/pattern.js`
+- `patterns/workbench-shell/pattern.json`
+- `patterns/workbench-shell/pattern.html`
+- `patterns/workbench-shell/pattern.css`
+- `patterns/workbench-shell/pattern.js`
 - `patterns/aic-core-object/pattern.json`
 - `patterns/aic-core-object/pattern.html`
 - `patterns/aic-core-object/pattern.css`
@@ -326,6 +330,8 @@ For swimlane task bars, reuse pattern id `swimlane-task-bar`. The canonical sour
 
 For memory hierarchy diagrams, reuse pattern id `memory-architecture-layout`. The canonical source is the hybrid renderer in `patterns/memory-architecture/pattern.js`, extracted from `mem_viewer` DOM, BPG grid logic, and MTE overlay behavior. New hardware pages such as 950B should extend the preset/config surface there instead of copying `mem_viewer/index.html` or redrawing route geometry in page-local code.
 
+For topbar + three-column workbench pages, reuse pattern id `workbench-shell`. The canonical source is `patterns/workbench-shell/pattern.js` plus `pattern.css`; it owns Split.js draggable gutters, persisted pane widths, and the standard 40%-120% canvas zoom controller. Product pages provide pane selectors, min widths, storage keys, and renderer callbacks. Do not reimplement split dragging, localStorage pane persistence, or page-local zoom groups in business pages.
+
 For AIC internal object shells, reuse pattern id `aic-core-object`. The canonical source is `patterns/aic-core-object/pattern.js`, driven by preset data rather than handwritten page DOM. Extend the preset to add or resize intermediate buffers for 950B; do not restyle the object chrome or clone the generated markup in local pages.
 
 For AIV internal object shells, reuse pattern id `aiv-core-object`. The canonical source is `patterns/aiv-core-object/pattern.js`, driven by preset data for DCache, ICache or ND-DNA Cache, UB, Scalar, SIMT, SIMD, Aux Scalar, and Vector. Keep AIC and AIV spacing, buffer grid math, and route treatment visually consistent when widening or rescaling architecture diagrams.
@@ -336,6 +342,7 @@ Current extraction progress:
 
 - `swimlane-task-bar`: shared canvas renderer registered and previewed
 - `memory-architecture-layout`: shared full-stage 950B renderer registered and previewed
+- `workbench-shell`: shared topbar + three-pane + canvas controls shell registered and previewed
 - `aic-core-object`: shared config-driven object renderer registered and previewed
 - `aiv-core-object`: shared config-driven object renderer registered and previewed
 - `pass-ir-graph-node`: shared hybrid renderer registered and previewed; original Pass-IR business page still uses its local renderer until a separate integration pass is approved
@@ -465,6 +472,8 @@ For three-column workbenches:
 - left = fixed utility rail or form rail
 - center = primary content, stretches
 - right = fixed assistant / detail rail
+
+Use `workbench-shell` for this page shape when the columns are draggable or the center area has zoomable graph/canvas content. Keep the Split.js gutter, width persistence, and zoom state in the shared pattern so source, canvas, and inspector pages behave consistently.
 
 If a module breaks this pattern, it must be intentional and documented.
 

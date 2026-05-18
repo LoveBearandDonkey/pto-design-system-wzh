@@ -12,6 +12,11 @@
       "preview": "patterns/memory-architecture/pattern.html"
     },
     {
+      "id": "workbench-shell",
+      "path": "patterns/workbench-shell/pattern.json",
+      "preview": "patterns/workbench-shell/pattern.html"
+    },
+    {
       "id": "aic-core-object",
       "path": "patterns/aic-core-object/pattern.json",
       "preview": "patterns/aic-core-object/pattern.html"
