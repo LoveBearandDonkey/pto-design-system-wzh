@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="./tokens/semantic.css">
   <link rel="stylesheet" href="./tokens/components.css">
   <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./patterns/workbench-shell/pattern.css">
   <link rel="stylesheet" href="./swimlane/styles.css">
   <style>
     :root {
@@ -687,6 +688,16 @@
 
     .preview-section.preview-section-viewer .preview-fullpage {
       width: 1440px;
+    }
+
+    .pto-workbench-shell.preview-workbench-shell {
+      box-sizing: border-box;
+      width: 1440px;
+      --pto-workbench-shell-height: 760px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      overflow: hidden;
+      padding: 0 14px 14px;
     }
 
     .layout-page-frame {
@@ -1522,126 +1533,41 @@
 
     <section class="preview-section preview-section-viewer">
       <div class="preview-fullpage">
-        <div class="layout-page-frame">
-        <div class="layout-page">
-          <div class="layout-header layout-page-topbar">
-            <div class="layout-header-left">
-              <a class="home-link" href="#" onclick="return false;" aria-label="Back To Home">⌂</a>
-              <div class="layout-header-brand">
-                <span class="layout-header-dot"></span>
-                Pass-IR
-              </div>
-              <div class="toolbar-sep"></div>
-              <span class="graph-title">mini-attn / after / semantic</span>
-              <div class="graph-stats">
-                <span class="stat-chip">124 nodes</span>
-                <span class="stat-chip">18 groups</span>
-              </div>
+        <section class="pto-workbench-shell preview-workbench-shell" id="overviewWorkbenchShell" data-workbench-shell>
+          <header class="pto-workbench-shell__topbar">
+            <div class="pto-workbench-shell__brand">
+              <span>PTO Workbench Shell</span>
+              <span class="pto-workbench-shell__brand-sub">empty frame</span>
             </div>
-            <div class="layout-header-right">
-              <button class="btn" type="button">Select Graph</button>
-              <button class="btn btn-ghost btn-icon" type="button" aria-label="搜索"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
-              <button class="btn btn-ghost btn-icon" type="button" aria-label="更多操作"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
-            </div>
+            <div class="pto-workbench-shell__top-actions" aria-hidden="true"></div>
+          </header>
+
+          <div class="pto-workbench-shell__panes">
+            <section class="pto-workbench-shell__pane" data-overview-pane="left" aria-label="Left pane">
+              <div class="pto-workbench-shell__pane-head">
+                <h2 class="pto-workbench-shell__pane-title">Left Pane</h2>
+                <span class="pto-workbench-shell__pane-kicker">left</span>
+              </div>
+              <div class="pto-workbench-shell__pane-body"></div>
+            </section>
+
+            <section class="pto-workbench-shell__pane pto-workbench-shell__canvas-pane" data-overview-pane="primary" aria-label="Primary pane">
+              <div class="pto-workbench-shell__pane-head">
+                <h2 class="pto-workbench-shell__pane-title">Primary Pane</h2>
+                <span class="pto-workbench-shell__pane-kicker">primary</span>
+              </div>
+              <div class="pto-workbench-shell__pane-body"></div>
+            </section>
+
+            <aside class="pto-workbench-shell__pane" data-overview-pane="right" aria-label="Right pane">
+              <div class="pto-workbench-shell__pane-head">
+                <h2 class="pto-workbench-shell__pane-title">Right Pane</h2>
+                <span class="pto-workbench-shell__pane-kicker">right</span>
+              </div>
+              <div class="pto-workbench-shell__pane-body"></div>
+            </aside>
           </div>
-          <div class="layout-page-canvas">
-            <div class="color-panel mode-panel visible layout-page-inline-card" style="top:16px; right:16px;">
-              <div class="mode-panel-header">
-                <div class="mode-panel-title-wrap">
-                  <div class="mode-panel-title">Color Mode</div>
-                  <div class="mode-panel-description">Compact graph switcher. Optional accent icons come from icon CSS variables.</div>
-                </div>
-                <button class="btn btn-ghost btn-icon panel-toggle-btn" type="button" aria-label="Collapse color panel">
-                  <span class="panel-toggle-icon panel-toggle-collapse">−</span>
-                  <span class="panel-toggle-icon panel-toggle-expand">+</span>
-                </button>
-              </div>
-              <div class="mode-panel-body">
-                <section class="mode-panel-section">
-                  <div class="mode-panel-section-label">Color</div>
-                  <div class="mode-panel-options">
-                    <button class="btn cp-btn mode-panel-item--doubleline" type="button">
-                      <span class="cp-btn-icon" style="--cp-btn-icon-bg: color-mix(in srgb, var(--accent) 18%, transparent); --cp-btn-icon-fg: color-mix(in srgb, var(--accent) 86%, white 10%);">S</span>
-                      <span class="cp-btn-text">
-                        <span class="cp-btn-label">Semantic</span>
-                        <span class="cp-btn-sub">operator / tensor roles</span>
-                      </span>
-                    </button>
-                    <button class="btn cp-btn mode-panel-item--doubleline is-selected" type="button">
-                      <span class="cp-btn-icon" style="--cp-btn-icon-bg: color-mix(in srgb, var(--primary) 18%, transparent); --cp-btn-icon-fg: color-mix(in srgb, var(--primary) 88%, white 8%);">L</span>
-                      <span class="cp-btn-text">
-                        <span class="cp-btn-label">Latency</span>
-                        <span class="cp-btn-sub">selected mode with supporting description</span>
-                      </span>
-                    </button>
-                    <button class="btn cp-btn mode-panel-item--singleline mode-panel-item--iconless" type="button">
-                      <span class="cp-btn-icon">N</span>
-                      <span class="cp-btn-text">
-                        <span class="cp-btn-label">None</span>
-                        <span class="cp-btn-sub">neutral nodes</span>
-                      </span>
-                    </button>
-                  </div>
-                </section>
-                <section class="mode-panel-section">
-                  <div class="mode-panel-section-label">Legend</div>
-                  <div class="mode-panel-legend">
-                    <span class="mode-panel-legend-item"><span class="mode-panel-legend-dot" style="background:var(--primary)"></span><span class="mode-panel-legend-label">Compute</span><span class="mode-panel-legend-count">(24)</span></span>
-                    <span class="mode-panel-legend-item"><span class="mode-panel-legend-dot" style="background:var(--accent)"></span><span class="mode-panel-legend-label">Tensor</span><span class="mode-panel-legend-count">(48)</span></span>
-                  </div>
-                </section>
-              </div>
-            </div>
-            <div class="card-demo" style="position:absolute; left:20px; bottom:20px; width:260px; z-index:1;">
-              <div class="card-demo-header">
-                <div class="card-demo-title">Selected Event</div>
-                <div class="card-demo-description">Compact context near the selection.</div>
-              </div>
-              <div class="card-demo-content">
-                <div class="card-demo-field">
-                  <div class="card-demo-label">Window</div>
-                <div class="card-demo-input">12.4ms → 18.1ms</div>
-                </div>
-              </div>
-            </div>
-            <div class="layout-minimap">
-              <div class="layout-minimap-view">
-                <div class="layout-minimap-grid"></div>
-                <div class="layout-minimap-frame"></div>
-                <div class="layout-minimap-viewport"></div>
-              </div>
-              <div class="layout-minimap-controls">
-                <button class="layout-minimap-btn" type="button" aria-label="缩小"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
-                <button class="layout-minimap-btn" type="button" aria-label="放大"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></button>
-                <button class="layout-minimap-btn" type="button">Fit</button>
-              </div>
-            </div>
-          </div>
-          <aside class="layout-sidepanel">
-            <div class="layout-sidepanel-head">
-              <div>
-                <div class="layout-sidepanel-title">Right Panel</div>
-                <div class="layout-sidepanel-sub">Inspector / diagnostics / detail shell.</div>
-              </div>
-              <button class="btn btn-ghost btn-icon" type="button" aria-label="关闭面板"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
-            </div>
-            <div class="card-demo-content" style="padding:0; border-top:none;">
-              <div class="card-demo-field">
-                <div class="card-demo-label">Node</div>
-                <div class="card-demo-input">fuse_attention</div>
-              </div>
-              <div class="card-demo-field">
-                <div class="card-demo-label">Mode</div>
-                <div class="card-demo-input">Semantic</div>
-              </div>
-            </div>
-            <div class="preview-inline">
-              <button class="btn btn-solid" type="button">Focus</button>
-              <button class="btn" type="button">Open Source</button>
-            </div>
-          </aside>
-        </div>
-        </div>
+        </section>
       </div>
     </section>
 
@@ -2395,6 +2321,7 @@
 
     </div>
   </main>
+  <script src="./patterns/workbench-shell/pattern.js"></script>
   <script>
     (() => {
       const root = document.documentElement;
@@ -2405,6 +2332,8 @@
       const paletteNeutralCard = document.getElementById('paletteNeutralCard');
       const paletteHighlightGrid = document.getElementById('paletteHighlightGrid');
       const patternPreviewFrames = Array.from(document.querySelectorAll('#pattern-previews .preview-embed-frame'));
+      const overviewWorkbenchShell = document.getElementById('overviewWorkbenchShell');
+      const overviewWorkbenchPanes = Array.from(overviewWorkbenchShell?.querySelectorAll('[data-overview-pane]') || []);
       let accentScope = 'default';
 
       const PALETTE_STEPS = ['0', '100', '200', '300', '400', '500', '600', '700', '800', '900', '1000'];
@@ -2636,6 +2565,17 @@
       });
 
       applyTheme('dark');
+      if (overviewWorkbenchPanes.length > 1 && window.PtoWorkbenchShell) {
+        window.PtoWorkbenchShell.initWorkbenchShell({
+          root: overviewWorkbenchShell,
+          panes: overviewWorkbenchPanes,
+          sizes: [23.5, 50.8, 23.5],
+          minSize: [240, 460, 260],
+          gutterSize: 12,
+          storageKey: 'pto_design_system_overview_workbench_split_bem_v1',
+          observeResize: false,
+        });
+      }
       renderPaletteSection();
       scopeButtons.forEach((button) => {
         button.classList.toggle('is-active', button.dataset.accentScope === accentScope);
