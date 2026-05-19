@@ -12,11 +12,6 @@
       "preview": "patterns/memory-architecture/pattern.html"
     },
     {
-      "id": "workbench-shell",
-      "path": "patterns/workbench-shell/pattern.json",
-      "preview": "patterns/workbench-shell/pattern.html"
-    },
-    {
       "id": "aic-core-object",
       "path": "patterns/aic-core-object/pattern.json",
       "preview": "patterns/aic-core-object/pattern.html"
@@ -30,6 +25,16 @@
       "id": "pass-ir-graph-node",
       "path": "patterns/pass-ir-graph-node/pattern.json",
       "preview": "patterns/pass-ir-graph-node/pattern.html"
+    },
+    {
+      "id": "model-graphviz",
+      "path": "patterns/model-graphviz/pattern.json",
+      "preview": "patterns/model-graphviz/pattern.html"
+    },
+    {
+      "id": "workbench-shell",
+      "path": "patterns/workbench-shell/pattern.json",
+      "preview": "patterns/workbench-shell/pattern.html"
     }
   ]
 }

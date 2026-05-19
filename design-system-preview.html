@@ -1323,12 +1323,12 @@
       height: 980px;
     }
 
-    #pattern-previews .preview-embed-frame[data-pattern-preview='workbench-shell'] {
-      height: 640px;
-    }
-
     #pattern-previews .preview-embed-frame[data-pattern-preview='pass-ir-graph-node'] {
       height: 720px;
+    }
+
+    #pattern-previews .preview-embed-frame[data-pattern-preview='model-graphviz'] {
+      height: 1180px;
     }
 
     @media (max-width: 1040px) {
@@ -1459,10 +1459,10 @@
             <div class="agent-label">Pattern Reuse Rules</div>
             <table class="agent-table">
               <tr><td><code>swimlane-task-bar</code></td><td>Use <code>patterns/swimlane-task/pattern.js</code> and call <code>window.PtoSwimlaneTaskPattern.drawTaskBar</code>. The canonical task bar is canvas-rendered, sourced from <code>pypto-swimlane-perf-tool/js/swimlane.js</code>. Do not rebuild it with DOM/CSS or rewrite segment math locally.</td></tr>
-              <tr><td><code>memory-architecture-layout</code></td><td>Use <code>patterns/memory-architecture/pattern.js</code>. Call <code>window.PtoMemoryArchitecturePattern.renderArchitecture</code> to build the stage, <code>createRouteOverlay</code> for MTE routes, and <code>renderBufferGrid</code> for per-tier occupancy. Extend it with a new preset for 950B; do not copy raw <code>mem_viewer</code> HTML or redraw route geometry locally.</td></tr>
-              <tr><td><code>workbench-shell</code></td><td>Use <code>patterns/workbench-shell/pattern.js</code> and call <code>window.PtoWorkbenchShell.initWorkbenchShell</code> for topbar + three-pane workbenches. The shell owns the borderless rounded gray pane-card style, Split.js draggable gutters, persisted pane widths, and 40%-120% canvas zoom controls. Product pages provide pane selectors and renderer callbacks; do not reimplement split dragging or page-local zoom groups.</td></tr>
+              <tr><td><code>memory-architecture-layout</code></td><td>Use <code>patterns/memory-architecture/pattern.js</code>. Call <code>window.PtoMemoryArchitecturePattern.renderArchitecture</code> to build the stage, <code>createRouteOverlay</code> for MTE routes, <code>attachHoverInteractions</code> for hardware tips, and <code>setDetailVisibility</code> / <code>applyCanvasScale</code> for page controls. Extend preset data for 910B/950; do not copy raw <code>mem_viewer</code> HTML or redraw route geometry locally.</td></tr>
               <tr><td><code>aic-core-object</code></td><td>Use <code>patterns/aic-core-object/pattern.js</code> and call <code>window.PtoAicCorePattern.render</code>. The shell is config-driven from the design draft; extend the preset data for 950B instead of cloning the generated DOM or restyling the chrome locally.</td></tr>
               <tr><td><code>aiv-core-object</code></td><td>Use <code>patterns/aiv-core-object/pattern.js</code> and call <code>window.PtoAivCorePattern.render</code>. The shell is config-driven from the approved AIV draft; extend the preset data for later chip variants instead of copying the generated DOM or changing card geometry locally.</td></tr>
+              <tr><td><code>model-graphviz</code></td><td>Use <code>patterns/model-graphviz/pattern.html</code> for parity preview; it iframes the real DeepSeek V3.2 and V4 Graphviz pages directly and includes the shared report-overlay sample. For new lightweight examples, use <code>patterns/model-graphviz/pattern.js</code> and call <code>window.PtoModelGraphvizPattern.render</code>. The contract preserves the DeepSeek V3.2/V4 rules: default depth-2 folding, full-pill module/op nodes, rounded-rect tensor nodes for Input/Output/MTP/Constant/Parameter/Tensor, dark graph stage, white edges, safe colormap normalized to <code>s=0.82</code>/<code>l=0.40</code>, 10% white expanded-cluster fill, strict semantic module hierarchy, parent-to-child fill inheritance for op/module nodes, folded representative edge dedupe, stable expand/collapse viewport anchoring, right-center fold controls, right-inset expand controls, no graph shadows, and no-border clicked-operator preview cards with dark code surfaces. Report overlays also belong to this pattern: Graphviz source pages keep <code>margin=0.22</code>, <code>pad=0.38</code>, and cluster <code>margin=36</code>; container title pills are centered to the container bbox, filled with P0/P1/P2 red-orange-yellow, include the P tag on the left, and sit in a root overlay layer above edge strokes. Node fill/report priority is the only data-viz color exception; all other UI styling must remain token-derived. Do not render tensor nodes as ellipses or full pills, use blue for P2, express priority with border-only styling, drift fold icons away from the cluster right-center anchor, add graph shadows or operator-card borders, hard-code non-node UI styles, recenter/refit the whole graph after expand/collapse, or duplicate an expanded parent as a standalone node.</td></tr>
               <tr><td>Preview rule</td><td>Preview pages may wrap a pattern for layout, but must not redefine the pattern's internal class styles.</td></tr>
             </table>
           </div>
@@ -1673,42 +1673,21 @@
 
         <article class="preview-card preview-card-full-row">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">950B Memory Architecture Pattern</h3>
-            <div class="preview-card-class">full-stage object: GM / L2 / AIC / AIV / UB / L0C route overlay</div>
+            <h3 class="preview-card-title">910B / 950 Memory Architecture Pattern</h3>
+            <div class="preview-card-class">full-stage object: GM / L2 / AIC / AIV / UB / L0C route overlay + hover tips</div>
           </div>
           <div class="preview-stage preview-stack">
             <div class="preview-inline">
               <a class="btn btn-ghost" href="./patterns/memory-architecture/pattern.html">Open Full Preview</a>
             </div>
             <div class="preview-embed">
-              <iframe class="preview-embed-frame" data-pattern-preview="memory-architecture" src="./patterns/memory-architecture/pattern.html?embed=1" title="950B Memory Architecture Pattern Preview"></iframe>
+              <iframe class="preview-embed-frame" data-pattern-preview="memory-architecture" src="./patterns/memory-architecture/pattern.html?embed=1" title="910B / 950 Memory Architecture Pattern Preview"></iframe>
             </div>
           </div>
           <div class="preview-meta">
             <span class="token-badge">pattern id: memory-architecture-layout</span>
             <span class="token-badge">source: patterns/memory-architecture/pattern.js</span>
-            <span class="token-badge">contract: full-stage DOM shell + shared AIC/AIV renderers</span>
-            <span class="state-badge">Pattern</span>
-          </div>
-        </article>
-
-        <article class="preview-card preview-card-full-row">
-          <div class="preview-card-head">
-            <h3 class="preview-card-title">Workbench Shell Pattern</h3>
-            <div class="preview-card-class">application shell: topbar + borderless rounded gray pane cards + Split.js layout + canvas zoom controls</div>
-          </div>
-          <div class="preview-stage preview-stack">
-            <div class="preview-inline">
-              <a class="btn btn-ghost" href="./patterns/workbench-shell/pattern.html">Open Full Preview</a>
-            </div>
-            <div class="preview-embed">
-              <iframe class="preview-embed-frame" data-pattern-preview="workbench-shell" src="./patterns/workbench-shell/pattern.html?embed=1&v=borderless-pane-cards-20260519" title="Workbench Shell Pattern Preview"></iframe>
-            </div>
-          </div>
-          <div class="preview-meta">
-            <span class="token-badge">pattern id: workbench-shell</span>
-            <span class="token-badge">source: patterns/workbench-shell/pattern.js</span>
-            <span class="token-badge">contract: resizable panes + canvas controls</span>
+            <span class="token-badge">contract: shared presets + route overlay + details + hover</span>
             <span class="state-badge">Pattern</span>
           </div>
         </article>
@@ -1730,6 +1709,27 @@
             <span class="token-badge">pattern id: pass-ir-graph-node</span>
             <span class="token-badge">source: patterns/pass-ir-graph-node/pattern.js</span>
             <span class="token-badge">contract: DOM shell + renderer-driven group/compact states</span>
+            <span class="state-badge">Pattern</span>
+          </div>
+        </article>
+
+        <article class="preview-card preview-card-full-row">
+          <div class="preview-card-head">
+            <h3 class="preview-card-title">Model Graphviz Pattern</h3>
+            <div class="preview-card-class">torchvista graphviz: rendered SVG model graph style for DeepSeek V3.2 / V4</div>
+          </div>
+          <div class="preview-stage preview-stack">
+            <div class="preview-inline">
+              <a class="btn btn-ghost" href="./patterns/model-graphviz/pattern.html">Open Full Preview</a>
+            </div>
+            <div class="preview-embed">
+              <iframe class="preview-embed-frame" data-pattern-preview="model-graphviz" src="./patterns/model-graphviz/pattern.html?embed=1" title="Model Graphviz Pattern Preview"></iframe>
+            </div>
+          </div>
+          <div class="preview-meta">
+            <span class="token-badge">pattern id: model-graphviz</span>
+            <span class="token-badge">source: patterns/model-graphviz/pattern.js</span>
+            <span class="token-badge">contract: iframe parity + SVG renderer rules</span>
             <span class="state-badge">Pattern</span>
           </div>
         </article>

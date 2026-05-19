@@ -137,12 +137,6 @@ components:
     textColor: "{colors.foreground}"
     rounded: "{rounded.xl}"
     padding: 16px
-  panel-shell-quiet:
-    backgroundColor: "{colors.surface-2}"
-    textColor: "{colors.foreground}"
-    rounded: "{rounded.xl}"
-    border: "none"
-    elevation: "none"
   card:
     backgroundColor: "{colors.surface-1}"
     textColor: "{colors.foreground}"
@@ -302,10 +296,6 @@ Current pattern sources:
 - `patterns/memory-architecture/pattern.html`
 - `patterns/memory-architecture/pattern.css`
 - `patterns/memory-architecture/pattern.js`
-- `patterns/workbench-shell/pattern.json`
-- `patterns/workbench-shell/pattern.html`
-- `patterns/workbench-shell/pattern.css`
-- `patterns/workbench-shell/pattern.js`
 - `patterns/aic-core-object/pattern.json`
 - `patterns/aic-core-object/pattern.html`
 - `patterns/aic-core-object/pattern.css`
@@ -318,6 +308,14 @@ Current pattern sources:
 - `patterns/pass-ir-graph-node/pattern.html`
 - `patterns/pass-ir-graph-node/pattern.css`
 - `patterns/pass-ir-graph-node/pattern.js`
+- `patterns/model-graphviz/pattern.json`
+- `patterns/model-graphviz/pattern.html`
+- `patterns/model-graphviz/pattern.css`
+- `patterns/model-graphviz/pattern.js`
+- `patterns/workbench-shell/pattern.json`
+- `patterns/workbench-shell/pattern.html`
+- `patterns/workbench-shell/pattern.css`
+- `patterns/workbench-shell/pattern.js`
 
 Rules:
 
@@ -330,22 +328,27 @@ For swimlane task bars, reuse pattern id `swimlane-task-bar`. The canonical sour
 
 For memory hierarchy diagrams, reuse pattern id `memory-architecture-layout`. The canonical source is the hybrid renderer in `patterns/memory-architecture/pattern.js`, extracted from `mem_viewer` DOM, BPG grid logic, and MTE overlay behavior. New hardware pages such as 950B should extend the preset/config surface there instead of copying `mem_viewer/index.html` or redrawing route geometry in page-local code.
 
-For topbar + three-column workbench pages, reuse pattern id `workbench-shell`. The canonical source is `patterns/workbench-shell/pattern.js` plus `pattern.css`; it owns the borderless rounded gray pane-card composition, Split.js draggable gutters, persisted pane widths, and the standard 40%-120% canvas zoom controller. Product pages provide pane selectors, min widths, storage keys, and renderer callbacks. Do not add pane borders, flatten the three panes into one black divided surface, reimplement split dragging, localStorage pane persistence, or page-local zoom groups in business pages.
-
 For AIC internal object shells, reuse pattern id `aic-core-object`. The canonical source is `patterns/aic-core-object/pattern.js`, driven by preset data rather than handwritten page DOM. Extend the preset to add or resize intermediate buffers for 950B; do not restyle the object chrome or clone the generated markup in local pages.
 
 For AIV internal object shells, reuse pattern id `aiv-core-object`. The canonical source is `patterns/aiv-core-object/pattern.js`, driven by preset data for DCache, ICache or ND-DNA Cache, UB, Scalar, SIMT, SIMD, Aux Scalar, and Vector. Keep AIC and AIV spacing, buffer grid math, and route treatment visually consistent when widening or rescaling architecture diagrams.
 
 For Pass-IR graph nodes, reuse pattern id `pass-ir-graph-node`. The canonical source is `patterns/pass-ir-graph-node/pattern.js`, extracted from the real Pass-IR `css/style.css` and `js/renderer.js` contract. It covers op, tensor, incast, outcast, selected, compact, and group cards. Compact group cards keep the Group Node shell, title, count, and thumbnail stack while dropping detailed rows. Do not use the old static graph-node examples in `design-system-preview.html` or `pass-ir/node-preview.html` as source of truth.
 
+For TorchVista / model Graphviz views, reuse pattern id `model-graphviz`. The canonical visual contract is `patterns/model-graphviz/pattern.js`, extracted from `graphviz/torchvista_graphviz_deepseek_v4.html` and synchronized with `graphviz/deepseek_v32_source_graph.html`; `patterns/model-graphviz/pattern.html` iframes those two real pages for parity preview instead of redrawing a simplified sample. The contract covers DeepSeek V3.2/V4 default depth-2 folding, dark graph stage, white edges and arrowheads, full-pill module/op nodes with `height / 2` radius, rounded-rect tensor nodes for Input/Output/MTP/Constant/Parameter/Tensor, strict semantic module hierarchy, right-center fold controls on expanded clusters, right-inset expand controls on collapsed modules, centered type labels, pass-ir safe colormap generation normalized to `s=0.82` and `l=0.40`, 10% white expanded-container fill, parent-to-child fill inheritance for op/module nodes, folded representative edge dedupe, stable expand/collapse viewport anchoring, no graph shadows, and no-border clicked-operator preview cards with dark code surfaces. Node fill colors are the only data-viz exception; all non-node UI colors, typography, spacing, radii, borders, and code surfaces must remain token-derived. Do not render tensor nodes as ellipses or full pills, place expand icons outside node bounds, drift fold icons away from the cluster right-center anchor, add graph drop-shadows, add border strokes to operator preview cards, use light code panels, hard-code non-node UI styles outside tokens, draw detail modules as same-level peers of their collapsed semantic parent, draw multiple parallel representative edges between the same folded modules, recenter/refit the whole graph after expand/collapse, or create duplicate standalone parent nodes next to expanded clusters.
+
+For model Graphviz report overlays, keep the overlay in the same `model-graphviz` pattern. Source pages should preserve Graphviz graph `margin=0.22`, `pad=0.38`, and expanded cluster `margin=36` so title pills and left-side priority tags have breathing room. Container report titles use a filled, same-priority pill centered against the container bbox, with the P0/P1/P2 tag inside the pill on the left and SVG geometric vertical centering. P0/P1/P2 report colors are red/orange/yellow; do not use blue for P2. Priority should be expressed through fill color, not border-only styling. If a centered title crosses an edge, lift it into a root overlay layer above edge strokes instead of adding a visible outline. Right-side report inspectors should reuse `panel-shell`; graph-side Mapped Nodes lists should focus the original graph, not just update inspector text.
+
+For PTO workbench page shells, reuse pattern id `workbench-shell`. The canonical contract is `patterns/workbench-shell/pattern.css` plus the optional split-pane helpers in `patterns/workbench-shell/pattern.js`. New workbench pages should use `.workbench-shell-page`, `.workbench-frame`, `.workbench-frame-split` or `.workbench-frame-grid`, `.workbench-pane`, and `.panel-shell.panel-shell-quiet` instead of redefining page chrome, panel shells, or split gutters locally.
+
 Current extraction progress:
 
 - `swimlane-task-bar`: shared canvas renderer registered and previewed
 - `memory-architecture-layout`: shared full-stage 950B renderer registered and previewed
-- `workbench-shell`: shared topbar + three-pane + canvas controls shell registered and previewed
 - `aic-core-object`: shared config-driven object renderer registered and previewed
 - `aiv-core-object`: shared config-driven object renderer registered and previewed
 - `pass-ir-graph-node`: shared hybrid renderer registered and previewed; original Pass-IR business page still uses its local renderer until a separate integration pass is approved
+- `model-graphviz`: shared SVG visual renderer registered and previewed; original TorchVista Graphviz page still owns DOT generation, D3 zoom, popup behavior, and graph reloads until a separate integration pass is approved
+- `workbench-shell`: shared hybrid DOM/CSS page frame registered, previewed, and adopted by `ascend-950-workbench-demo` workbench pages
 
 ## 4. Color Palette & Roles
 
@@ -419,16 +422,6 @@ Buttons should be grouped into a small, stable set:
 
 Do not invent page-local button archetypes unless they are first proven in preview pages and absorbed into tokens.
 
-### Tabs and Segments
-
-Tabs are navigation, not commit actions.
-
-- Page-level tabs use `.tab-control` and `.tab-control-item`
-- A selected tab uses a neutral elevated surface, not the white primary-action fill
-- In-panel path or mode filters use `.segmented-control.segmented-control-muted`
-- Canvas tools such as `Fit` and zoom values use `.toolbar-control` / `.toolbar-readout`
-- Reserve `.btn-solid` for the single primary workflow commit action
-
 ### Inputs
 
 Inputs must feel like tool inputs, not consumer rounded pills by default.
@@ -448,8 +441,6 @@ All modules should use a consistent shell language:
 - consistent border alpha
 - stable elevation hierarchy
 - similar header/body/footer rhythm
-
-For major workbench regions, prefer `.panel-shell.panel-shell-quiet`: a neutral filled section with no visible border. Use stronger borders only for selected rows, interactive controls, warnings, or inspector cards.
 
 ### Code Editors
 
@@ -472,8 +463,6 @@ For three-column workbenches:
 - left = fixed utility rail or form rail
 - center = primary content, stretches
 - right = fixed assistant / detail rail
-
-Use `workbench-shell` for this page shape when the columns are draggable or the center area has zoomable graph/canvas content. The three columns should read as separate borderless rounded gray background cards inside one quiet shell. Keep the Split.js gutter, width persistence, and zoom state in the shared pattern so source, canvas, and inspector pages behave consistently.
 
 If a module breaks this pattern, it must be intentional and documented.
 
