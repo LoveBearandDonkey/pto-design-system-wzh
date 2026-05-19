@@ -289,8 +289,8 @@ body.pto-is-pane-resizing * {
 .pto-workbench-shell__demo-node {
   min-height: 108px;
   border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--surface-2) 82%, transparent);
-  border: 1px solid var(--border-default);
+  background: color-mix(in srgb, var(--background) 16%, transparent);
+  border: 0;
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -299,8 +299,7 @@ body.pto-is-pane-resizing * {
 }
 
 .pto-workbench-shell__demo-node.is-primary {
-  background: color-mix(in srgb, var(--primary) 12%, var(--surface-2));
-  border-color: color-mix(in srgb, var(--primary) 36%, var(--border-default));
+  background: color-mix(in srgb, var(--primary) 18%, var(--surface-2));
 }
 
 .pto-workbench-shell__demo-node-title {
