@@ -330,7 +330,7 @@ For swimlane task bars, reuse pattern id `swimlane-task-bar`. The canonical sour
 
 For memory hierarchy diagrams, reuse pattern id `memory-architecture-layout`. The canonical source is the hybrid renderer in `patterns/memory-architecture/pattern.js`, extracted from `mem_viewer` DOM, BPG grid logic, and MTE overlay behavior. New hardware pages such as 950B should extend the preset/config surface there instead of copying `mem_viewer/index.html` or redrawing route geometry in page-local code.
 
-For topbar + three-column workbench pages, reuse pattern id `workbench-shell`. The canonical source is `patterns/workbench-shell/pattern.js` plus `pattern.css`; it owns Split.js draggable gutters, persisted pane widths, and the standard 40%-120% canvas zoom controller. Product pages provide pane selectors, min widths, storage keys, and renderer callbacks. Do not reimplement split dragging, localStorage pane persistence, or page-local zoom groups in business pages.
+For topbar + three-column workbench pages, reuse pattern id `workbench-shell`. The canonical source is `patterns/workbench-shell/pattern.js` plus `pattern.css`; it owns the borderless rounded gray pane-card composition, Split.js draggable gutters, persisted pane widths, and the standard 40%-120% canvas zoom controller. Product pages provide pane selectors, min widths, storage keys, and renderer callbacks. Do not add pane borders, flatten the three panes into one black divided surface, reimplement split dragging, localStorage pane persistence, or page-local zoom groups in business pages.
 
 For AIC internal object shells, reuse pattern id `aic-core-object`. The canonical source is `patterns/aic-core-object/pattern.js`, driven by preset data rather than handwritten page DOM. Extend the preset to add or resize intermediate buffers for 950B; do not restyle the object chrome or clone the generated markup in local pages.
 
@@ -473,7 +473,7 @@ For three-column workbenches:
 - center = primary content, stretches
 - right = fixed assistant / detail rail
 
-Use `workbench-shell` for this page shape when the columns are draggable or the center area has zoomable graph/canvas content. Keep the Split.js gutter, width persistence, and zoom state in the shared pattern so source, canvas, and inspector pages behave consistently.
+Use `workbench-shell` for this page shape when the columns are draggable or the center area has zoomable graph/canvas content. The three columns should read as separate borderless rounded gray background cards inside one quiet shell. Keep the Split.js gutter, width persistence, and zoom state in the shared pattern so source, canvas, and inspector pages behave consistently.
 
 If a module breaks this pattern, it must be intentional and documented.
 

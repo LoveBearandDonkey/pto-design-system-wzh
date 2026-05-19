@@ -2,7 +2,7 @@
   "id": "workbench-shell",
   "name": "Workbench Shell",
   "type": "hybrid",
-  "description": "Reusable PTO application shell for topbar + resizable three-pane workbenches with a canvas viewport control group. The shell owns Split.js pane dragging, persisted pane sizes, resize callbacks, and standardized 40%-120% canvas zoom controls.",
+  "description": "Reusable PTO application shell for topbar + resizable three-pane workbenches with borderless rounded gray pane cards and a canvas viewport control group. The shell owns Split.js pane dragging, persisted pane sizes, resize callbacks, and standardized 40%-120% canvas zoom controls.",
   "source": {
     "visualContract": [
       "ascend-950-workbench-demo/index.html",
@@ -33,6 +33,7 @@
     "outer page height and preview embedding chrome"
   ],
   "forbiddenOverrides": [
+    "adding pane borders or flattening the three pane cards into a single black divided surface",
     "reimplementing Split.js gutters and localStorage size persistence in each product page",
     "creating page-local canvas zoom buttons with different min/max/step behavior",
     "styling draggable gutters with one-off colors, large handles, or hidden focus states",
