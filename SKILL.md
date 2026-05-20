@@ -21,9 +21,10 @@ The rule: pages must consume the existing PTO design system. Do not invent a new
 
 1. `DESIGN.md` — full system spec: theme, surfaces, palette, typography, spacing, components, governance. **Read this first.**
 2. `references/quick-reference.md` — one-page cheat sheet of tokens and class names.
-3. `design-system-preview.html` — live visual reference, open in a browser.
-4. `tokens/foundation.css`, `tokens/semantic.css`, `tokens/components.css` — token implementation (CSS variables).
-5. `css/style.css` — concrete class implementations.
+3. `references/retrofit-container-audit.md` — mandatory rules for removing legacy card / panel decoration during retrofit.
+4. `design-system-preview.html` — live visual reference, open in a browser.
+5. `tokens/foundation.css`, `tokens/semantic.css`, `tokens/components.css` — token implementation (CSS variables).
+6. `css/style.css` — concrete class implementations.
 
 For layout-heavy work, also inspect `patterns/` (graph nodes, swimlane tasks, memory architecture, AIV/AIC core, pass-IR nodes).
 
@@ -55,7 +56,8 @@ When the user already has an HTML/CSS demo and wants it migrated to PTO style:
 
 1. Read the demo top-to-bottom and list every visual element (buttons, inputs, panels, badges, toggles, headings, surfaces, hard-coded colors).
 2. For each element, map to PTO using `references/pto-design-system-map.md` + the preview page + `references/quick-reference.md`.
-3. Produce a **migration table** so the user can review before applying:
+3. Run the **container decoration audit** from `references/retrofit-container-audit.md`. This is mandatory for every card, panel, list item, inspector block, and sidebar section.
+4. Produce a **migration table** so the user can review before applying:
 
    | Element in demo | PTO equivalent | Class / token to use |
    |---|---|---|
@@ -63,16 +65,23 @@ When the user already has an HTML/CSS demo and wants it migrated to PTO style:
    | `background: #1a1a1a` | surface-2 | `var(--color-surface-2)` |
    | `padding: 16px` | space-4 | `var(--space-4)` |
 
-4. After the migration table is shown, replace classes and inline styles in the HTML; replace hard-coded colors / shadows / radii / spacing with tokens.
-5. Skip the preview-gate — no new style is being created, only consuming the existing system.
-6. In the final response list:
+   Add a fourth column named `Legacy decoration to remove`. Use it to list old full borders, left rails, accent bars, inset highlights, shadows, pseudo-elements, and gradients that must be deleted rather than tokenized.
+
+5. After the migration table is shown, replace classes and inline styles in the HTML; replace hard-coded colors / shadows / radii / spacing with tokens.
+6. Remove legacy container decoration. Do not convert private card borders or left accent bars into PTO token values unless the target PTO component explicitly has that decoration.
+7. Run the post-migration residue check from `references/retrofit-container-audit.md` and include the result in the final response.
+8. Skip the preview-gate — no new style is being created, only consuming the existing system.
+9. In the final response list:
    - Which PTO classes / tokens were used.
    - Any element that did **not** find an equivalent → flag for user decision (do not invent a new style silently).
+   - The container decoration residue check result.
 
 ## Hard rules
 
 - Do not create a new private button / toggle / badge / card system.
 - Do not hard-code colors, radii, shadows, font sizes, borders, or spacing when an existing token fits.
+- Do not preserve legacy card / panel decoration by merely replacing its colors with tokens.
+- Do not keep `border-left`, `border-inline-start`, inset left `box-shadow`, pseudo-element rails, or side gradients on generic cards / panels / inspector blocks unless they encode data or an approved selected state.
 - Do not add new module-local visual tokens unless the user has approved a preview first.
 - Do not ship the business module with unapproved new visuals.
 
@@ -104,6 +113,7 @@ In the final response, explicitly state:
 - whether the user approved new visuals
 - whether approved visuals were absorbed into the shared system
 - (Workflow B) the full migration table
+- (Workflow B) the container decoration residue check result
 
 ## References
 

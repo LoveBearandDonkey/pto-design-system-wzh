@@ -47,6 +47,8 @@ Use for inspector panels, action-list panels, popup detail cards, and compact in
 
 Do not treat every large surface as a card. Large canvases and viz shells belong outside this class.
 
+During retrofit, do not keep a legacy card's private frame just because its colors were converted to tokens. Full borders, left accent rails, inset-left shadows, pseudo-element side bars, and side gradients should be removed unless the target PTO class explicitly owns that decoration. Dense right-side details should usually become `.inspector-section` plus one optional `.inspector-soft-card`, not a stack of bordered cards.
+
 ### Data Viz Exempt
 
 Allowed exemptions:
@@ -64,5 +66,6 @@ Even exempt patterns should be previewed and documented when they materially aff
 
 - Creating a new `.xxx-btn` visual system when shared buttons already fit
 - Hard-coding neutral grays, borders, shadows, or radii inside a new module
+- Token-swapping old card borders or left highlight rails instead of removing them
 - Introducing a new type scale disconnected from existing tokens
 - Shipping unapproved new component visuals directly in the module

@@ -15,6 +15,7 @@ design-system-share/
 ├── references/
 │   ├── quick-reference.md       ← 一页速查：所有 token 和 class 名
 │   ├── pto-design-system-map.md ← 元素分类规则（什么时候用什么按钮）
+│   ├── retrofit-container-audit.md ← 改造 demo 时检查旧卡片/面板边框残留
 │   └── preview-gate.md          ← 遇到系统没有的样式时的审批流程
 ├── tokens/                      ← CSS 变量（颜色 / 间距 / 圆角 / 字体）
 │   ├── foundation.css
@@ -91,13 +92,13 @@ git clone https://github.com/yinyucheng0601/pto-design-system \
 
    > 先读 `SKILL.md`。把这个 demo 改造成 PTO 样式，按 Workflow B 来做。
 
-3. AI 会先给你一张 **迁移对照表**，告诉你它打算把哪个元素换成哪个 PTO class、哪些颜色换成哪个 token：
+3. AI 会先给你一张 **迁移对照表**，告诉你它打算把哪个元素换成哪个 PTO class、哪些颜色换成哪个 token、哪些旧容器装饰要删除：
 
-   | demo 里的元素 | 对应 PTO 组件 | 用的 class / token |
-   |---|---|---|
-   | `<button class="cta">运行</button>` | solid 主按钮 | `btn btn-solid` |
-   | `background: #1a1a1a` | surface-2 | `var(--color-surface-2)` |
-   | `padding: 16px` | space-4 | `var(--space-4)` |
+   | demo 里的元素 | 对应 PTO 组件 | 用的 class / token | 要删除的旧装饰 |
+   |---|---|---|---|
+   | `<button class="cta">运行</button>` | solid 主按钮 | `btn btn-solid` | 无 |
+   | `background: #1a1a1a` | surface-2 | `var(--surface-2)` | 无 |
+   | `.card { border-left: 3px solid #5b8cff }` | inspector section / soft card | `inspector-section` / `inspector-soft-card` | 左侧高亮描边 |
 
 4. 你看一遍没问题，让它继续，AI 就会真的改 HTML / CSS
 
@@ -108,7 +109,9 @@ git clone https://github.com/yinyucheng0601/pto-design-system \
 - 所有颜色都用 `var(--color-...)` 或 `var(--surface-...)`，**没有硬编码的 `#xxxxxx`**
 - 间距用 `var(--space-1)` ~ `var(--space-6)`，**不要写死 `padding: 13px`**
 - 按钮用 `btn` / `btn btn-solid` / `btn btn-ghost`，**没有 `.my-button`、`.custom-cta` 这种自创 class**
+- 旧 demo 的卡片/面板边框已消除：尤其不要留下旧的 `border-left`、伪元素竖条、左侧 inset shadow、侧向渐变高亮
 - AI 在最后会列出**"复用了哪些 PTO 组件"**和**"哪些地方系统没覆盖到"**
+- 改造 demo 时，AI 在最后会列出 **Container decoration residue**，说明旧容器装饰是否已删除或为什么保留
 - 如果 AI 偷偷加了新颜色 / 新按钮样式但**没有标注**，直接打回让它改
 
 ## 遇到 PTO 系统没覆盖的情况怎么办
