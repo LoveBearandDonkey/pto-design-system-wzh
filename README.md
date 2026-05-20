@@ -22,6 +22,7 @@ design-system-share/
 │   ├── semantic.css
 │   └── components.css
 ├── css/style.css                ← 真正的 class 实现
+├── assets/                      ← pattern 运行时需要的 SVG 资源（例如 fx.svg）
 ├── swimlane/styles.css          ← swimlane 模块样式（预览页要用）
 └── patterns/                    ← 6 个可复用 pattern（图节点 / 泳道 / 内存架构 / AIV / AIC / Pass-IR）
 ```
