@@ -25,7 +25,48 @@ design-system-share/
 └── patterns/                    ← 6 个可复用 pattern（图节点 / 泳道 / 内存架构 / AIV / AIC / Pass-IR）
 ```
 
+## 在三种环境里加载
+
+有两种用法：**装成 Skill**（Claude 系工具，自动触发、按需读文件）和 **当文件包**（其他工具，手动丢给它）。
+
+### 1. CLI — Claude Code
+
+技能目录名**必须等于 `SKILL.md` 里的 `name` 字段**（本系统为 `pto-design-system`）。
+
+```bash
+# 个人级（所有项目可用）
+git clone https://github.com/yinyucheng0601/pto-design-system \
+  ~/.claude/skills/pto-design-system
+
+# 或项目级（只在某个项目可用）
+git clone https://github.com/yinyucheng0601/pto-design-system \
+  <你的项目>/.claude/skills/pto-design-system
+```
+
+重启 Claude Code，`/` 列表里能看到 `pto-design-system`。命中 description 描述的场景（建 PTO 新页面 / 改造 demo）会**自动触发**，也可手动 `/pto-design-system` 调用。
+
+### 2. 网页版 + 桌面 App — Claude.ai / Claude Desktop
+
+两者同一账号，**上传一次两端都生效**，桌面 App 不用单独装。
+
+1. 把 `design-system-share/` 打包成 **.zip**，确保 zip 内顶层就是包含 `SKILL.md` 的文件夹（GitHub「Download ZIP」会多一层 `-main` 外壳，要先解压再重新打包）。
+2. 进入 Settings → Capabilities → **Skills**（需 Pro / Max / Team / Enterprise）。
+3. 上传 zip，启用。之后新对话里会按 description 自动触发。
+
+> 不想装 Skill 也可以用 **Projects**：把文件加进项目知识库即可，但不会自动触发，且文件夹层级会被拍平，体验弱于 Skill。
+
+### 3. Codex / Cursor / Windsurf / ChatGPT 等
+
+这些工具**没有 Skill 自动加载机制**，只能当文件包用：
+
+- **Codex**：把 `design-system-share/` 放进项目，在项目根的 `AGENTS.md` 里加一句——「生成或改造页面前先读 `design-system-share/SKILL.md`，严格复用其中的 token 和 class」。
+- **Cursor / Windsurf / ChatGPT 等**：直接把整个文件夹丢进对话，并在指令里要求「先读 `SKILL.md`」。
+
+具体手动用法见下面「怎么用」。
+
 ## 怎么用
+
+> 下面的「丢文件夹给 AI」适用于**当文件包**的场景；如果已按上面装成 Skill，文件已在本地，AI 会自己按需读，你只要直接说需求即可。
 
 ### 第 0 步：先在浏览器打开看看
 

@@ -1,5 +1,5 @@
 ---
-name: pto-new-module-design-system
+name: pto-design-system
 description: Enforce PTO design-system-first module creation. Use when building a new page in PTO style, or when retrofitting an existing demo to PTO. Reuse the existing design system by default; do not invent new visual styles.
 ---
 
