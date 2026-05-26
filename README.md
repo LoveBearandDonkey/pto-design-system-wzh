@@ -4,6 +4,10 @@
 
 > 简单说：你给 AI 一个产品需求或现有 demo，AI 会按 PTO 样式产出网页，**不需要你再手动调样式**。
 
+## 在线预览
+
+- Design System Preview: <https://yinyucheng0601.github.io/pto-design-system/design-system-preview.html>
+
 ## 这个文件夹里有什么
 
 ```
