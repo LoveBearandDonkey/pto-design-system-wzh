@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Target UI System Preview</title>
+  <title>PyPTO Design System</title>
   <link rel="stylesheet" href="./tokens/foundation.css">
   <link rel="stylesheet" href="./tokens/semantic.css">
   <link rel="stylesheet" href="./tokens/components.css">
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="./patterns/workbench-shell/pattern.css">
+  <link rel="stylesheet" href="./patterns/ide-frame/pattern.css">
   <link rel="stylesheet" href="./swimlane/styles.css">
   <style>
     :root {
@@ -17,40 +18,165 @@
       --preview-text-body-sm-size: 12px;
       --preview-text-label-size: 11px;
       --preview-text-mono-size: 12px;
+      --preview-page-bg: var(--app-background, var(--background));
+      --preview-shell-bg: color-mix(in srgb, var(--background-elevated) 94%, transparent);
+      --preview-nav-bg: transparent;
+      --preview-section-bg: transparent;
+      --preview-card-bg: var(--surface-1);
+      --preview-stage-bg: transparent;
+      --preview-section-border: color-mix(in srgb, var(--foreground) 8%, transparent);
     }
 
     body {
       min-height: 100vh;
-      min-width: 1720px;
-      overflow: auto;
-      background: var(--background);
+      height: auto;
+      display: block;
+      margin: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background: var(--preview-page-bg);
+      color: var(--foreground);
+      font-family: var(--font-sans);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-y: auto;
+      background: var(--preview-page-bg);
+    }
+
+    :root,
+    :root[data-theme='dark'] {
+      --lucide-icon-stroke: #ffffff;
+      --lucide-icon-stroke-inverse: #101010;
+      --lucide-icon-opacity-strong: 0.90;
+      --lucide-icon-opacity-secondary: 0.60;
+      --lucide-icon-opacity-muted: 0.40;
+    }
+
+    :root[data-theme='glass'] {
+      --lucide-icon-stroke: #ffffff;
+      --lucide-icon-stroke-inverse: #080a0f;
+      --lucide-icon-opacity-strong: 0.92;
+      --lucide-icon-opacity-secondary: 0.66;
+      --lucide-icon-opacity-muted: 0.46;
+    }
+
+    :root[data-theme='light'] {
+      --lucide-icon-stroke: #000000;
+      --lucide-icon-stroke-inverse: #ffffff;
+      --lucide-icon-opacity-strong: 0.90;
+      --lucide-icon-opacity-secondary: 0.55;
+      --lucide-icon-opacity-muted: 0.42;
+    }
+
+    .blocks-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: var(--z-modal);
+      min-height: 64px;
+      height: 64px;
+      gap: var(--space-4);
+      padding: 0 22px;
+      background: color-mix(in srgb, var(--background) 88%, transparent);
+      backdrop-filter: blur(18px);
+    }
+
+    .blocks-toolbar .toolbar-l,
+    .blocks-toolbar .toolbar-r {
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .blocks-toolbar .toolbar-logo {
+      font: 700 14px / 1 var(--font-sans);
+      color: var(--foreground);
+      border-right: 0;
+      padding-right: 0;
+      margin-right: 0;
+      white-space: nowrap;
+    }
+
+    .blocks-toolbar .home-link {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+    }
+
+    .blocks-toolbar .toolbar-sep {
+      height: 24px;
+      margin: 0 4px;
+    }
+
+    .blocks-nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      min-width: 0;
+    }
+
+    .blocks-nav a {
+      color: var(--foreground-secondary);
+      text-decoration: none;
+      font: 500 13px / 1 var(--font-sans);
+      white-space: nowrap;
+    }
+
+    .blocks-nav a.is-active,
+    .blocks-nav a:hover {
       color: var(--foreground);
     }
 
+    .lucide-icon {
+      width: 16px;
+      height: 16px;
+      display: block;
+      fill: none;
+      stroke: var(--lucide-icon-stroke-current, var(--lucide-icon-stroke));
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: var(--lucide-icon-opacity-current, var(--lucide-icon-opacity-strong));
+    }
+
+    .home-link .lucide-icon,
+    .btn-ghost .lucide-icon {
+      --lucide-icon-opacity-current: var(--lucide-icon-opacity-secondary);
+    }
+
+    .home-link:hover .lucide-icon,
+    .btn-ghost:hover .lucide-icon {
+      --lucide-icon-opacity-current: var(--lucide-icon-opacity-strong);
+    }
+
     .preview-shell {
+      width: min(1500px, calc(100vw - 44px));
+      margin: 0 auto;
+      padding: 64px 0 92px;
       display: flex;
-      gap: 24px;
-      padding: 32px 24px 64px;
-      justify-content: center;
-      align-items: start;
+      flex-direction: column;
+      gap: 28px;
     }
 
     .preview-nav {
+      order: 1;
       position: sticky;
-      top: 32px;
-      align-self: flex-start;
-      flex-shrink: 0;
-      width: 220px;
-      background: color-mix(in srgb, var(--background-elevated) 76%, transparent);
-      border-radius: 18px;
-      padding: 14px;
+      top: 64px;
+      z-index: var(--z-dropdown);
+      width: 100%;
+      background: var(--preview-nav-bg);
+      border: 0;
+      border-radius: 0;
+      padding: 0;
       box-shadow: none;
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      align-items: center;
+      gap: 4px;
+      overflow-x: auto;
     }
 
     .preview-nav-title {
+      display: none;
       font-family: var(--font-sans);
       font-size: var(--preview-text-label-size);
       font-weight: 500;
@@ -65,26 +191,41 @@
       text-decoration: none;
       font-family: var(--font-sans);
       font-size: var(--preview-text-body-sm-size);
-      font-weight: 400;
-      line-height: 1.4;
+      font-weight: 600;
+      line-height: 1;
+      white-space: nowrap;
+      border-radius: 10px;
+      padding: 10px 14px;
     }
 
-    .preview-nav-link:hover {
+    .preview-nav-link.is-active,
+    .preview-nav-link:hover,
+    .preview-nav-link:focus-visible {
       color: var(--foreground);
+      background: var(--state-hover);
+    }
+
+    .preview-nav-link.is-active {
+      background: var(--surface-3);
     }
 
     .preview-main {
-      width: 1440px;
-      flex-shrink: 0;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 28px;
+      width: 100%;
+      min-width: 0;
     }
 
     .preview-head {
+      order: 0;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 16px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
     }
 
     .preview-controls {
@@ -101,7 +242,8 @@
       gap: 8px;
       padding: 6px;
       border-radius: 12px;
-      background: color-mix(in srgb, var(--background-elevated) 72%, transparent);
+      background: transparent;
+      border: 0;
     }
 
     .preview-control-label {
@@ -140,7 +282,8 @@
       height: 34px;
       border: none;
       border-radius: 8px;
-      background: color-mix(in srgb, var(--surface-1) 82%, transparent);
+      background: transparent;
+      border: 1px solid var(--border-subtle);
       color: var(--foreground);
       padding: 0 10px;
       font-family: var(--font-mono);
@@ -167,29 +310,24 @@
     }
 
     :root[data-theme='light'] body {
-      background:
-        radial-gradient(circle at top left, color-mix(in srgb, var(--primary) 6%, white) 0%, transparent 34%),
-        linear-gradient(180deg, #fcfcfc 0%, var(--background) 100%);
+      background: var(--preview-page-bg);
       color: var(--foreground);
     }
 
-    :root[data-theme='light'] .preview-nav,
-    :root[data-theme='light'] .preview-section,
-    :root[data-theme='light'] .palette-ramp-card,
-    :root[data-theme='light'] .palette-rule-card,
-    :root[data-theme='light'] .preview-agent-body {
-      background: var(--surface-1);
-      border: 1px solid var(--border-default);
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    :root[data-theme='light'] .preview-section {
+      background: var(--preview-section-bg);
+      border: 0;
+      box-shadow: none;
     }
 
     :root[data-theme='light'] .preview-control-group,
-    :root[data-theme='light'] .preview-card,
-    :root[data-theme='light'] .preview-stage,
-    :root[data-theme='light'] .palette-source,
-    :root[data-theme='light'] .state-badge {
-      background: var(--surface-2);
-      border: 1px solid var(--border-subtle);
+    :root[data-theme='light'] .palette-source {
+      background: transparent;
+      border: 0;
+    }
+
+    :root[data-theme='light'] .preview-stage {
+      background: var(--preview-stage-bg);
     }
 
     :root[data-theme='light'] .theme-switch-btn.is-active {
@@ -198,7 +336,7 @@
     }
 
     :root[data-theme='light'] .accent-input {
-      background: var(--surface-1);
+      background: transparent;
       border: 1px solid var(--border-default);
     }
 
@@ -214,9 +352,19 @@
       box-shadow: none;
     }
 
+    :root[data-theme='light'] {
+      --preview-page-bg: var(--app-background, var(--background));
+      --preview-shell-bg: #F4F4F4;
+      --preview-nav-bg: transparent;
+      --preview-section-bg: transparent;
+      --preview-card-bg: #F2F2F2;
+      --preview-stage-bg: transparent;
+      --preview-section-border: rgba(0, 0, 0, 0.10);
+    }
+
     :root[data-theme='light'] .layout-page-canvas {
       background: linear-gradient(180deg, #ffffff 0%, #f8f8f8 100%);
-      border: 1px solid var(--border-subtle);
+      border: 0;
     }
 
     :root[data-theme='light'] .layout-page-canvas::before {
@@ -228,7 +376,7 @@
 
     :root[data-theme='light'] .layout-minimap {
       background: var(--surface-1);
-      border: 1px solid var(--border-default);
+      border: 0;
     }
 
     :root[data-theme='light'] .layout-minimap-view {
@@ -244,7 +392,7 @@
 
     :root[data-theme='light'] .layout-minimap-controls {
       background: var(--surface-1);
-      border-top-color: var(--border-subtle);
+      border-top-color: transparent;
     }
 
     :root[data-theme='light'] .layout-minimap-btn {
@@ -253,16 +401,54 @@
       color: var(--foreground-secondary);
     }
 
+    :root[data-theme='glass'] .preview-nav {
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    :root[data-theme='glass'] .preview-section {
+      background: var(--preview-section-bg);
+      border: 0;
+      box-shadow: none;
+    }
+
+    :root[data-theme='glass'] .preview-control-group,
+    :root[data-theme='glass'] .palette-source {
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+
+    :root[data-theme='glass'] .theme-switch-btn.is-active {
+      background: var(--state-selected);
+      box-shadow: var(--glass-surface-highlight);
+    }
+
+    :root[data-theme='glass'] .accent-input {
+      background: transparent;
+      border: 1px solid var(--input-border);
+    }
+
+    :root[data-theme='glass'] body {
+      background: var(--preview-page-bg);
+    }
+
     .preview-title {
       font-family: var(--font-sans);
-      font-size: var(--preview-text-display-size);
+      font-size: 38px;
       font-weight: 700;
-      line-height: 1.25;
+      line-height: 1.08;
       color: var(--foreground);
+      letter-spacing: 0;
+      margin: 0;
     }
 
     .preview-sub {
-      max-width: 860px;
+      max-width: 760px;
+      margin: 0;
       color: var(--foreground-secondary);
       font-family: var(--font-sans);
       font-size: var(--preview-text-body-size);
@@ -271,30 +457,67 @@
     }
 
     .preview-section {
-      background: color-mix(in srgb, var(--background-elevated) 68%, transparent);
-      border-radius: 18px;
-      padding: 18px;
+      width: 100%;
+      background: var(--preview-section-bg);
+      border: 0;
+      border-radius: 16px;
+      padding: 0;
       box-shadow: none;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 0;
+      overflow: clip;
     }
 
+    .preview-section[hidden] {
+      display: none;
+    }
+
+    #layout-shell { order: 1; }
+    #color-palette { order: 2; }
+    #buttons { order: 3; }
+    #toggle-chip { order: 4; }
+    #labels-badges { order: 5; }
+    #panels-containers { order: 6; }
+    #pattern-previews { order: 7; }
+    #data-viz-exempt { order: 8; }
+    #module-matrix { order: 9; }
+
     .preview-section-title {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      border-bottom: 0;
+      background: transparent;
       font-size: 15px;
       font-weight: 700;
       color: var(--foreground);
       margin: 0;
     }
 
+    .preview-caption {
+      margin: 0;
+      padding: 16px 20px 0;
+    }
+
     .preview-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 14px;
+      padding: 18px;
+    }
+
+    .preview-fullpage,
+    .palette-overview,
+    .palette-grid,
+    .palette-rules-grid {
+      padding: 18px;
     }
 
     .preview-card {
-      background: color-mix(in srgb, var(--surface-1) 78%, transparent);
+      background: var(--preview-card-bg);
+      border: 0;
       border-radius: 14px;
       padding: 14px;
       display: flex;
@@ -330,7 +553,8 @@
     .preview-stage {
       min-height: 74px;
       border-radius: 12px;
-      background: color-mix(in srgb, var(--background) 54%, transparent);
+      background: var(--preview-stage-bg);
+      border: 0;
       padding: 12px;
       display: flex;
       align-items: center;
@@ -386,14 +610,18 @@
       align-items: start;
     }
 
+    .palette-overview-single {
+      grid-template-columns: 1fr;
+    }
+
     .palette-note-card {
       min-height: 100%;
     }
 
     .palette-ramp-card {
       border-radius: 16px;
-      border: 1px solid var(--border-subtle);
-      background: color-mix(in srgb, var(--background-elevated) 78%, transparent);
+      border: 0;
+      background: var(--preview-card-bg);
       padding: 16px;
       display: flex;
       flex-direction: column;
@@ -426,8 +654,8 @@
       gap: 8px;
       padding: 6px 8px;
       border-radius: 999px;
-      border: 1px solid var(--border-default);
-      background: color-mix(in srgb, var(--surface-1) 86%, transparent);
+      border: 0;
+      background: transparent;
       color: var(--foreground-secondary);
       font: var(--text-mono);
       white-space: nowrap;
@@ -437,7 +665,7 @@
       width: 12px;
       height: 12px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 0;
       background: var(--palette-source-color, #fff);
       flex-shrink: 0;
     }
@@ -451,21 +679,22 @@
     .palette-stop {
       display: flex;
       flex-direction: column;
+      align-items: center;
       gap: 6px;
       min-width: 0;
     }
 
     .palette-chip {
-      height: 48px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.10);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 0;
       background: var(--palette-color, transparent);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+      box-shadow: none;
     }
 
     .palette-stop-tone-neutral .palette-chip {
-      border-color: rgba(17,24,39,0.08);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.88);
+      box-shadow: none;
     }
 
     .palette-step,
@@ -500,8 +729,8 @@
 
     .palette-rule-card {
       border-radius: 16px;
-      border: 1px solid var(--border-subtle);
-      background: color-mix(in srgb, var(--background-elevated) 78%, transparent);
+      border: 0;
+      background: transparent;
       padding: 16px;
       display: flex;
       flex-direction: column;
@@ -609,9 +838,9 @@
       flex-direction: column;
       gap: 14px;
       padding: 16px;
-      background: color-mix(in srgb, var(--surface-1) 60%, transparent);
+      background: transparent;
       border-radius: 12px;
-      border: 1px solid var(--border-subtle);
+      border: 0;
     }
 
     .agent-row {
@@ -681,23 +910,186 @@
     }
 
     .preview-section.preview-section-viewer {
-      padding: 0;
-      background: transparent;
-      border-radius: 0;
+      padding: 18px;
+      background: var(--preview-section-bg);
+      border-radius: 18px;
     }
 
     .preview-section.preview-section-viewer .preview-fullpage {
-      width: 1440px;
+      width: 100%;
     }
 
-    .pto-workbench-shell.preview-workbench-shell {
+    .preview-workbench-kernel {
       box-sizing: border-box;
-      width: 1440px;
-      --pto-workbench-shell-height: 760px;
-      border: 1px solid var(--border-subtle);
-      border-radius: 24px;
+      width: 100%;
+      height: 420px;
+      border: 0;
+      border-radius: var(--radius-lg);
       overflow: hidden;
-      padding: 0 14px 14px;
+      padding: 10px;
+      background: transparent;
+    }
+
+    .preview-workbench-kernel-panes {
+      height: 100%;
+      min-height: 0;
+    }
+
+    .preview-workbench-kernel-pane {
+      border: 0;
+      border-radius: var(--radius-md);
+      background: transparent;
+      padding: 12px;
+      gap: 8px;
+    }
+
+    .preview-workbench-kernel-pane strong {
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .preview-workbench-kernel-pane span {
+      color: var(--foreground-muted);
+      font: var(--text-mono);
+    }
+
+    .preview-feature-ide {
+      width: 100%;
+      max-width: none;
+      aspect-ratio: 4 / 3;
+      height: auto;
+      margin: 0;
+      border-radius: 16px;
+      box-shadow: none;
+    }
+
+    .preview-feature-ide .pto-ide-frame__topbar-center {
+      display: none;
+    }
+
+    .preview-feature-ide .pto-ide-frame__topbar-left,
+    .preview-feature-ide .pto-ide-frame__topbar-right {
+      flex: 1 1 auto;
+    }
+
+    .preview-tree {
+      padding: 8px 6px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      color: var(--foreground-secondary);
+      font: 500 12px / 1.45 var(--font-sans);
+    }
+
+    .preview-tree-group {
+      padding: 6px 8px 4px;
+      color: var(--foreground);
+      font-weight: 700;
+    }
+
+    .preview-tree-row {
+      min-height: 26px;
+      display: grid;
+      grid-template-columns: 16px 16px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 6px;
+      padding: 0 8px 0 calc(8px + var(--tree-depth, 0) * 16px);
+      border-radius: 7px;
+    }
+
+    .preview-tree-row.is-active {
+      background: var(--state-selected);
+      color: var(--foreground);
+    }
+
+    .preview-tree-row.is-muted {
+      color: var(--foreground-muted);
+    }
+
+    .preview-tree-icon,
+    .preview-tree-chevron {
+      width: 15px;
+      height: 15px;
+      display: block;
+      fill: none;
+      stroke: var(--lucide-icon-stroke);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: var(--lucide-icon-opacity-secondary);
+    }
+
+    .preview-tree-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .preview-tree-status {
+      color: var(--foreground-muted);
+      font: var(--text-mono);
+    }
+
+    .preview-tree-status.is-modified {
+      color: var(--warning);
+    }
+
+    .preview-editor-breadcrumbs {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 14px;
+      color: var(--foreground-muted);
+      font: var(--text-mono);
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .preview-editor-breadcrumbs strong {
+      color: var(--foreground-secondary);
+      font-weight: 600;
+    }
+
+    .preview-code-surface {
+      height: calc(100% - 34px);
+      padding: 6px 0 14px;
+      background:
+        linear-gradient(90deg, color-mix(in srgb, var(--foreground) 5%, transparent) 1px, transparent 1px) 46px 0 / 1px 100% no-repeat,
+        var(--ide-frame-pane-bg);
+    }
+
+    .preview-code-surface .pto-ide-frame__code-line {
+      grid-template-columns: 50px minmax(720px, 1fr);
+      min-height: 23px;
+    }
+
+    .preview-code-surface .pto-ide-frame__code-line-code::before {
+      display: none;
+    }
+
+    .preview-code-surface .pto-ide-frame__code-line-code {
+      padding: 0 22px 0 12px;
+    }
+
+    .tk-comment { color: var(--foreground-muted); font-style: italic; }
+    .tk-tag { color: #ff7b72; }
+    .tk-attr { color: #79c0ff; }
+    .tk-value { color: #a5d6ff; }
+    .tk-keyword { color: #c792ea; }
+    .tk-type { color: #82aaff; }
+    .tk-number { color: #f78c6c; }
+    .tk-fn { color: #82aaff; }
+
+    .preview-empty-view {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      color: var(--foreground-muted);
+      font: var(--text-body-sm);
+      text-align: center;
     }
 
     .layout-page-frame {
@@ -750,8 +1142,8 @@
     .card-demo {
       width: min(100%, 360px);
       border-radius: 12px;
-      border: 1px solid var(--border-default);
-      background: var(--background-elevated);
+      border: 0;
+      background: transparent;
       color: var(--foreground);
       overflow: hidden;
     }
@@ -791,7 +1183,7 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      border-top: 1px solid color-mix(in srgb, var(--border-default) 56%, transparent);
+      border-top: 0;
     }
 
     .card-demo-field {
@@ -810,7 +1202,7 @@
       height: 36px;
       border-radius: 8px;
       border: 1px solid var(--border-default);
-      background: var(--surface-1);
+      background: transparent;
       color: var(--foreground-muted);
       display: inline-flex;
       align-items: center;
@@ -822,7 +1214,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      border-top: 1px solid color-mix(in srgb, var(--border-default) 56%, transparent);
+      border-top: 0;
     }
 
     .action-row-selected {
@@ -952,7 +1344,8 @@
       width: min(100%, 320px);
       min-height: 320px;
       border-radius: 14px;
-      background: color-mix(in srgb, var(--background-elevated) 94%, transparent);
+      background: transparent;
+      border: 0;
       padding: 14px;
       display: flex;
       flex-direction: column;
@@ -983,7 +1376,7 @@
       height: 188px;
       border-radius: 16px;
       background: rgba(22, 22, 22, 0.98);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 0;
       position: relative;
       overflow: hidden;
       display: flex;
@@ -1017,7 +1410,7 @@
 
     .layout-minimap-controls {
       height: 48px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-top: 0;
       display: flex;
       align-items: center;
       justify-content: stretch;
@@ -1049,7 +1442,7 @@
       width: 1440px;
       height: 1080px;
       flex: 0 0 auto;
-      border: 6px solid rgba(138, 138, 138, 0.5);
+      border: 0;
       border-radius: 24px;
       background: color-mix(in srgb, var(--background) 86%, transparent);
       box-shadow:
@@ -1224,7 +1617,7 @@
     .preview-shell .theme-switch-btn:focus-visible,
     .preview-shell .layout-minimap-btn:focus-visible,
     .preview-shell .preview-nav-link:focus-visible {
-      outline: 2px solid var(--button-primary-bg, #5b8cff);
+      outline: 2px solid var(--button-solid-bg, #5b8cff);
       outline-offset: 2px;
     }
 
@@ -1283,29 +1676,35 @@
     .preview-embed {
       width: 100%;
       min-height: 860px;
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      background: var(--surface-1);
-      overflow: hidden;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      overflow: visible;
     }
 
     .preview-embed-frame {
       width: 100%;
       height: 860px;
       border: 0;
-      background: var(--surface-1);
+      background: transparent;
     }
 
     #pattern-previews .preview-card {
       background: transparent;
+      border: 0;
+      border-radius: 0;
       padding: 0;
       gap: 10px;
+      box-shadow: none;
     }
 
     #pattern-previews .preview-stage {
       min-height: 0;
+      border: 0;
+      border-radius: 0;
       padding: 0;
       background: transparent;
+      box-shadow: none;
     }
 
     #pattern-previews .preview-card-class {
@@ -1316,14 +1715,28 @@
 
     #pattern-previews .preview-embed {
       min-height: 0;
+      border: 0;
+      border-radius: 0;
       background: transparent;
+      box-shadow: none;
+      overflow: visible;
     }
 
     #pattern-previews .preview-embed-frame {
       display: block;
       height: 320px;
       min-height: 0;
+      border: 0;
+      outline: 0;
       background: transparent;
+    }
+
+    #pattern-previews.preview-section {
+      padding: 0;
+      border-radius: 16px;
+      border: 0;
+      background: var(--preview-section-bg);
+      box-shadow: none;
     }
 
     #pattern-previews .preview-embed-frame[data-pattern-preview='swimlane-task'] {
@@ -1338,6 +1751,18 @@
       height: 720px;
     }
 
+    #pattern-previews .preview-embed-frame[data-pattern-preview='workbench-shell'] {
+      height: 720px;
+    }
+
+    #pattern-previews .preview-embed-frame[data-pattern-preview='ide-frame'] {
+      height: 1680px;
+    }
+
+    #pattern-previews .preview-embed-frame[data-pattern-preview='floating-playback-control'] {
+      height: 320px;
+    }
+
     #pattern-previews .preview-embed-frame[data-pattern-preview='model-graphviz'] {
       height: 1180px;
     }
@@ -1345,12 +1770,26 @@
     @media (max-width: 1040px) {
       .preview-shell {
         grid-template-columns: 1fr;
+        width: min(100% - 24px, 1440px);
         max-width: 1440px;
         justify-content: stretch;
+        padding-top: 36px;
       }
 
       .preview-nav {
         position: static;
+      }
+
+      .blocks-nav {
+        display: none;
+      }
+
+      .blocks-toolbar {
+        padding: 0 12px;
+      }
+
+      .blocks-toolbar .toolbar-r {
+        gap: 8px;
       }
 
       .preview-main,
@@ -1369,27 +1808,40 @@
   </style>
 </head>
 <body>
-  <main class="preview-shell">
-    <aside class="preview-nav">
-      <div class="preview-nav-title">Target UI System</div>
-      <a class="preview-nav-link" href="#overview">Overview</a>
-      <a class="preview-nav-link" href="#pattern-previews">Pattern Preview</a>
-      <a class="preview-nav-link" href="#color-palette">Color Palette</a>
-      <a class="preview-nav-link" href="#buttons">Buttons</a>
-      <a class="preview-nav-link" href="#toggle-chip">Toggle &amp; Chip</a>
-      <a class="preview-nav-link" href="#labels-badges">Labels &amp; Badges</a>
-      <a class="preview-nav-link" href="#panels-containers">Card</a>
-      <a class="preview-nav-link" href="#data-viz-exempt">Data Viz Exempt</a>
-      <a class="preview-nav-link" href="#module-matrix">Module Mapping Matrix</a>
-    </aside>
+  <header class="toolbar blocks-toolbar">
+    <div class="toolbar-l">
+      <a class="btn btn-ghost btn-icon home-link" href="./launch.html" title="Home" aria-label="Home">
+        <svg class="lucide-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m3 11 9-8 9 8"></path>
+          <path d="M5 10v10h14V10"></path>
+          <path d="M9 20v-6h6v6"></path>
+        </svg>
+      </a>
+      <span class="toolbar-logo">PyPTO Design System</span>
+      <span class="toolbar-sep" aria-hidden="true"></span>
+      <nav class="blocks-nav" aria-label="Primary">
+        <a class="is-active" href="./design-system-preview.html">Components</a>
+        <a href="#pattern-previews">Patterns</a>
+        <a href="./DESIGN.md">Design.md</a>
+      </nav>
+    </div>
+    <div class="toolbar-r">
+      <div class="preview-control-group" aria-label="Theme mode">
+        <button class="theme-switch-btn is-active" type="button" data-theme-mode="dark">Dark</button>
+        <button class="theme-switch-btn" type="button" data-theme-mode="light">Light</button>
+        <button class="theme-switch-btn" type="button" data-theme-mode="glass">Glass</button>
+      </div>
+    </div>
+  </header>
 
-    <div class="preview-main">
+  <main class="preview-shell blocks-shell">
+    <div class="preview-main blocks-list">
     <header class="preview-head" id="overview">
       <div class="preview-inline">
-        <a class="btn btn-ghost" href="./launch.html">Back</a>
+        <a class="btn btn-ghost" href="#pattern-previews">Browse patterns</a>
       </div>
-      <h1 class="preview-title">Target UI System Preview</h1>
-      <p class="preview-sub">PTO 设计系统目标态规范。模块迁移时以本页组件形态、状态和映射为准。</p>
+      <h1 class="preview-title">PyPTO Design System</h1>
+      <p class="preview-sub">基于 Shadcn 实现的 PTO 3.0 设计风格组件库，配合 design.md 和 skill 使用。本页面展示基础组件、tokens 和 patterns 入口。</p>
 
       <details class="preview-agent-ref">
         <summary>Agent Reference</summary>
@@ -1457,6 +1909,33 @@
           <div class="agent-divider"></div>
 
           <div class="agent-row">
+            <div class="agent-label">Component Usage Notes</div>
+            <table class="agent-table">
+              <tr><td>Button weight</td><td><code>.btn-solid</code> is for the only action that commits or advances the workflow: Run, Generate, Apply, Execute, Start. Open/import/browse/load actions stay <code>.btn</code>.</td></tr>
+              <tr><td>Ghost action</td><td><code>.btn-ghost</code> is for cancel, close, more, toolbar helpers, and icon-only utility actions.</td></tr>
+              <tr><td>Outline toggle</td><td>Single binary toggles use <code>.toggle-outline</code> with <code>aria-pressed</code>. Do not fake toggle state with generic buttons.</td></tr>
+              <tr><td>Toggle group</td><td>Mutually exclusive options use grouped outline toggles. Keep size smaller than primary actions.</td></tr>
+              <tr><td>Chip filter</td><td>Filter chips stay low-emphasis. Selected chips use a muted selected surface, not a solid CTA fill.</td></tr>
+              <tr><td>Status badge</td><td>Semantic badges keep the neutral badge structure and only change text/border color.</td></tr>
+              <tr><td>Action list</td><td>Action lists live inside card content. One row may be selected; do not promote each row to a separate component category.</td></tr>
+            </table>
+          </div>
+
+          <div class="agent-divider"></div>
+
+          <div class="agent-row">
+            <div class="agent-label">Foundation Rules</div>
+            <table class="agent-table">
+              <tr><td>Semantic mapping</td><td>Neutral ramp values are primitive colors. Map them through theme-level <code>surface</code>, <code>foreground</code>, <code>border</code>, and <code>state</code> tokens before use.</td></tr>
+              <tr><td>Highlight steps</td><td>Light themes use low steps for backgrounds; dark themes use high steps for backgrounds. Middle steps stay for foregrounds or data-viz base hues.</td></tr>
+              <tr><td>State overlay</td><td>Hover, pressed, muted, selected, and focus states come from semantic state tokens. Do not hard-code per-component alpha overlays.</td></tr>
+              <tr><td>Palette policy</td><td>Shared tokens only hold reusable palettes. Module-local alpha fills stay local unless promoted through a documented token pass.</td></tr>
+            </table>
+          </div>
+
+          <div class="agent-divider"></div>
+
+          <div class="agent-row">
             <div class="agent-label">State Modifier Rules</div>
             <table class="agent-table">
               <tr><td>.is-selected</td><td>Universal selected state. Applies to <code>.btn</code> of any variant. Produces <code>var(--foreground)</code> fill + <code>var(--background)</code> text. Used by toggle groups, chip filters, toolbar active states.</td></tr>
@@ -1469,11 +1948,15 @@
           <div class="agent-row">
             <div class="agent-label">Pattern Reuse Rules</div>
             <table class="agent-table">
+              <tr><td>Stable entry</td><td>Every pattern must expose a stable consumer entry. Static visual primitives use documented CSS classes; DOM/SVG/canvas generation, drag behavior, zoom, routing, persistence, or synchronized state must go through a <code>window.Pto*Pattern</code> or <code>window.Pto*</code> helper. Business pages must not copy generated DOM or restyle internal pattern classes.</td></tr>
               <tr><td><code>swimlane-task-bar</code></td><td>Use <code>patterns/swimlane-task/pattern.js</code> and call <code>window.PtoSwimlaneTaskPattern.drawTaskBar</code>. The canonical task bar is canvas-rendered, sourced from <code>pypto-swimlane-perf-tool/js/swimlane.js</code>. Do not rebuild it with DOM/CSS or rewrite segment math locally.</td></tr>
               <tr><td><code>memory-architecture-layout</code></td><td>Use <code>patterns/memory-architecture/pattern.js</code>. Call <code>window.PtoMemoryArchitecturePattern.renderArchitecture</code> to build the stage, <code>createRouteOverlay</code> for MTE routes, <code>attachHoverInteractions</code> for hardware tips, and <code>setDetailVisibility</code> / <code>applyCanvasScale</code> for page controls. Extend preset data for 910B/950; do not copy raw <code>mem_viewer</code> HTML or redraw route geometry locally.</td></tr>
               <tr><td><code>aic-core-object</code></td><td>Use <code>patterns/aic-core-object/pattern.js</code> and call <code>window.PtoAicCorePattern.render</code>. The shell is config-driven from the design draft; extend the preset data for 950B instead of cloning the generated DOM or restyling the chrome locally.</td></tr>
               <tr><td><code>aiv-core-object</code></td><td>Use <code>patterns/aiv-core-object/pattern.js</code> and call <code>window.PtoAivCorePattern.render</code>. The shell is config-driven from the approved AIV draft; extend the preset data for later chip variants instead of copying the generated DOM or changing card geometry locally.</td></tr>
-              <tr><td><code>model-graphviz</code></td><td>Use <code>patterns/model-graphviz/pattern.html</code> for parity preview; it iframes the real DeepSeek V3.2 and V4 Graphviz pages directly and includes the shared report-overlay sample. For new lightweight examples, use <code>patterns/model-graphviz/pattern.js</code> and call <code>window.PtoModelGraphvizPattern.render</code>. The contract preserves the DeepSeek V3.2/V4 rules: default depth-2 folding, full-pill module/op nodes, rounded-rect tensor nodes for Input/Output/MTP/Constant/Parameter/Tensor, dark graph stage, white edges, safe colormap normalized to <code>s=0.82</code>/<code>l=0.40</code>, 10% white expanded-cluster fill, strict semantic module hierarchy, parent-to-child fill inheritance for op/module nodes, folded representative edge dedupe, stable expand/collapse viewport anchoring, right-center fold controls, right-inset expand controls, no graph shadows, and no-border clicked-operator preview cards with dark code surfaces. Report overlays also belong to this pattern: Graphviz source pages keep <code>margin=0.22</code>, <code>pad=0.38</code>, and cluster <code>margin=36</code>; container title pills are centered to the container bbox, filled with P0/P1/P2 red-orange-yellow, include the P tag on the left, and sit in a root overlay layer above edge strokes. Node fill/report priority is the only data-viz color exception; all other UI styling must remain token-derived. Do not render tensor nodes as ellipses or full pills, use blue for P2, express priority with border-only styling, drift fold icons away from the cluster right-center anchor, add graph shadows or operator-card borders, hard-code non-node UI styles, recenter/refit the whole graph after expand/collapse, or duplicate an expanded parent as a standalone node.</td></tr>
+              <tr><td><code>workbench-shell</code></td><td>Resize kernel only. Use <code>patterns/workbench-shell/pattern.css</code> and <code>patterns/workbench-shell/pattern.js</code>, then call <code>window.PtoWorkbenchShell.initResizablePanes</code>, <code>createSplitGutter</code>, or <code>initNestedResizablePanes</code> for horizontal / vertical / nested splits. Do not put page chrome, pane fills, topbars, titles, canvas controls, or IDE typography into this pattern.</td></tr>
+              <tr><td><code>ide-frame</code></td><td>IDE framework shell. Use <code>patterns/ide-frame/pattern.css</code>, <code>patterns/ide-frame/pattern.js</code>, <code>patterns/floating-playback-control/pattern.css</code>, <code>patterns/floating-playback-control/pattern.js</code>, and optional <code>patterns/ide-frame/vscode.css</code>. Set <code>data-host="standalone"</code> or <code>data-host="vscode-webview"</code>. It owns IDE chrome, pane headers, pane-local preview tabs, generic slots, floating playback mounting, and split initialization. It must not ship business sample data, must not recreate playback chrome, and must not override <code>.pto-workbench-shell__*</code> internals.</td></tr>
+              <tr><td><code>floating-playback-control</code></td><td>Use <code>patterns/floating-playback-control/pattern.css</code> and <code>patterns/floating-playback-control/pattern.js</code>. Pages should use <code>.pto-floating-playback*</code> classes or call <code>window.PtoFloatingPlaybackControl.createControl</code>, then call <code>init</code> and <code>initScrubberHover</code>. Business pages own playback data and button handlers, but must not copy floating-shell chrome, collapse synchronization, or scrubber hover behavior locally.</td></tr>
+              <tr><td><code>model-graphviz</code></td><td>Use <code>patterns/model-graphviz/pattern.html</code> for parity preview; it iframes the real DeepSeek V3.2 Graphviz page directly. For new lightweight examples, use <code>patterns/model-graphviz/pattern.js</code> and call <code>window.PtoModelGraphvizPattern.render</code>. The contract preserves the DeepSeek V3.2 rules: default depth-2 folding, full-pill module/op nodes, rounded-rect tensor nodes for Input/Output/MTP/Constant/Parameter/Tensor, graph stage, graph edges, safe colormap normalized to <code>s=0.82</code>/<code>l=0.40</code>, 10% expanded-cluster fill, strict semantic module hierarchy, parent-to-child fill inheritance for op/module nodes, folded representative edge dedupe, stable expand/collapse viewport anchoring, right-center fold controls, right-inset expand controls, no graph shadows, and no-border clicked-operator preview cards. Node fill colors are the only data-viz color exception; all other UI styling must remain token-derived. Do not render tensor nodes as ellipses or full pills, drift fold icons away from the cluster right-center anchor, add graph shadows or operator-card borders, hard-code non-node UI styles, recenter/refit the whole graph after expand/collapse, or duplicate an expanded parent as a standalone node.</td></tr>
               <tr><td>Preview rule</td><td>Preview pages may wrap a pattern for layout, but must not redefine the pattern's internal class styles.</td></tr>
             </table>
           </div>
@@ -1492,7 +1975,7 @@
               <tr><td>swimlane</td><td>swimlane/styles.css — active states neutralised to <code>var(--foreground)</code> fill ✓</td><td class="agent-status-ok">migrated</td></tr>
               <tr><td>op-ide-assistant</td><td>Still uses old <code>.btn-primary</code> class</td><td class="agent-status-todo">pending</td></tr>
               <tr><td>execution-overlay</td><td>Still uses old <code>.btn-primary</code> class</td><td class="agent-status-todo">pending</td></tr>
-              <tr><td>mem_viewer</td><td>Still uses old <code>.btn-primary</code> class</td><td class="agent-status-todo">pending</td></tr>
+              <tr><td>mem_viewer</td><td>Floating playback migrated to <code>floating-playback-control</code>; remaining memory-viz colors stay data-viz exempt</td><td class="agent-status-ok">migrated</td></tr>
               <tr><td>model-architecture</td><td>Not audited yet</td><td class="agent-status-todo">pending</td></tr>
               <tr><td>graph-prototype-lab</td><td>Missing token imports entirely</td><td class="agent-status-warn">no tokens</td></tr>
             </table>
@@ -1514,14 +1997,9 @@
       </details>
       <div class="preview-controls">
         <div class="preview-control-group">
-          <span class="preview-control-label">Theme</span>
-          <button class="theme-switch-btn is-active" type="button" data-theme-mode="dark">Dark</button>
-          <button class="theme-switch-btn" type="button" data-theme-mode="light">Light</button>
-        </div>
-        <div class="preview-control-group">
           <span class="preview-control-label">Solid Tone</span>
-          <button class="theme-switch-btn is-active" type="button" data-accent-scope="default">Default</button>
-          <button class="theme-switch-btn" type="button" data-accent-scope="accent">Accent</button>
+          <button class="theme-switch-btn" type="button" data-accent-scope="default">Default</button>
+          <button class="theme-switch-btn is-active" type="button" data-accent-scope="accent">Accent</button>
         </div>
         <div class="preview-control-group">
           <span class="preview-control-label">Accent</span>
@@ -1531,49 +2009,232 @@
       </div>
     </header>
 
-    <section class="preview-section preview-section-viewer">
+    <aside class="preview-nav" aria-label="Component categories">
+      <div class="preview-nav-title">PTO UI Kit</div>
+      <a class="preview-nav-link is-active" href="#overview" data-filter="featured">Featured</a>
+      <a class="preview-nav-link" href="#color-palette" data-filter="foundations">Foundations</a>
+      <a class="preview-nav-link" href="#buttons" data-filter="actions">Actions</a>
+      <a class="preview-nav-link" href="#toggle-chip" data-filter="selection">Selection</a>
+      <a class="preview-nav-link" href="#labels-badges" data-filter="metadata">Metadata</a>
+      <a class="preview-nav-link" href="#panels-containers" data-filter="surfaces">Surfaces</a>
+      <a class="preview-nav-link" href="#layout-shell" data-filter="layout">Layout</a>
+      <a class="preview-nav-link" href="#pattern-previews" data-filter="patterns">Patterns</a>
+      <a class="preview-nav-link" href="#data-viz-exempt" data-filter="visualization">Visualization</a>
+      <a class="preview-nav-link" href="#module-matrix" data-filter="migration">Migration</a>
+    </aside>
+
+    <section class="preview-section preview-section-viewer block-card" id="layout-shell" data-categories="featured layout surfaces patterns">
+      <h2 class="preview-section-title">PTO 典型 IDE Frame</h2>
       <div class="preview-fullpage">
-        <section class="pto-workbench-shell preview-workbench-shell" id="overviewWorkbenchShell" data-workbench-shell>
-          <header class="pto-workbench-shell__topbar">
-            <div class="pto-workbench-shell__brand">
-              <span>PTO Workbench Shell</span>
-              <span class="pto-workbench-shell__brand-sub">empty frame</span>
+        <section class="pto-ide-frame preview-feature-ide" data-ide-frame data-host="standalone" aria-label="PTO typical IDE frame">
+          <header class="pto-ide-frame__topbar pto-ide-frame__standalone-chrome">
+            <div class="pto-ide-frame__topbar-left">
+              <div class="pto-ide-frame__traffic" aria-hidden="true">
+                <span class="pto-ide-frame__traffic-dot"></span>
+                <span class="pto-ide-frame__traffic-dot"></span>
+                <span class="pto-ide-frame__traffic-dot"></span>
+              </div>
+              <div class="pto-ide-frame__host-chip">
+                <svg class="pto-ide-frame__host-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                  <path d="m7 9 3 3-3 3"></path>
+                  <path d="M12 15h5"></path>
+                </svg>
+                <span>IDE</span>
+              </div>
+              <div class="pto-ide-frame__workspace" data-ide-slot="workspace-switcher">
+                <span>ascend-950-workbench-demo</span>
+                <span class="pto-ide-frame__crumbs">index.html</span>
+              </div>
             </div>
-            <div class="pto-workbench-shell__top-actions" aria-hidden="true"></div>
+            <div class="pto-ide-frame__topbar-right">
+              <div class="pto-ide-frame__window-actions" data-ide-slot="window-controls" aria-label="Window controls">
+                <button class="pto-ide-frame__window-action" type="button" aria-label="Toggle left dock">
+                  <svg class="pto-ide-frame__window-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    <path d="M9 3v18"></path>
+                  </svg>
+                </button>
+                <button class="pto-ide-frame__window-action" type="button" aria-label="Toggle right dock">
+                  <svg class="pto-ide-frame__window-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    <path d="M15 3v18"></path>
+                  </svg>
+                </button>
+                <button class="pto-ide-frame__window-action" type="button" aria-label="Settings">
+                  <svg class="pto-ide-frame__window-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9.67 4.14a2.34 2.34 0 0 1 4.66 0 2.34 2.34 0 0 0 3.32 1.91 2.34 2.34 0 0 1 2.33 4.04 2.34 2.34 0 0 0 0 3.82 2.34 2.34 0 0 1-2.33 4.04 2.34 2.34 0 0 0-3.32 1.91 2.34 2.34 0 0 1-4.66 0 2.34 2.34 0 0 0-3.32-1.91 2.34 2.34 0 0 1-2.33-4.04 2.34 2.34 0 0 0 0-3.82 2.34 2.34 0 0 1 2.33-4.04 2.34 2.34 0 0 0 3.32-1.91"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+            </div>
           </header>
 
-          <div class="pto-workbench-shell__panes">
-            <section class="pto-workbench-shell__pane" data-overview-pane="left" aria-label="Left pane">
-              <div class="pto-workbench-shell__pane-head">
-                <h2 class="pto-workbench-shell__pane-title">Left Pane</h2>
-                <span class="pto-workbench-shell__pane-kicker">left</span>
-              </div>
-              <div class="pto-workbench-shell__pane-body"></div>
-            </section>
+          <div class="pto-ide-frame__body">
+            <nav class="pto-ide-frame__activity-rail pto-ide-frame__standalone-chrome" data-ide-slot="activity-rail" aria-label="Activity rail">
+              <button class="btn btn-icon btn-ghost pto-ide-frame__rail-button is-selected" type="button" data-ide-toggle="explorer" aria-label="Toggle file explorer" aria-controls="feature-explorer-pane" aria-expanded="true" aria-pressed="true" title="Explorer">
+                <svg class="pto-ide-frame__rail-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9l-.81-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path>
+                </svg>
+              </button>
+              <button class="btn btn-icon btn-ghost pto-ide-frame__rail-button" type="button" aria-label="Search" title="Search">
+                <svg class="pto-ide-frame__rail-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.3-4.3"></path>
+                </svg>
+              </button>
+              <button class="btn btn-icon btn-ghost pto-ide-frame__rail-button" type="button" aria-label="Source control" title="Source control">
+                <svg class="pto-ide-frame__rail-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="6" cy="18" r="3"></circle>
+                  <circle cx="18" cy="6" r="3"></circle>
+                  <path d="M6 15V3"></path>
+                  <path d="M9 18a9 9 0 0 0 9-9"></path>
+                </svg>
+              </button>
+              <button class="btn btn-icon btn-ghost pto-ide-frame__rail-button" type="button" aria-label="Terminal" title="Terminal">
+                <svg class="pto-ide-frame__rail-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                  <path d="m7 9 3 3-3 3"></path>
+                  <path d="M12 15h5"></path>
+                </svg>
+              </button>
+            </nav>
 
-            <section class="pto-workbench-shell__pane pto-workbench-shell__canvas-pane" data-overview-pane="primary" aria-label="Primary pane">
-              <div class="pto-workbench-shell__pane-head">
-                <h2 class="pto-workbench-shell__pane-title">Primary Pane</h2>
-                <span class="pto-workbench-shell__pane-kicker">primary</span>
-              </div>
-              <div class="pto-workbench-shell__pane-body"></div>
-            </section>
+            <div class="pto-ide-frame__workarea">
+              <div class="pto-ide-frame__split" data-ide-split="standalone-main" data-storage-key="pto-design-system-feature-ide-main-v3" data-split-direction="horizontal" data-sizes="22,50,28" data-pixel-sizes="300" data-min-size="220,360,240">
+                <aside class="pto-ide-frame__pane pto-ide-frame__explorer" data-ide-pane="explorer" id="feature-explorer-pane">
+                  <header class="pto-ide-frame__pane-header">
+                    <h2 class="pto-ide-frame__pane-title">资源管理器</h2>
+                    <span class="pto-ide-frame__pane-meta">PTO</span>
+                  </header>
+                  <div class="pto-ide-frame__pane-body" data-ide-slot="navigation">
+                    <div class="preview-tree">
+                      <div class="preview-tree-group">文件</div>
+                      <div class="preview-tree-row" style="--tree-depth:0">
+                        <svg class="preview-tree-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+                        <svg class="preview-tree-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9l-.81-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path></svg>
+                        <span class="preview-tree-name">ascend-950-workbench-demo</span>
+                        <span class="preview-tree-status"></span>
+                      </div>
+                      <div class="preview-tree-row" style="--tree-depth:1">
+                        <svg class="preview-tree-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+                        <svg class="preview-tree-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9l-.81-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path></svg>
+                        <span class="preview-tree-name">kernels</span>
+                        <span class="preview-tree-status"></span>
+                      </div>
+                      <div class="preview-tree-row" style="--tree-depth:2">
+                        <span></span>
+                        <svg class="preview-tree-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path></svg>
+                        <span class="preview-tree-name">c_api_add.asc</span>
+                        <span class="preview-tree-status is-modified">M</span>
+                      </div>
+                      <div class="preview-tree-row" style="--tree-depth:2">
+                        <span></span>
+                        <svg class="preview-tree-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path></svg>
+                        <span class="preview-tree-name">gelu_high_api.js</span>
+                        <span class="preview-tree-status">U</span>
+                      </div>
+                      <div class="preview-tree-row" style="--tree-depth:2">
+                        <span></span>
+                        <svg class="preview-tree-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path></svg>
+                        <span class="preview-tree-name">fp8_mmad_masked_reduce.js</span>
+                        <span class="preview-tree-status"></span>
+                      </div>
+                      <div class="preview-tree-row" style="--tree-depth:1">
+                        <svg class="preview-tree-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+                        <svg class="preview-tree-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9l-.81-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path></svg>
+                        <span class="preview-tree-name">patterns</span>
+                        <span class="preview-tree-status"></span>
+                      </div>
+                      <div class="preview-tree-row is-active" style="--tree-depth:1">
+                        <span></span>
+                        <svg class="preview-tree-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path></svg>
+                        <span class="preview-tree-name">index.html</span>
+                        <span class="preview-tree-status is-modified">M</span>
+                      </div>
+                      <div class="preview-tree-row" style="--tree-depth:1">
+                        <span></span>
+                        <svg class="preview-tree-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path></svg>
+                        <span class="preview-tree-name">hardware-frame.html</span>
+                        <span class="preview-tree-status"></span>
+                      </div>
+                    </div>
+                  </div>
+                </aside>
 
-            <aside class="pto-workbench-shell__pane" data-overview-pane="right" aria-label="Right pane">
-              <div class="pto-workbench-shell__pane-head">
-                <h2 class="pto-workbench-shell__pane-title">Right Pane</h2>
-                <span class="pto-workbench-shell__pane-kicker">right</span>
+                <section class="pto-ide-frame__pane" data-ide-pane="editor-preview">
+                  <div class="pto-ide-frame__tabstrip" data-ide-slot="preview-tabs">
+                    <div class="tab-control" role="tablist" aria-label="Preview tabs">
+                      <button class="tab-control-item" type="button" role="tab">c_api_add.asc <span class="pto-ide-frame__tab-close" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></span></button>
+                      <button class="tab-control-item is-selected" type="button" role="tab">index.html <span class="pto-ide-frame__tab-close" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></span></button>
+                    </div>
+                  </div>
+                  <header class="pto-ide-frame__pane-header">
+                    <h2 class="pto-ide-frame__pane-title">Preview</h2>
+                    <span class="pto-ide-frame__pane-meta">index.html</span>
+                  </header>
+                  <div class="pto-ide-frame__pane-body" data-ide-slot="preview">
+                    <div class="preview-editor-breadcrumbs">
+                      <strong>ascend-950-workbench-demo</strong>
+                      <span>/</span>
+                      <strong>index.html</strong>
+                      <span>/</span>
+                      <span>workbench shell</span>
+                    </div>
+                    <div class="pto-ide-frame__code-surface preview-code-surface" aria-label="Code preview surface">
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1944</span><span class="pto-ide-frame__code-line-code"><span class="tk-tag">&lt;div</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;workbench-shell-page wb-page&quot;</span><span class="tk-tag">&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1945</span><span class="pto-ide-frame__code-line-code">  <span class="tk-tag">&lt;header</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;layout-header layout-header-filled workbench-shell-header&quot;</span><span class="tk-tag">&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1946</span><span class="pto-ide-frame__code-line-code">    <span class="tk-tag">&lt;div</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;layout-header-left&quot;</span><span class="tk-tag">&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line is-related"><span class="pto-ide-frame__code-line-number">1947</span><span class="pto-ide-frame__code-line-code">      <span class="tk-tag">&lt;a</span> <span class="tk-attr">href</span>=<span class="tk-value">&quot;../launch.html&quot;</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;home-link&quot;</span> <span class="tk-attr">title</span>=<span class="tk-value">&quot;Back to Launcher&quot;</span><span class="tk-tag">&gt;</span>⌂<span class="tk-tag">&lt;/a&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1948</span><span class="pto-ide-frame__code-line-code">      <span class="tk-tag">&lt;div</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;wb-brand&quot;</span><span class="tk-tag">&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1949</span><span class="pto-ide-frame__code-line-code">        <span class="tk-tag">&lt;div</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;wb-title-stack&quot;</span><span class="tk-tag">&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line is-active"><span class="pto-ide-frame__code-line-number">1950</span><span class="pto-ide-frame__code-line-code">          <span class="tk-tag">&lt;div</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;wb-title&quot;</span><span class="tk-tag">&gt;</span>硬件路径工作台<span class="tk-tag">&lt;/div&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1951</span><span class="pto-ide-frame__code-line-code">          <span class="tk-tag">&lt;div</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;wb-subtitle&quot;</span><span class="tk-tag">&gt;</span>代码 ↔ 硬件 ↔ 决策同步审查<span class="tk-tag">&lt;/div&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1952</span><span class="pto-ide-frame__code-line-code">        <span class="tk-tag">&lt;/div&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1953</span><span class="pto-ide-frame__code-line-code">      <span class="tk-tag">&lt;/div&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1954</span><span class="pto-ide-frame__code-line-code">      <span class="tk-tag">&lt;div</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;wb-context&quot;</span> <span class="tk-attr">aria-label</span>=<span class="tk-value">&quot;Context&quot;</span><span class="tk-tag">&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line is-related"><span class="pto-ide-frame__code-line-number">1955</span><span class="pto-ide-frame__code-line-code">        <span class="tk-tag">&lt;span</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;wb-chip&quot;</span><span class="tk-tag">&gt;</span>内核 <span class="tk-tag">&lt;strong</span> <span class="tk-attr">id</span>=<span class="tk-value">&quot;contextKernelName&quot;</span><span class="tk-tag">&gt;</span>c_api_add<span class="tk-tag">&lt;/strong&gt;&lt;/span&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1956</span><span class="pto-ide-frame__code-line-code">        <span class="tk-tag">&lt;span</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;wb-chip&quot;</span><span class="tk-tag">&gt;</span>目标 <span class="tk-tag">&lt;strong</span> <span class="tk-attr">id</span>=<span class="tk-value">&quot;contextTarget&quot;</span><span class="tk-tag">&gt;</span>Ascend 910B<span class="tk-tag">&lt;/strong&gt;&lt;/span&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1957</span><span class="pto-ide-frame__code-line-code">        <span class="tk-tag">&lt;span</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;wb-chip&quot;</span><span class="tk-tag">&gt;</span>分析 <span class="tk-tag">&lt;strong</span> <span class="tk-attr">id</span>=<span class="tk-value">&quot;contextAnalysis&quot;</span><span class="tk-tag">&gt;</span>T1 静态<span class="tk-tag">&lt;/strong&gt;&lt;/span&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1958</span><span class="pto-ide-frame__code-line-code">        <span class="tk-tag">&lt;span</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;wb-chip is-verdict&quot;</span><span class="tk-tag">&gt;</span>结论 <span class="tk-tag">&lt;strong</span> <span class="tk-attr">id</span>=<span class="tk-value">&quot;contextVerdict&quot;</span><span class="tk-tag">&gt;</span>Native Vector baseline<span class="tk-tag">&lt;/strong&gt;&lt;/span&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1959</span><span class="pto-ide-frame__code-line-code">      <span class="tk-tag">&lt;/div&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1960</span><span class="pto-ide-frame__code-line-code">    <span class="tk-tag">&lt;/div&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1961</span><span class="pto-ide-frame__code-line-code">    <span class="tk-tag">&lt;div</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;layout-header-right&quot;</span><span class="tk-tag">&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line is-active"><span class="pto-ide-frame__code-line-number">1962</span><span class="pto-ide-frame__code-line-code">      <span class="tk-tag">&lt;button</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;btn btn-sm&quot;</span> <span class="tk-attr">type</span>=<span class="tk-value">&quot;button&quot;</span> <span class="tk-attr">id</span>=<span class="tk-value">&quot;analyzeBtn&quot;</span><span class="tk-tag">&gt;</span>分析<span class="tk-tag">&lt;/button&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1963</span><span class="pto-ide-frame__code-line-code">      <span class="tk-tag">&lt;button</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;btn btn-solid btn-sm&quot;</span> <span class="tk-attr">type</span>=<span class="tk-value">&quot;button&quot;</span><span class="tk-tag">&gt;</span>应用建议<span class="tk-tag">&lt;/button&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1964</span><span class="pto-ide-frame__code-line-code">    <span class="tk-tag">&lt;/div&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1965</span><span class="pto-ide-frame__code-line-code">  <span class="tk-tag">&lt;/header&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1966</span><span class="pto-ide-frame__code-line-code"></span></div>
+                      <div class="pto-ide-frame__code-line is-related"><span class="pto-ide-frame__code-line-number">1967</span><span class="pto-ide-frame__code-line-code">  <span class="tk-tag">&lt;main</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;workbench-frame workbench-frame-split wb-workbench&quot;</span><span class="tk-tag">&gt;</span></span></div>
+                      <div class="pto-ide-frame__code-line"><span class="pto-ide-frame__code-line-number">1968</span><span class="pto-ide-frame__code-line-code">    <span class="tk-tag">&lt;section</span> <span class="tk-attr">class</span>=<span class="tk-value">&quot;panel-shell panel-shell-quiet workbench-pane wb-source-panel&quot;</span> <span class="tk-attr">aria-label</span>=<span class="tk-value">&quot;Kernel source&quot;</span><span class="tk-tag">&gt;</span></span></div>
+                    </div>
+                  </div>
+                </section>
+
+                <aside class="pto-ide-frame__pane" data-ide-pane="inspector">
+                  <header class="pto-ide-frame__pane-header">
+                    <h2 class="pto-ide-frame__pane-title">View</h2>
+                    <span class="pto-ide-frame__pane-meta">view slot</span>
+                  </header>
+                  <div class="pto-ide-frame__pane-body" data-ide-slot="inspector">
+                    <div class="preview-empty-view">请运行 skill，并定义本窗口视图</div>
+                  </div>
+                </aside>
               </div>
-              <div class="pto-workbench-shell__pane-body"></div>
-            </aside>
+
+              <footer class="pto-ide-frame__status-strip pto-ide-frame__standalone-chrome" data-ide-slot="status">
+                <span>PTO 3.0</span>
+                <span>view composition pending</span>
+              </footer>
+            </div>
           </div>
         </section>
       </div>
     </section>
 
-    <section class="preview-section" id="pattern-previews">
-      <h2 class="preview-section-title">Pattern Preview</h2>
-      <div class="preview-caption">页面 preview 后先看可复用 pattern。这里优先展示已经抽成共享 renderer 或 config-driven object 的 pattern，便于先确认复用边界，再往下看 token 和组件细节。</div>
+    <section class="preview-section block-card" id="pattern-previews" data-categories="featured patterns layout visualization">
+      <h2 class="preview-section-title">Pattern Library</h2>
       <div class="preview-grid">
 
         <article class="preview-card preview-card-full-row">
@@ -1586,7 +2247,7 @@
               <a class="btn btn-ghost" href="./patterns/swimlane-task/pattern.html">Open Full Preview</a>
             </div>
             <div class="preview-embed">
-              <iframe class="preview-embed-frame" data-pattern-preview="swimlane-task" src="./patterns/swimlane-task/pattern.html?embed=1" title="Swimlane Task Pattern Preview"></iframe>
+              <iframe class="preview-embed-frame" data-pattern-preview="swimlane-task" data-src="./patterns/swimlane-task/pattern.html?embed=1" src="about:blank" title="Swimlane Task Pattern Preview" loading="lazy"></iframe>
             </div>
           </div>
           <div class="preview-meta">
@@ -1607,7 +2268,7 @@
               <a class="btn btn-ghost" href="./patterns/memory-architecture/pattern.html">Open Full Preview</a>
             </div>
             <div class="preview-embed">
-              <iframe class="preview-embed-frame" data-pattern-preview="memory-architecture" src="./patterns/memory-architecture/pattern.html?embed=1" title="910B / 950 Memory Architecture Pattern Preview"></iframe>
+              <iframe class="preview-embed-frame" data-pattern-preview="memory-architecture" data-src="./patterns/memory-architecture/pattern.html?embed=1" src="about:blank" title="910B / 950 Memory Architecture Pattern Preview" loading="lazy"></iframe>
             </div>
           </div>
           <div class="preview-meta">
@@ -1628,7 +2289,7 @@
               <a class="btn btn-ghost" href="./patterns/pass-ir-graph-node/pattern.html">Open Full Preview</a>
             </div>
             <div class="preview-embed">
-              <iframe class="preview-embed-frame" data-pattern-preview="pass-ir-graph-node" src="./patterns/pass-ir-graph-node/pattern.html?embed=1" title="Pass-IR Graph Node Pattern Preview"></iframe>
+              <iframe class="preview-embed-frame" data-pattern-preview="pass-ir-graph-node" data-src="./patterns/pass-ir-graph-node/pattern.html?embed=1" src="about:blank" title="Pass-IR Graph Node Pattern Preview" loading="lazy"></iframe>
             </div>
           </div>
           <div class="preview-meta">
@@ -1641,15 +2302,78 @@
 
         <article class="preview-card preview-card-full-row">
           <div class="preview-card-head">
+            <h3 class="preview-card-title">Workbench Split Kernel Pattern</h3>
+            <div class="preview-card-class">resize kernel: horizontal / vertical / nested split helpers</div>
+          </div>
+          <div class="preview-stage preview-stack">
+            <div class="preview-inline">
+              <a class="btn btn-ghost" href="./patterns/workbench-shell/pattern.html">Open Full Preview</a>
+            </div>
+            <div class="preview-embed">
+              <iframe class="preview-embed-frame" data-pattern-preview="workbench-shell" data-src="./patterns/workbench-shell/pattern.html?embed=1" src="about:blank" title="Workbench Split Kernel Pattern Preview" loading="lazy"></iframe>
+            </div>
+          </div>
+          <div class="preview-meta">
+            <span class="token-badge">pattern id: workbench-shell</span>
+            <span class="token-badge">source: patterns/workbench-shell/pattern.js</span>
+            <span class="token-badge">contract: split / resize / gutter / persistence</span>
+            <span class="state-badge">Pattern</span>
+          </div>
+        </article>
+
+        <article class="preview-card preview-card-full-row">
+          <div class="preview-card-head">
+            <h3 class="preview-card-title">PTO IDE Frame Pattern</h3>
+            <div class="preview-card-class">framework shell: standalone host + VS Code webview adapter + content-free slots</div>
+          </div>
+          <div class="preview-stage preview-stack">
+            <div class="preview-inline">
+              <a class="btn btn-ghost" href="./patterns/ide-frame/pattern.html?v=ide-frame-v3">Open Full Preview</a>
+            </div>
+            <div class="preview-embed">
+              <iframe class="preview-embed-frame" data-pattern-preview="ide-frame" data-src="./patterns/ide-frame/pattern.html?embed=1&amp;v=ide-frame-v3" src="about:blank" title="PTO IDE Frame Pattern Preview" loading="lazy"></iframe>
+            </div>
+          </div>
+          <div class="preview-meta">
+            <span class="token-badge">pattern id: ide-frame</span>
+            <span class="token-badge">source: patterns/ide-frame/pattern.css + pattern.js</span>
+            <span class="token-badge">host: standalone / vscode-webview</span>
+            <span class="state-badge">Pattern</span>
+          </div>
+        </article>
+
+        <article class="preview-card preview-card-full-row">
+          <div class="preview-card-head">
+            <h3 class="preview-card-title">Floating Playback Control Pattern</h3>
+            <div class="preview-card-class">mem_viewer module: bottom playback shell + timeline scrubber state helper</div>
+          </div>
+          <div class="preview-stage preview-stack">
+            <div class="preview-inline">
+              <a class="btn btn-ghost" href="./patterns/floating-playback-control/pattern.html">Open Full Preview</a>
+            </div>
+            <div class="preview-embed">
+              <iframe class="preview-embed-frame" data-pattern-preview="floating-playback-control" data-src="./patterns/floating-playback-control/pattern.html?embed=1" src="about:blank" title="Floating Playback Control Pattern Preview" loading="lazy"></iframe>
+            </div>
+          </div>
+          <div class="preview-meta">
+            <span class="token-badge">pattern id: floating-playback-control</span>
+            <span class="token-badge">source: patterns/floating-playback-control/pattern.js</span>
+            <span class="token-badge">contract: DOM shell + collapse + scrubber hover helper</span>
+            <span class="state-badge">Pattern</span>
+          </div>
+        </article>
+
+        <article class="preview-card preview-card-full-row">
+          <div class="preview-card-head">
             <h3 class="preview-card-title">Model Graphviz Pattern</h3>
-            <div class="preview-card-class">torchvista graphviz: rendered SVG model graph style for DeepSeek V3.2 / V4</div>
+            <div class="preview-card-class">torchvista graphviz: rendered SVG model graph style for DeepSeek V3.2</div>
           </div>
           <div class="preview-stage preview-stack">
             <div class="preview-inline">
               <a class="btn btn-ghost" href="./patterns/model-graphviz/pattern.html">Open Full Preview</a>
             </div>
             <div class="preview-embed">
-              <iframe class="preview-embed-frame" data-pattern-preview="model-graphviz" src="./patterns/model-graphviz/pattern.html?embed=1" title="Model Graphviz Pattern Preview"></iframe>
+              <iframe class="preview-embed-frame" data-pattern-preview="model-graphviz" data-src="./patterns/model-graphviz/pattern.html?embed=1" src="about:blank" title="Model Graphviz Pattern Preview" loading="lazy"></iframe>
             </div>
           </div>
           <div class="preview-meta">
@@ -1663,99 +2387,19 @@
       </div>
     </section>
 
-    <section class="preview-section" id="color-palette">
-      <h2 class="preview-section-title">Color Palette</h2>
-      <p class="preview-caption">`tokens.json` 现补全 11 阶中性色板与 mem-viewer 高亮色色板。中性色为白到黑统一灰阶；高亮色从现有图例与块体颜色抽出，统一按 `0-1000` 管理。</p>
+    <section class="preview-section block-card" id="color-palette" data-categories="featured foundations visualization">
+      <h2 class="preview-section-title">Foundations</h2>
 
-      <div class="palette-overview">
+      <div class="palette-overview palette-overview-single">
         <div class="palette-ramp-card" id="paletteNeutralCard"></div>
-        <div class="palette-ramp-card palette-note-card">
-          <div class="palette-ramp-title">Palette Policy</div>
-          <div class="palette-ramp-sub">shared token 里只放可复用的色板，不直接把模块局部 alpha 背景搬过来。mem-viewer 里的 base hue 被抽成完整 ramp，模块仍可按具体密度在 `500/600` 上叠 alpha 使用。</div>
-          <div class="preview-stack">
-            <div class="preview-inline">
-              <span class="preview-map">source</span>
-              <span class="preview-badge">copy-in / accum / vector tile / MTE</span>
-            </div>
-            <div class="preview-inline">
-              <span class="preview-map">naming</span>
-              <span class="preview-badge">0 = tint</span>
-              <span class="preview-badge">500 = base</span>
-              <span class="preview-badge">1000 = deep shade</span>
-            </div>
-            <div class="preview-note">后续如果把 mem-viewer 正式接入 shared token，建议优先引用 `highlight.*.500 / 600`，不要继续散落写裸十六进制。</div>
-          </div>
-        </div>
       </div>
 
       <div class="palette-grid" id="paletteHighlightGrid"></div>
-
-      <div class="palette-rules-grid">
-        <article class="palette-rule-card">
-          <div class="palette-rule-title">Semantic Mapping</div>
-          <div class="palette-rule-sub">neutral 色板本身不直接等于 surface token。真正落地时，surface / foreground / border 要按 theme 做语义映射。</div>
-          <table class="palette-rule-table">
-            <thead>
-              <tr><th>Role</th><th>Dark</th><th>Light</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>surface.1</td><td>#161616</td><td>neutral.0</td></tr>
-              <tr><td>surface.2</td><td>#1c1c1c</td><td>neutral.100</td></tr>
-              <tr><td>surface.3</td><td>#262626</td><td>neutral.200</td></tr>
-              <tr><td>surface.4</td><td>#313131</td><td>neutral.300</td></tr>
-              <tr><td>fg.default</td><td>rgba(255,255,255,.90)</td><td>rgba(0,0,0,.90)</td></tr>
-              <tr><td>fg.secondary</td><td>rgba(255,255,255,.60)</td><td>rgba(0,0,0,.55)</td></tr>
-              <tr><td>fg.muted</td><td>rgba(255,255,255,.40)</td><td>rgba(0,0,0,.38)</td></tr>
-              <tr><td>border.default</td><td>rgba(255,255,255,.10)</td><td>rgba(0,0,0,.12)</td></tr>
-            </tbody>
-          </table>
-        </article>
-
-        <article class="palette-rule-card">
-          <div class="palette-rule-title">Highlight Step Rules</div>
-          <div class="palette-rule-sub">统一规则是 light 用低步号做背景、dark 用高步号做背景；中步号始终保留给前景或 block base。</div>
-          <table class="palette-rule-table">
-            <thead>
-              <tr><th>Step</th><th>Dark Use</th><th>Light Use</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>0-100</td><td>—</td><td>chip/tag bg</td></tr>
-              <tr><td>200-300</td><td>icon / label fg</td><td>hover bg / icon fg</td></tr>
-              <tr><td>400</td><td>bright block fill</td><td>bright block fill</td></tr>
-              <tr><td>500</td><td>base/source</td><td>base/source</td></tr>
-              <tr><td>600-700</td><td>hover / pressed deepen</td><td>hover / pressed deepen</td></tr>
-              <tr><td>800-900</td><td>chip/tag bg</td><td>—</td></tr>
-            </tbody>
-          </table>
-          <div class="preview-inline">
-            <span class="palette-sample-chip" style="--palette-sample-bg:#E0E2FF;--palette-sample-fg:#4F46E5;">light chip 100/300</span>
-            <span class="palette-sample-chip" style="--palette-sample-bg:#1C1953;--palette-sample-fg:#BFC3FF;">dark chip 900/200</span>
-          </div>
-        </article>
-
-        <article class="palette-rule-card">
-          <div class="palette-rule-title">State Overlay Rules</div>
-          <div class="palette-rule-sub">overlay 方案在 light 模式下反转为黑色半透明。`muted` 跟 `hover` 同底层叠色，但不表达交互，只表达弱化。</div>
-          <table class="palette-rule-table">
-            <thead>
-              <tr><th>State</th><th>Dark</th><th>Light</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>hover</td><td>rgba(255,255,255,.06)</td><td>rgba(0,0,0,.05)</td></tr>
-              <tr><td>pressed</td><td>rgba(255,255,255,.10)</td><td>rgba(0,0,0,.09)</td></tr>
-              <tr><td>muted</td><td>rgba(255,255,255,.06) + fg.muted</td><td>rgba(0,0,0,.05) + fg.muted</td></tr>
-              <tr><td>selected</td><td>rgba(67,105,239,.14)</td><td>rgba(67,105,239,.10)</td></tr>
-              <tr><td>focus-ring</td><td>rgba(67,105,239,.42)</td><td>rgba(67,105,239,.36)</td></tr>
-            </tbody>
-          </table>
-        </article>
-      </div>
     </section>
 
     <!-- ① Core Variants -->
-    <section class="preview-section" id="buttons">
-      <h2 class="preview-section-title">Buttons</h2>
-      <div class="preview-caption">共享按钮语义只保留 soft / solid / ghost / disabled，加上 icon-only 与 destructive 作为受控变体。模块级 CTA、工具栏按钮、入口按钮都先归到这里。</div>
+    <section class="preview-section block-card" id="buttons" data-categories="featured actions">
+      <h2 class="preview-section-title">Actions</h2>
       <div class="preview-grid">
 
         <article class="preview-card">
@@ -1774,7 +2418,6 @@
             <span class="token-badge">soft: entry / open / import / choose</span>
             <span class="state-badge">Rule</span>
           </div>
-          <div class="preview-note">`solid` 只给真正推进主流程的唯一主动作，例如 Run、Generate、Apply、Execute、Start。`soft` 给打开、导入、选择、浏览、加载、本地资源这类入口动作，例如 Open Pass Folder、Open single JSON、加载本地资源。判断标准不是按钮位置，而是点击后是否立即提交或推进核心流程。</div>
         </article>
 
         <article class="preview-card">
@@ -1793,7 +2436,6 @@
             <span class="token-badge">--button-secondary-fg</span>
             <span class="state-badge">Use for open/import/load</span>
           </div>
-          <div class="preview-note">默认按钮。用于打开、导入、选择、浏览、加载、本地资源、次级确认。凡是不直接提交主流程的入口动作，默认都走 `soft`。</div>
         </article>
 
         <article class="preview-card">
@@ -1810,7 +2452,6 @@
             <span class="token-badge">color: --background</span>
             <span class="state-badge">Use for run/apply/submit</span>
           </div>
-          <div class="preview-note">主操作 CTA。只用于真正提交或推进主流程的唯一主动作，例如 Run、Generate、Apply、Execute、Start。不要给“打开本地资源”这类入口动作用 `solid`。</div>
         </article>
 
         <article class="preview-card">
@@ -1829,7 +2470,6 @@
             <span class="token-badge">--button-ghost-fg</span>
             <span class="token-badge">--button-ghost-bg-hover</span>
           </div>
-          <div class="preview-note">轻操作：取消、关闭、更多、icon-only 按钮。</div>
         </article>
 
         <article class="preview-card">
@@ -1851,9 +2491,8 @@
     </section>
 
     <!-- ② Toggle & Chip -->
-    <section class="preview-section" id="toggle-chip">
-      <h2 class="preview-section-title">Toggle &amp; Chip</h2>
-      <div class="preview-caption">这里按 shadcn / Base UI 的组件边界拆开：<code>Toggle</code> 是单个二态开关，<code>Toggle Group</code> 是互斥切换，<code>Chip Filter</code> 是轻量筛选标签。方向切换、版本切换、视图切换都并入 <code>Toggle Group</code>，不再单列 pill 组件。</div>
+    <section class="preview-section block-card" id="toggle-chip" data-categories="featured selection">
+      <h2 class="preview-section-title">Selection Controls</h2>
       <div class="preview-grid">
 
         <article class="preview-card">
@@ -1877,7 +2516,6 @@
             <span class="token-badge">radius: 6px</span>
             <span class="state-badge">Shared</span>
           </div>
-          <div class="preview-note">单个 toggle 采用独立 outline 控件，不直接复用普通按钮。更接近 shadcn 的 `variant=&quot;outline&quot;` 结构。</div>
         </article>
 
         <article class="preview-card">
@@ -1896,7 +2534,6 @@
             <span class="token-badge">lg: h-9 px-3</span>
             <span class="state-badge">Shared</span>
           </div>
-          <div class="preview-note">整体尺寸收小一号。默认尺寸现在收敛到原来的 small 档，避免 toggle 比普通控制项更重。</div>
         </article>
 
         <article class="preview-card">
@@ -1925,7 +2562,6 @@
             <span class="token-badge">selected via aria-pressed</span>
             <span class="state-badge">Shared</span>
           </div>
-          <div class="preview-note">互斥切换用一组 outline toggle 组成，不再用普通按钮叠加 `.is-selected` 假装 toggle。方向切换和版本切换也收进这里，不再保留 pill 分类。</div>
         </article>
 
         <article class="preview-card">
@@ -1943,15 +2579,13 @@
             <span class="token-badge">selected: var(--state-selected) + var(--foreground)</span>
             <span class="state-badge">Module Variant</span>
           </div>
-          <div class="preview-note">chip 是筛选器，不是普通 toggle。选中态保持低干扰，用 30% 白底加白字，不使用纯白实心填充。</div>
         </article>
 
       </div>
     </section>
 
-    <section class="preview-section" id="labels-badges">
-      <h2 class="preview-section-title">Labels &amp; Badges</h2>
-      <div class="preview-caption">状态标签与 badge 不并入按钮系统。这里定义的是目标态信息标记层：默认保持低干扰，只有确实承载状态或等级时才使用颜色。</div>
+    <section class="preview-section block-card" id="labels-badges" data-categories="metadata">
+      <h2 class="preview-section-title">Metadata &amp; Status</h2>
       <div class="preview-grid">
 
         <article class="preview-card">
@@ -1988,7 +2622,6 @@
             <span class="token-badge">semantic colors: success / info / warning / danger</span>
             <span class="state-badge">Shared</span>
           </div>
-          <div class="preview-note">Semantic Status 只是 Neutral Badge 的语义色版本，结构、尺寸、圆角都保持一致，只叠加文字和描边颜色。</div>
         </article>
 
         <article class="preview-card">
@@ -2028,9 +2661,8 @@
       </div>
     </section>
 
-    <section class="preview-section" id="panels-containers">
-      <h2 class="preview-section-title">Card</h2>
-      <div class="preview-caption">这一节只展示真正属于 shadcn 语义的 Card。重点不是外框，而是 <code>CardHeader</code>、<code>CardAction</code>、<code>CardContent</code>、<code>CardFooter</code> 这类 slot 结构。</div>
+    <section class="preview-section block-card" id="panels-containers" data-categories="featured surfaces">
+      <h2 class="preview-section-title">Surfaces &amp; Cards</h2>
       <div class="preview-grid">
 
         <article class="preview-card">
@@ -2135,9 +2767,8 @@
       </div>
     </section>
 
-    <section class="preview-section" id="data-viz-exempt">
-      <h2 class="preview-section-title">Data Viz Exempt</h2>
-      <div class="preview-caption">这一节收必须豁免的 data-viz 颜色系统，以及仍需按可视化语义单独保留的少量图形模式。它们不并入共享 token，也不作为通用组件对待。</div>
+    <section class="preview-section block-card" id="data-viz-exempt" data-categories="visualization foundations">
+      <h2 class="preview-section-title">Visualization Exceptions</h2>
       <div class="preview-grid">
 
         <article class="preview-card">
@@ -2220,7 +2851,7 @@
             <div class="preview-card-class">graph / swimlane / canvas surface</div>
           </div>
           <div class="preview-stage">
-            <div class="preview-panel" style="background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.08);">
+            <div class="preview-panel">
               <div class="preview-panel-title">Canvas Surface</div>
               <div class="preview-panel-sub">图面板、泳道布景、overlay surface 允许保留模块特定处理，不并入 Card。</div>
             </div>
@@ -2236,9 +2867,8 @@
     </section>
 
     <!-- ③ Module Mapping -->
-    <section class="preview-section" id="module-matrix">
-      <h2 class="preview-section-title">Module Mapping Matrix</h2>
-      <div class="preview-caption">这块是 migrate 阶段的输入索引。它不再只列按钮，而是按五大组件域说明每个模块最终应该收敛到哪里，哪些继续保留模块专属。</div>
+    <section class="preview-section block-card" id="module-matrix" data-categories="migration reference actions selection surfaces">
+      <h2 class="preview-section-title">Migration Matrix</h2>
       <div class="preview-grid">
 
         <article class="preview-card">
@@ -2313,7 +2943,6 @@
             <span class="token-badge">inner pattern: action list rows</span>
             <span class="token-badge">one row can be selected</span>
           </div>
-          <div class="preview-note">这类内容本质上不是独立组件大类，而是 `Card Content` 里的 action list pattern。外层是 card，内层是一组操作行，其中一项通常表示当前选中模式。</div>
         </article>
 
       </div>
@@ -2322,20 +2951,22 @@
     </div>
   </main>
   <script src="./patterns/workbench-shell/pattern.js"></script>
+  <script src="./patterns/ide-frame/pattern.js"></script>
   <script>
     (() => {
       const root = document.documentElement;
       const themeButtons = Array.from(document.querySelectorAll('[data-theme-mode]'));
+      const categoryLinks = Array.from(document.querySelectorAll('[data-filter]'));
+      const blockCards = Array.from(document.querySelectorAll('.preview-section[data-categories]'));
       const scopeButtons = Array.from(document.querySelectorAll('[data-accent-scope]'));
       const accentInput = document.getElementById('accentInput');
       const accentPicker = document.getElementById('accentPicker');
       const paletteNeutralCard = document.getElementById('paletteNeutralCard');
       const paletteHighlightGrid = document.getElementById('paletteHighlightGrid');
-      const patternPreviewFrames = Array.from(document.querySelectorAll('#pattern-previews .preview-embed-frame'));
-      const overviewWorkbenchShell = document.getElementById('overviewWorkbenchShell');
-      const overviewWorkbenchPanes = Array.from(overviewWorkbenchShell?.querySelectorAll('[data-overview-pane]') || []);
-      let accentScope = 'default';
+      const patternPreviewFrames = Array.from(document.querySelectorAll('[data-pattern-preview]'));
+      let accentScope = 'accent';
 
+      const THEME_MODES = new Set(['dark', 'light', 'glass']);
       const PALETTE_STEPS = ['0', '100', '200', '300', '400', '500', '600', '700', '800', '900', '1000'];
       const NEUTRAL_RAMP = {
         title: 'Neutral 0-1000',
@@ -2482,17 +3113,80 @@
         });
       };
 
+      const syncPatternPreviewTheme = (iframe) => {
+        if (!iframe?.contentWindow) return;
+        iframe.contentWindow.postMessage({
+          type: 'pto-preview-theme',
+          theme: root.dataset.theme || 'dark',
+        }, '*');
+      };
+
+      const loadPatternPreviewFrame = (iframe) => {
+        if (!iframe || iframe.dataset.loaded === 'true') return;
+        const source = iframe.dataset.src;
+        if (!source) return;
+        iframe.dataset.loaded = 'true';
+        iframe.src = source;
+      };
+
+      patternPreviewFrames.forEach((iframe) => {
+        iframe.addEventListener('load', () => syncPatternPreviewTheme(iframe));
+      });
+
+      if ('IntersectionObserver' in window) {
+        const patternFrameObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            loadPatternPreviewFrame(entry.target);
+            observer.unobserve(entry.target);
+          });
+        }, { rootMargin: '600px 0px' });
+        patternPreviewFrames.forEach((iframe) => patternFrameObserver.observe(iframe));
+      } else {
+        patternPreviewFrames.forEach(loadPatternPreviewFrame);
+      }
+
       window.addEventListener('message', (event) => {
         const data = event.data;
+        if (data?.type === 'pto-pattern-preview-wheel') {
+          window.scrollBy({
+            top: data.deltaY || 0,
+            left: data.deltaX || 0,
+            behavior: 'auto',
+          });
+          return;
+        }
         if (!data || data.type !== 'pto-pattern-preview-height') return;
         applyPatternPreviewHeight(data.pathname, data.height);
       });
 
+      const setCategoryFilter = (filter) => {
+        const activeFilter = filter || 'featured';
+        categoryLinks.forEach((link) => {
+          const active = link.dataset.filter === activeFilter;
+          link.classList.toggle('is-active', active);
+          link.setAttribute('aria-current', active ? 'page' : 'false');
+        });
+        blockCards.forEach((card) => {
+          const categories = (card.dataset.categories || '').split(/\s+/);
+          const visible = activeFilter === 'all' || categories.includes(activeFilter);
+          card.hidden = !visible;
+        });
+      };
+
       const applyTheme = (mode) => {
         root.dataset.theme = mode;
         themeButtons.forEach((button) => {
-          button.classList.toggle('is-active', button.dataset.themeMode === mode);
+          const isActive = button.dataset.themeMode === mode;
+          button.classList.toggle('is-active', isActive);
+          button.setAttribute('aria-pressed', String(isActive));
         });
+        patternPreviewFrames.forEach(syncPatternPreviewTheme);
+      };
+
+      const getInitialTheme = () => {
+        const requestedTheme = new URLSearchParams(window.location.search).get('theme');
+        return THEME_MODES.has(requestedTheme) ? requestedTheme : 'dark';
       };
 
       const clearAccentOverrides = () => {
@@ -2508,6 +3202,10 @@
           '--button-primary-bg-hover',
           '--button-primary-bg-press',
           '--button-primary-fg',
+          '--button-solid-bg',
+          '--button-solid-bg-hover',
+          '--button-solid-bg-press',
+          '--button-solid-fg',
         ].forEach((token) => root.style.removeProperty(token));
       };
 
@@ -2522,10 +3220,21 @@
         clearAccentOverrides();
 
         if (accentScope === 'accent') {
+          root.style.setProperty('--primary', rgbToHex(rgb));
+          root.style.setProperty('--primary-hover', rgbToHex(hover));
+          root.style.setProperty('--primary-foreground', primaryForeground);
+          root.style.setProperty('--accent', rgbToHex(rgb));
+          root.style.setProperty('--focus-ring', toRgba(rgb, 0.42));
+          root.style.setProperty('--state-selected', toRgba(rgb, 0.16));
+          root.style.setProperty('--state-focus', toRgba(rgb, 0.22));
           root.style.setProperty('--button-primary-bg', rgbToHex(rgb));
           root.style.setProperty('--button-primary-bg-hover', rgbToHex(hover));
           root.style.setProperty('--button-primary-bg-press', rgbToHex(press));
           root.style.setProperty('--button-primary-fg', primaryForeground);
+          root.style.setProperty('--button-solid-bg', rgbToHex(rgb));
+          root.style.setProperty('--button-solid-bg-hover', rgbToHex(hover));
+          root.style.setProperty('--button-solid-bg-press', rgbToHex(press));
+          root.style.setProperty('--button-solid-fg', primaryForeground);
           return true;
         }
 
@@ -2533,11 +3242,21 @@
         root.style.setProperty('--button-primary-bg-hover', 'color-mix(in srgb, var(--foreground) 95%, black)');
         root.style.setProperty('--button-primary-bg-press', 'color-mix(in srgb, var(--foreground) 90%, black)');
         root.style.setProperty('--button-primary-fg', 'var(--background)');
+        root.style.setProperty('--button-solid-bg', 'var(--foreground)');
+        root.style.setProperty('--button-solid-bg-hover', 'color-mix(in srgb, var(--foreground) 88%, transparent)');
+        root.style.setProperty('--button-solid-bg-press', 'color-mix(in srgb, var(--foreground) 80%, transparent)');
+        root.style.setProperty('--button-solid-fg', 'var(--background)');
         return true;
       };
 
       themeButtons.forEach((button) => {
         button.addEventListener('click', () => applyTheme(button.dataset.themeMode));
+      });
+
+      categoryLinks.forEach((link) => {
+        link.addEventListener('click', () => {
+          setCategoryFilter(link.dataset.filter);
+        });
       });
 
       scopeButtons.forEach((button) => {
@@ -2564,23 +3283,13 @@
         }
       });
 
-      applyTheme('dark');
-      if (overviewWorkbenchPanes.length > 1 && window.PtoWorkbenchShell) {
-        window.PtoWorkbenchShell.initWorkbenchShell({
-          root: overviewWorkbenchShell,
-          panes: overviewWorkbenchPanes,
-          sizes: [23.5, 50.8, 23.5],
-          minSize: [240, 460, 260],
-          gutterSize: 12,
-          storageKey: 'pto_design_system_overview_workbench_split_bem_v1',
-          observeResize: false,
-        });
-      }
+      applyTheme(getInitialTheme());
       renderPaletteSection();
       scopeButtons.forEach((button) => {
         button.classList.toggle('is-active', button.dataset.accentScope === accentScope);
       });
       applyAccent(accentPicker.value);
+      setCategoryFilter('featured');
     })();
   </script>
 </body>

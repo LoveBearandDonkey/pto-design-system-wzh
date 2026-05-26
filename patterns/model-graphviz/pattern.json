@@ -2,10 +2,10 @@
   "id": "model-graphviz",
   "name": "Model Graphviz",
   "type": "svg",
-  "description": "Reusable SVG visual contract for TorchVista/Graphviz model architecture maps and report overlays. Captures the approved DeepSeek V3.2/V4 graph style: default depth-2 folding, pill module/op nodes, rounded-rect tensor nodes, parent cluster shells with 10% white expanded fill, white edges, centered type labels, normalized safe colormap at s=0.82/l=0.40, strict semantic module hierarchy, parent-to-child fill inheritance for op/module nodes, folded representative edge dedupe, stable expand/collapse viewport anchoring, centered report-priority container title pills, no-extra-border priority tags, right-center fold controls, right-inset expand controls, no graph shadows, and no-border clicked-operator preview cards with dark code surfaces.",
+  "description": "Reusable SVG visual contract for TorchVista/Graphviz model architecture maps and report overlays. Captures the approved DeepSeek V3.2 graph style: default depth-2 folding, pill module/op nodes, rounded-rect tensor nodes, parent cluster shells with 10% white expanded fill, white edges, centered type labels, normalized safe colormap at s=0.82/l=0.40, strict semantic module hierarchy, parent-to-child fill inheritance for op/module nodes, folded representative edge dedupe, stable expand/collapse viewport anchoring, centered report-priority container title pills, no-extra-border priority tags, right-center fold controls, right-inset expand controls, no graph shadows, and no-border clicked-operator preview cards with dark code surfaces.",
   "source": {
     "visualContract": [
-      "graphviz/torchvista_graphviz_deepseek_v4.html",
+      "graphviz/deepseek_v32_source_graph.html",
       "graphviz/deepseek_v32_report_overlay_demo.html",
       "patterns/model-graphviz/pattern.html",
       "patterns/model-graphviz/pattern.css",
@@ -14,8 +14,8 @@
     "patternHtml": "patterns/model-graphviz/pattern.html",
     "patternCss": "patterns/model-graphviz/pattern.css",
     "renderScript": "patterns/model-graphviz/pattern.js",
-    "originalModule": "graphviz/torchvista_graphviz_deepseek_v4.html",
-    "parityNote": "The pattern preview embeds the real DeepSeek V3.2/V4 Graphviz pages with iframes for parity and includes a rendered report-overlay sample from pattern.js. The original Graphviz pages still own DOT generation, Graphviz layout, D3 zoom, popup behavior, and expand/collapse graph reloads. New model graph pages should reuse this pattern contract for visual styling, report overlay placement, and renderer math."
+    "originalModule": "graphviz/deepseek_v32_source_graph.html",
+    "parityNote": "The pattern preview embeds the real DeepSeek V3.2 Graphviz page with an iframe for parity. The original Graphviz page still owns DOT generation, Graphviz layout, D3 zoom, popup behavior, and expand/collapse graph reloads. New model graph pages should reuse this pattern contract for visual styling, report overlay placement, and renderer math."
   },
   "layoutContract": {
     "dotGraphMargin": 0.22,
@@ -48,12 +48,6 @@
       "sourcePage": "graphviz/deepseek_v32_source_graph.html",
       "defaultCollapseDepth": 2,
       "notes": "Expands Transformer Core and Decoder Block by default, folds deeper semantic modules, uses tensor styling for hidden/block/output tensors, no shadows, normalized colormap s=0.82/l=0.40, right-center fold controls, graph margin/pad, cluster margin, and report-overlay priority title pills when the report page is loaded."
-    },
-    {
-      "id": "deepseek-v4-torchvista",
-      "sourcePage": "graphviz/torchvista_graphviz_deepseek_v4.html",
-      "defaultCollapseDepth": 2,
-      "notes": "Canonical TorchVista/Graphviz renderer template for model architecture pages using the same depth-2 folding, colormap, tensor, container, and fold-control rules."
     },
     {
       "id": "deepseek-v32-report-overlay",
@@ -111,5 +105,5 @@
     "letting a centered report title pill sit below edge strokes where the graph line crosses through the label",
     "adding visible border styles to the panel-shell report inspector beyond the shared panel-shell token contract"
   ],
-  "agentReuseRule": "Read this JSON first. For any model graph preview, use pattern.html as the parity preview because it iframes the real V3.2/V4 Graphviz pages and includes the shared report-overlay sample. For new lightweight rendered examples, load pattern.css and pattern.js, then call window.PtoModelGraphvizPattern.render with data. Treat this as a rendered SVG pattern: node geometry, depth-2 default folding, right-center fold placement, right-inset expand placement, parent/child color inheritance, 10% white expanded-cluster fill, Graphviz margin/pad, cluster margin, no-shadow graph rendering, centered report-priority container title pills, no-extra-border priority tags, invisible-only click hit targets, and normalized safe colormap generation stay in the shared renderer rather than page-local CSS."
+  "agentReuseRule": "Read this JSON first. For any model graph preview, use pattern.html as the parity preview because it iframes the real V3.2 Graphviz page. For new lightweight rendered examples, load pattern.css and pattern.js, then call window.PtoModelGraphvizPattern.render with data. Treat this as a rendered SVG pattern: node geometry, depth-2 default folding, right-center fold placement, right-inset expand placement, parent/child color inheritance, 10% white expanded-cluster fill, Graphviz margin/pad, cluster margin, no-shadow graph rendering, centered report-priority container title pills, no-extra-border priority tags, invisible-only click hit targets, and normalized safe colormap generation stay in the shared renderer rather than page-local CSS."
 }

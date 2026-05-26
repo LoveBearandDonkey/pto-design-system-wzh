@@ -1,9 +1,41 @@
+:root {
+  --pto-aiv-core-bg: #343434;
+  --pto-aiv-core-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  --pto-aiv-muted-panel-bg: rgba(164, 176, 189, 0.18);
+  --pto-aiv-muted-panel-border: rgba(164, 176, 189, 0.26);
+  --pto-aiv-muted-panel-border-soft: rgba(164, 176, 189, 0.22);
+  --pto-aiv-buffer-bg: rgba(77, 151, 255, 0.16);
+  --pto-aiv-buffer-border: rgba(77, 151, 255, 0.32);
+  --pto-aiv-panel-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --pto-aiv-label: #ffffff;
+  --pto-aiv-label-secondary: rgba(255, 255, 255, 0.92);
+  --pto-aiv-badge-border: rgba(255, 255, 255, 0.10);
+  --pto-aiv-badge-bg: rgba(255, 255, 255, 0.05);
+  --pto-aiv-badge-fg: rgba(255, 255, 255, 0.74);
+}
+
+:root[data-theme='light'] {
+  --pto-aiv-core-bg: var(--surface-2);
+  --pto-aiv-core-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --pto-aiv-muted-panel-bg: color-mix(in srgb, var(--surface-1) 72%, var(--surface-3));
+  --pto-aiv-muted-panel-border: var(--border-default);
+  --pto-aiv-muted-panel-border-soft: var(--border-subtle);
+  --pto-aiv-buffer-bg: color-mix(in srgb, var(--primary) 11%, var(--surface-1));
+  --pto-aiv-buffer-border: color-mix(in srgb, var(--primary) 28%, var(--border-default));
+  --pto-aiv-panel-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  --pto-aiv-label: var(--foreground);
+  --pto-aiv-label-secondary: var(--foreground-secondary);
+  --pto-aiv-badge-border: var(--comp-tag-border);
+  --pto-aiv-badge-bg: var(--comp-tag-bg);
+  --pto-aiv-badge-fg: var(--comp-tag-fg);
+}
+
 .pto-aiv-core-pattern-page {
   min-height: 100vh;
   margin: 0;
-  background: #1f1f1f;
-  color: #ffffff;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
 }
 
 .pto-aiv-core-pattern-main {
@@ -24,7 +56,7 @@
 .pto-aiv-core-pattern-subtitle {
   margin: 0;
   max-width: 980px;
-  color: rgba(255, 255, 255, 0.62);
+  color: var(--foreground-secondary);
   font-size: 13px;
   line-height: 1.6;
 }
@@ -41,9 +73,9 @@
   min-height: 22px;
   padding: 0 8px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.74);
+  border: 1px solid var(--pto-aiv-badge-border);
+  background: var(--pto-aiv-badge-bg);
+  color: var(--pto-aiv-badge-fg);
   font: 10px/1.2 var(--text-mono, ui-monospace, monospace);
 }
 
@@ -58,14 +90,14 @@
   max-width: 1000px;
   padding: 24px 24px 28px;
   border-radius: 30px;
-  background: #343434;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  background: var(--pto-aiv-core-bg);
+  box-shadow: var(--pto-aiv-core-shadow);
   position: relative;
 }
 
 .pto-aiv-core__title {
   margin: 0 0 22px;
-  color: #ffffff;
+  color: var(--pto-aiv-label);
   font-size: 24px;
   font-weight: 800;
   line-height: 1;
@@ -115,9 +147,9 @@
 }
 
 .pto-aiv-core__cache {
-  background: rgba(164, 176, 189, 0.18);
-  border: 1px solid rgba(164, 176, 189, 0.26);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  background: var(--pto-aiv-muted-panel-bg);
+  border: 1px solid var(--pto-aiv-muted-panel-border);
+  box-shadow: var(--pto-aiv-panel-highlight);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -135,7 +167,7 @@
 .pto-aiv-core__cache-label,
 .pto-aiv-core__exec-label,
 .pto-aiv-core__buffer-label {
-  color: #ffffff;
+  color: var(--pto-aiv-label);
   font-weight: 800;
   line-height: 1;
 }
@@ -161,9 +193,9 @@
 }
 
 .pto-aiv-core__buffer {
-  background: rgba(77, 151, 255, 0.16);
-  border: 1px solid rgba(77, 151, 255, 0.32);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  background: var(--pto-aiv-buffer-bg);
+  border: 1px solid var(--pto-aiv-buffer-border);
+  box-shadow: var(--pto-aiv-panel-highlight);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -178,15 +210,15 @@
 }
 
 .pto-aiv-core__buffer-capacity {
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--pto-aiv-label-secondary);
   font-weight: 500;
   line-height: 1;
 }
 
 .pto-aiv-core__exec {
-  background: rgba(164, 176, 189, 0.18);
-  border: 1px solid rgba(164, 176, 189, 0.22);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  background: var(--pto-aiv-muted-panel-bg);
+  border: 1px solid var(--pto-aiv-muted-panel-border-soft);
+  box-shadow: var(--pto-aiv-panel-highlight);
   display: flex;
   flex-direction: column;
   gap: 12px;

@@ -316,11 +316,22 @@ Current pattern sources:
 - `patterns/workbench-shell/pattern.html`
 - `patterns/workbench-shell/pattern.css`
 - `patterns/workbench-shell/pattern.js`
+- `patterns/ide-frame/pattern.json`
+- `patterns/ide-frame/pattern.html`
+- `patterns/ide-frame/pattern.css`
+- `patterns/ide-frame/pattern.js`
+- `patterns/ide-frame/vscode.css`
+- `patterns/floating-playback-control/pattern.json`
+- `patterns/floating-playback-control/pattern.html`
+- `patterns/floating-playback-control/pattern.css`
+- `patterns/floating-playback-control/pattern.js`
 
 Rules:
 
 - preview pages may wrap a pattern for layout, but must not redefine the pattern's internal classes
+- pattern preview wrappers must be borderless: section/card/stage/embed/iframe layers may provide spacing only, not stacked borders, shadows, or rounded frame chrome; the pattern itself owns any visual boundary it needs
 - agents must read the pattern JSON before reusing a graph or timeline primitive
+- every pattern must expose a stable consumer entry: CSS class names for static visual primitives, and a `window.Pto*Pattern` or `window.Pto*` helper for DOM/SVG/canvas generation, drag behavior, zoom, routing, persistence, or synchronized state
 - allowed overrides must be explicit CSS variables or geometry fields documented by the pattern
 - forbidden overrides include internal radius, segment typography, divider shadows, and state rules unless the pattern source itself is updated
 
@@ -334,11 +345,15 @@ For AIV internal object shells, reuse pattern id `aiv-core-object`. The canonica
 
 For Pass-IR graph nodes, reuse pattern id `pass-ir-graph-node`. The canonical source is `patterns/pass-ir-graph-node/pattern.js`, extracted from the real Pass-IR `css/style.css` and `js/renderer.js` contract. It covers op, tensor, incast, outcast, selected, compact, and group cards. Compact group cards keep the Group Node shell, title, count, and thumbnail stack while dropping detailed rows. Do not use the old static graph-node examples in `design-system-preview.html` or `pass-ir/node-preview.html` as source of truth.
 
-For TorchVista / model Graphviz views, reuse pattern id `model-graphviz`. The canonical visual contract is `patterns/model-graphviz/pattern.js`, extracted from `graphviz/torchvista_graphviz_deepseek_v4.html` and synchronized with `graphviz/deepseek_v32_source_graph.html`; `patterns/model-graphviz/pattern.html` iframes those two real pages for parity preview instead of redrawing a simplified sample. The contract covers DeepSeek V3.2/V4 default depth-2 folding, dark graph stage, white edges and arrowheads, full-pill module/op nodes with `height / 2` radius, rounded-rect tensor nodes for Input/Output/MTP/Constant/Parameter/Tensor, strict semantic module hierarchy, right-center fold controls on expanded clusters, right-inset expand controls on collapsed modules, centered type labels, pass-ir safe colormap generation normalized to `s=0.82` and `l=0.40`, 10% white expanded-container fill, parent-to-child fill inheritance for op/module nodes, folded representative edge dedupe, stable expand/collapse viewport anchoring, no graph shadows, and no-border clicked-operator preview cards with dark code surfaces. Node fill colors are the only data-viz exception; all non-node UI colors, typography, spacing, radii, borders, and code surfaces must remain token-derived. Do not render tensor nodes as ellipses or full pills, place expand icons outside node bounds, drift fold icons away from the cluster right-center anchor, add graph drop-shadows, add border strokes to operator preview cards, use light code panels, hard-code non-node UI styles outside tokens, draw detail modules as same-level peers of their collapsed semantic parent, draw multiple parallel representative edges between the same folded modules, recenter/refit the whole graph after expand/collapse, or create duplicate standalone parent nodes next to expanded clusters.
+For TorchVista / model Graphviz views, reuse pattern id `model-graphviz`. The canonical visual contract is `patterns/model-graphviz/pattern.js`, aligned to `graphviz/deepseek_v32_source_graph.html`; `patterns/model-graphviz/pattern.html` iframes the real DeepSeek V3.2 source page for parity preview instead of redrawing a simplified sample. The old source preview is not a design-system pattern reference. The contract covers DeepSeek V3.2 default depth-2 folding, dark graph stage, white edges and arrowheads, full-pill module/op nodes with `height / 2` radius, rounded-rect tensor nodes for Input/Output/MTP/Constant/Parameter/Tensor, strict semantic module hierarchy, right-center fold controls on expanded clusters, right-inset expand controls on collapsed modules, centered type labels, pass-ir safe colormap generation normalized to `s=0.82` and `l=0.40`, 10% white expanded-container fill, parent-to-child fill inheritance for op/module nodes, folded representative edge dedupe, stable expand/collapse viewport anchoring, no graph shadows, and no-border clicked-operator preview cards with dark code surfaces. Node fill colors are the only data-viz exception; all non-node UI colors, typography, spacing, radii, borders, and code surfaces must remain token-derived. Do not render tensor nodes as ellipses or full pills, place expand icons outside node bounds, drift fold icons away from the cluster right-center anchor, add graph drop-shadows, add border strokes to operator preview cards, use light code panels, hard-code non-node UI styles outside tokens, draw detail modules as same-level peers of their collapsed semantic parent, draw multiple parallel representative edges between the same folded modules, recenter/refit the whole graph after expand/collapse, or create duplicate standalone parent nodes next to expanded clusters.
 
 For model Graphviz report overlays, keep the overlay in the same `model-graphviz` pattern. Source pages should preserve Graphviz graph `margin=0.22`, `pad=0.38`, and expanded cluster `margin=36` so title pills and left-side priority tags have breathing room. Container report titles use a filled, same-priority pill centered against the container bbox, with the P0/P1/P2 tag inside the pill on the left and SVG geometric vertical centering. P0/P1/P2 report colors are red/orange/yellow; do not use blue for P2. Priority should be expressed through fill color, not border-only styling. If a centered title crosses an edge, lift it into a root overlay layer above edge strokes instead of adding a visible outline. Right-side report inspectors should reuse `panel-shell`; graph-side Mapped Nodes lists should focus the original graph, not just update inspector text.
 
-For PTO workbench page shells, reuse pattern id `workbench-shell`. The canonical contract is `patterns/workbench-shell/pattern.css` plus the optional split-pane helpers in `patterns/workbench-shell/pattern.js`. New workbench pages should use `.workbench-shell-page`, `.workbench-frame`, `.workbench-frame-split` or `.workbench-frame-grid`, `.workbench-pane`, and `.panel-shell.panel-shell-quiet` instead of redefining page chrome, panel shells, or split gutters locally.
+For split-pane resize behavior, reuse pattern id `workbench-shell`. It is a resize kernel, not an application shell. The canonical contract is `patterns/workbench-shell/pattern.css` plus `patterns/workbench-shell/pattern.js`. Use `window.PtoWorkbenchShell.initResizablePanes`, `createSplitGutter`, or `initNestedResizablePanes` for horizontal, vertical, and nested splits with min sizes, default ratio sizes, localStorage persistence, callbacks, keyboard resize, and destroy lifecycle. Pane sizes divide the space left after fixed gutters, so drag bars must not push the last pane outside the frame. Do not put page background, pane background, topbar, brand, title, subtitle, badge, pane header typography, canvas controls, or fixed preview height assumptions into `workbench-shell`. `initWorkbenchShell` and `initCanvasControls` remain compatibility APIs only and are deprecated for new pages.
+
+For PTO IDE framework shells, reuse pattern id `ide-frame`. The canonical contract is `patterns/ide-frame/pattern.css` plus `patterns/ide-frame/pattern.js`; load `patterns/ide-frame/vscode.css` for VS Code webviews. `ide-frame` owns a TRAE-like IDE frame: 4:3 host window ratio, page background one gray step lighter than the IDE window, transparent top chrome without divider borders, darker pane/content wells, dense 12-13px pane titles, mono metadata, window open/close controls, activity rail, pane headers, pane-local preview tabs, domain toolbars, generic preview surfaces, renderer slots, inspector docks, optional floating playback mounting, and split initialization. Standalone explorer starts at 300px by default through `data-pixel-sizes`, then the remaining panes divide the remaining width by ratio. Tabs belong inside the preview/editor pane, not in a separate top-level chrome band. Playback must use `floating-playback-control`; do not recreate a footer playback bar, scrubber, collapse state, or shell chrome in `ide-frame`. It must not ship business content: no file names, kernel names, graph node data, timeline lanes, trace data, inspector values, placeholder tab names, placeholder code rows, or default textual slot content. Consuming pages provide all domain content and renderers. It must call the `workbench-shell` resize helper and must not override `.pto-workbench-shell__*` internals. Use `data-host="standalone"` when PTO owns topbar, navigation, preview-pane tabs, and status strip; use `data-host="vscode-webview"` when VS Code owns explorer, editor tabs, search, git, terminal, settings, command palette, keybindings, global status, notifications, progress, theme colors, and baseline fonts.
+
+For floating playback controls, reuse pattern id `floating-playback-control`. The canonical contract is `patterns/floating-playback-control/pattern.css` plus state helpers in `pattern.js`, extracted from the `mem_viewer` bottom toolbar. Pages own step data, timers, and renderer updates, but use `.pto-floating-playback*`, `window.PtoFloatingPlaybackControl.init`, and `initScrubberHover` for chrome, collapse state, collapsed play/pause icon, and scrubber hover behavior. Do not redefine floating-shell styling, range thumb, tooltip, or collapse synchronization locally.
 
 Current extraction progress:
 
@@ -348,7 +363,9 @@ Current extraction progress:
 - `aiv-core-object`: shared config-driven object renderer registered and previewed
 - `pass-ir-graph-node`: shared hybrid renderer registered and previewed; original Pass-IR business page still uses its local renderer until a separate integration pass is approved
 - `model-graphviz`: shared SVG visual renderer registered and previewed; original TorchVista Graphviz page still owns DOT generation, D3 zoom, popup behavior, and graph reloads until a separate integration pass is approved
-- `workbench-shell`: shared hybrid DOM/CSS page frame registered, previewed, and adopted by `ascend-950-workbench-demo` workbench pages
+- `workbench-shell`: shared split / resize kernel registered and previewed; old visual shell APIs are compatibility-only
+- `ide-frame`: shared PTO IDE framework shell registered and previewed with standalone and VS Code webview host modes; content-free slots only
+- `floating-playback-control`: shared DOM/CSS playback toolbar registered, previewed, and adopted by Memory Viewer v1/v2
 
 ## 4. Color Palette & Roles
 
@@ -438,7 +455,8 @@ Rules:
 All modules should use a consistent shell language:
 
 - rounded container
-- consistent border alpha
+- consistent border alpha when a border is necessary
+- at most one visible boundary around a surface; do not stack parent, card, stage, embed, and iframe borders around the same content
 - stable elevation hierarchy
 - similar header/body/footer rhythm
 
@@ -493,6 +511,7 @@ Dark PTO should rely on:
 - subtle border contrast
 - low-to-medium elevation
 - restrained glass/blur usage
+- Liquid Glass surfaces only through the shared `data-liquid-glass` adapter, and only for floating auxiliary overlays that sit above content. This follows Apple HIG Materials guidance: material is for controls/navigation without hiding underlying content, and larger material regions need stronger opacity for legibility. Native `backdrop-filter: blur(...) saturate(...)` must be visible first; static highlight layers are additive only. Do not add cursor-following glow.
 
 Do not stack multiple styling tricks at once:
 
@@ -500,6 +519,7 @@ Do not stack multiple styling tricks at once:
 - bright gradients
 - high drop shadow
 - saturated fills
+- nested border frames
 
 Pick one emphasis mechanism, not four.
 
@@ -549,7 +569,9 @@ Generated artifacts:
 - `tokens/tokens.js`
 - `tokens/tokens.json`
 
-must be generated from those CSS sources, not edited by hand.
+must be generated from those CSS sources with `python3 tokens/generate_tokens.py`, not edited by hand.
+
+Before sharing the bundle, run `node scripts/audit-theme.mjs` to check light/dark token coverage, hard-coded UI color counts in shared CSS, and baseline contrast ratios.
 
 ### Review Rule
 

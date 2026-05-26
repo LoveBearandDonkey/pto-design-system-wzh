@@ -33,6 +33,30 @@
         </div>
     </div>
 
+    <script>
+        (() => {
+            const params = new URLSearchParams(window.location.search);
+            const applyTheme = (theme) => {
+                if (theme === "light" || theme === "dark") {
+                    document.documentElement.dataset.theme = theme;
+                }
+            };
+            applyTheme(params.get("theme"));
+            window.addEventListener("message", (event) => {
+                if (event.data?.type !== "pto-preview-theme") return;
+                const nextTheme = event.data.theme;
+                if (nextTheme !== "light" && nextTheme !== "dark") return;
+                const url = new URL(window.location.href);
+                url.searchParams.set("theme", nextTheme);
+                if (url.href !== window.location.href) {
+                    window.location.replace(url.href);
+                    return;
+                }
+                applyTheme(nextTheme);
+            });
+        })();
+    </script>
+
     <style>
         @import url("../tokens/foundation.css");
         @import url("../tokens/semantic.css");
@@ -81,6 +105,18 @@
             --graphviz-button-bg-hover: var(--button-solid-bg-hover);
             --graphviz-button-fg: var(--button-solid-fg);
             --graphviz-logo-opacity: 0.6;
+        }
+        :root[data-theme='light'] {
+            --graphviz-surface: var(--surface-1);
+            --graphviz-surface-soft: color-mix(in srgb, var(--surface-1) 76%, var(--surface-2));
+            --graphviz-code-bg: color-mix(in srgb, var(--surface-1) 88%, var(--surface-2));
+            --graphviz-code-string: var(--highlight-copy-blue-700);
+            --graphviz-code-number: var(--highlight-l0a-violet-700);
+            --graphviz-popup-header-bg: var(--surface-1);
+            --graphviz-popup-body-bg: linear-gradient(180deg, var(--surface-1), var(--background-elevated));
+            --graphviz-popup-section-bg: color-mix(in srgb, var(--surface-1) 76%, var(--surface-2));
+            --graphviz-tensor-fill: color-mix(in srgb, var(--surface-3) 72%, var(--foreground));
+            --graphviz-logo-opacity: 0.72;
         }
         .node_8738e552-e764-4a57-839a-6321bc3ae7d3 rect {
             stroke: var(--graphviz-line-soft);

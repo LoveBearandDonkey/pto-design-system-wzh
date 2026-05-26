@@ -1,9 +1,37 @@
+:root {
+  --pass-ir-pattern-stage-bg:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.028) 0%, transparent 38%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.2));
+  --pass-ir-pattern-stage-border: rgba(255, 255, 255, 0.06);
+  --pass-ir-pattern-stage-dot: rgba(255, 255, 255, 0.08);
+  --pass-ir-card-caption: rgba(255, 255, 255, 0.56);
+  --pass-ir-node-bg-elevated: var(--surface-4, #313131);
+  --pass-ir-node-bg-elevated-hover: color-mix(in srgb, var(--surface-4, #313131) 92%, white);
+  --pass-ir-node-bg-elevated-selected: color-mix(in srgb, var(--surface-4, #313131) 84%, white);
+  --pass-ir-node-shadow: var(--shadow-md);
+  --pass-ir-node-shadow-hover: var(--shadow-lg);
+}
+
+:root[data-theme='light'] {
+  --pass-ir-pattern-stage-bg:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--primary) 5%, transparent) 0%, transparent 34%),
+    linear-gradient(180deg, var(--surface-1), var(--background-elevated));
+  --pass-ir-pattern-stage-border: var(--border-subtle);
+  --pass-ir-pattern-stage-dot: rgba(17, 24, 39, 0.10);
+  --pass-ir-card-caption: var(--foreground-muted);
+  --pass-ir-node-bg-elevated: var(--surface-1);
+  --pass-ir-node-bg-elevated-hover: color-mix(in srgb, var(--surface-1) 78%, var(--surface-3));
+  --pass-ir-node-bg-elevated-selected: color-mix(in srgb, var(--surface-1) 68%, var(--state-selected));
+  --pass-ir-node-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --pass-ir-node-shadow-hover: 0 10px 24px rgba(15, 23, 42, 0.10);
+}
+
 .pto-pass-ir-graph-node-pattern-page {
   min-height: 100vh;
   margin: 0;
-  background: #171717;
-  color: #e6e6e6;
-  font-family: Inter, 'Source Han Sans SC', 'PingFang SC', sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
 }
 
 .pto-pass-ir-graph-node-pattern-main {
@@ -24,7 +52,7 @@
 .pto-pass-ir-graph-node-pattern-subtitle {
   margin: 0;
   max-width: 980px;
-  color: rgba(255, 255, 255, 0.62);
+  color: var(--foreground-secondary);
   font-size: 13px;
   line-height: 1.6;
 }
@@ -41,9 +69,9 @@
   min-height: 22px;
   padding: 0 8px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.74);
+  border: 1px solid var(--comp-tag-border);
+  background: var(--comp-tag-bg);
+  color: var(--comp-tag-fg);
   font: 10px/1.2 var(--text-mono, ui-monospace, monospace);
 }
 
@@ -59,22 +87,20 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.54);
+  color: var(--foreground-muted);
 }
 
 .pto-pass-ir-graph-node-pattern-section-note {
   margin: 0;
-  color: rgba(255, 255, 255, 0.56);
+  color: var(--foreground-secondary);
   font-size: 12px;
   line-height: 1.5;
 }
 
 .pto-pass-ir-graph-node-pattern-stage {
   border-radius: 22px;
-  background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.028) 0%, transparent 38%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.2));
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--pass-ir-pattern-stage-bg);
+  border: 1px solid var(--pass-ir-pattern-stage-border);
   padding: 24px;
   position: relative;
   overflow: hidden;
@@ -84,7 +110,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.08) 1px, transparent 1.2px);
+  background-image: radial-gradient(circle, var(--pass-ir-pattern-stage-dot) 1px, transparent 1.2px);
   background-size: 24px 24px;
   opacity: 0.24;
   pointer-events: none;
@@ -96,30 +122,30 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  --incast-accent: #04d793;
-  --incast-accent-dim: color-mix(in srgb, #04d793 18%, transparent);
-  --op-accent: #4369ef;
-  --op-accent-dim: color-mix(in srgb, #4369ef 22%, transparent);
-  --tensor-accent: #7c8db8;
-  --tensor-accent-dim: color-mix(in srgb, #7c8db8 18%, transparent);
-  --outcast-accent: #ff4b7b;
-  --outcast-accent-dim: color-mix(in srgb, #ff4b7b 18%, transparent);
-  --node-bg: #262626;
-  --node-bg-hover: #313131;
-  --node-bg-selected: #313131;
-  --node-border: #202020;
-  --node-border-hover: #292929;
+  --incast-accent: var(--success);
+  --incast-accent-dim: color-mix(in srgb, var(--success) 18%, transparent);
+  --op-accent: var(--primary);
+  --op-accent-dim: color-mix(in srgb, var(--primary) 22%, transparent);
+  --tensor-accent: var(--accent);
+  --tensor-accent-dim: color-mix(in srgb, var(--accent) 18%, transparent);
+  --outcast-accent: var(--danger);
+  --outcast-accent-dim: color-mix(in srgb, var(--danger) 18%, transparent);
+  --node-bg: var(--surface-2);
+  --node-bg-hover: var(--surface-3);
+  --node-bg-selected: var(--surface-3);
+  --node-border: var(--border-subtle);
+  --node-border-hover: var(--border-default);
   --node-radius: 12px;
-  --text-primary: #e6e6e6;
-  --text-secondary: #999999;
-  --text-label: #666666;
-  --tag-bg: rgba(255, 255, 255, 0.05);
-  --tag-border: rgba(255, 255, 255, 0.08);
-  --group-count-color: #7c8db8;
-  --node-bg-elevated: var(--surface-4, #313131);
-  --node-bg-elevated-hover: color-mix(in srgb, var(--surface-4, #313131) 92%, white);
-  --node-bg-elevated-selected: color-mix(in srgb, var(--surface-4, #313131) 84%, white);
-  --text-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  --text-primary: var(--foreground);
+  --text-secondary: var(--foreground-secondary);
+  --text-label: var(--foreground-muted);
+  --tag-bg: var(--comp-tag-bg);
+  --tag-border: var(--comp-tag-border);
+  --group-count-color: var(--accent);
+  --node-bg-elevated: var(--pass-ir-node-bg-elevated);
+  --node-bg-elevated-hover: var(--pass-ir-node-bg-elevated-hover);
+  --node-bg-elevated-selected: var(--pass-ir-node-bg-elevated-selected);
+  --text-mono: var(--font-mono);
 }
 
 .pto-pass-ir-graph-node-grid {
@@ -140,7 +166,7 @@
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.56);
+  color: var(--pass-ir-card-caption);
 }
 
 .node-card {
@@ -172,16 +198,16 @@
 }
 
 .pto-pass-ir-graph-node-pattern-page .node-card {
-  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.10));
+  border: 1px solid var(--border-default);
   background: var(--node-bg-elevated);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--pass-ir-node-shadow);
   border-radius: var(--radius-xl, 16px);
 }
 
 .pto-pass-ir-graph-node-pattern-page .node-card:hover {
-  border-color: var(--border-strong, rgba(255, 255, 255, 0.16));
+  border-color: var(--border-strong);
   background: var(--node-bg-elevated-hover);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--pass-ir-node-shadow-hover);
 }
 
 .pto-pass-ir-graph-node-pattern-page .node-card.selected {

@@ -245,6 +245,7 @@
 
   function buildTransportPill(label) {
     const pill = node('span', 'pto-aic-core__transport-pill', label || '');
+    pill.dataset.aicNode = `transport:${label || 'Transport'}`;
     return pill;
   }
 

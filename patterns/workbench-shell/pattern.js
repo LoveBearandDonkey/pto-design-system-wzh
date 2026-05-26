@@ -1,4 +1,6 @@
 (function attachPtoWorkbenchShell(global) {
+  'use strict';
+
   const DEFAULT_ZOOM_MIN = 0.4;
   const DEFAULT_ZOOM_MAX = 1.2;
   const DEFAULT_ZOOM_STEP = 0.1;
@@ -15,15 +17,76 @@
     return root.querySelector(target);
   };
 
-  const normalizePanes = (panes, root = document) =>
-    (panes || []).map((pane) => asElement(pane, root)).filter(Boolean);
+  const normalizeDirection = (direction) => (
+    direction === 'vertical' ? 'vertical' : 'horizontal'
+  );
+
+  const axisFor = (direction) => {
+    const resolved = normalizeDirection(direction);
+    return resolved === 'vertical'
+      ? {
+          direction: resolved,
+          coordinate: 'clientY',
+          size: 'height',
+          sizeStyle: 'height',
+          minStyle: 'minHeight',
+          cursor: 'row-resize',
+          ariaOrientation: 'horizontal',
+          negativeKeys: new Set(['ArrowUp']),
+          positiveKeys: new Set(['ArrowDown']),
+        }
+      : {
+          direction: resolved,
+          coordinate: 'clientX',
+          size: 'width',
+          sizeStyle: 'width',
+          minStyle: 'minWidth',
+          cursor: 'col-resize',
+          ariaOrientation: 'vertical',
+          negativeKeys: new Set(['ArrowLeft']),
+          positiveKeys: new Set(['ArrowRight']),
+        };
+  };
+
+  const normalizePanes = (panes, root = document) => {
+    const items = panes
+      ? Array.from(panes)
+      : Array.from(root.querySelectorAll?.('[data-split-pane]') || []);
+    return items.map((pane) => asElement(pane, root)).filter(Boolean);
+  };
+
+  const normalizeSizes = (sizes, paneCount) => {
+    const fallback = Array.from({ length: paneCount }, () => 100 / paneCount);
+    if (!Array.isArray(sizes) || sizes.length !== paneCount) return fallback;
+    if (!sizes.every((item) => Number.isFinite(item) && item > 0)) return fallback;
+    const total = sizes.reduce((sum, size) => sum + size, 0);
+    if (total <= 0) return fallback;
+    return sizes.map((size) => size / total * 100);
+  };
+
+  const normalizeMinSizes = (minSize, paneCount) => {
+    if (Array.isArray(minSize)) {
+      return Array.from({ length: paneCount }, (_item, index) => {
+        const value = Number(minSize[index]);
+        return Number.isFinite(value) ? Math.max(0, value) : 0;
+      });
+    }
+    const value = Number(minSize);
+    return Array.from({ length: paneCount }, () => (
+      Number.isFinite(value) ? Math.max(0, value) : 0
+    ));
+  };
 
   const readStoredSizes = (key, fallback) => {
     if (!key) return fallback.slice();
     try {
       const value = JSON.parse(global.localStorage?.getItem(key) || 'null');
-      if (Array.isArray(value) && value.length === fallback.length && value.every((item) => Number.isFinite(item) && item > 0)) {
-        return value;
+      if (
+        Array.isArray(value)
+        && value.length === fallback.length
+        && value.every((item) => Number.isFinite(item) && item > 0)
+      ) {
+        return normalizeSizes(value, fallback.length);
       }
     } catch (_error) {
       return fallback.slice();
@@ -36,9 +99,22 @@
     try {
       global.localStorage?.setItem(key, JSON.stringify(sizes.map((item) => round(item, 2))));
     } catch (_error) {
-      // Storage may be unavailable in private previews. The live drag state still applies.
+      // Storage can be unavailable in sandboxed previews; drag state still applies.
     }
   };
+
+  function createSplitGutter(index, direction = 'horizontal', options = {}) {
+    const axis = axisFor(direction);
+    const gutter = document.createElement('div');
+    gutter.className = options.gutterClass || 'pto-workbench-shell__split-gutter';
+    gutter.dataset.splitIndex = String(index);
+    gutter.dataset.splitDirection = axis.direction;
+    gutter.setAttribute('role', 'separator');
+    gutter.setAttribute('aria-orientation', axis.ariaOrientation);
+    gutter.setAttribute('aria-label', options.gutterLabel || 'Resize adjacent panes');
+    gutter.tabIndex = options.keyboard === false ? -1 : 0;
+    return gutter;
+  }
 
   function getZoomLevels(options = {}) {
     const min = Number.isFinite(options.min) ? options.min : DEFAULT_ZOOM_MIN;
@@ -66,163 +142,200 @@
     return bestIndex;
   }
 
-  function createGutter(index, direction, options = {}) {
-    const gutter = document.createElement('div');
-    gutter.className = options.gutterClass || 'pto-workbench-shell__split-gutter';
-    gutter.dataset.splitIndex = String(index);
-    gutter.dataset.splitDirection = direction;
-    gutter.setAttribute('role', 'separator');
-    gutter.setAttribute('aria-orientation', 'vertical');
-    gutter.setAttribute('aria-label', options.gutterLabel || '调整相邻栏宽度');
-    gutter.tabIndex = 0;
-    return gutter;
+  function panePixelSizes(panes, axis) {
+    return panes.map((pane) => pane.getBoundingClientRect()[axis.size]);
   }
 
-  function getPaneSizes(panes) {
-    const widths = panes.map((pane) => pane.getBoundingClientRect().width);
-    const total = widths.reduce((sum, width) => sum + width, 0);
+  function panePercentSizes(panes, axis) {
+    const sizes = panePixelSizes(panes, axis);
+    const total = sizes.reduce((sum, size) => sum + size, 0);
     if (total <= 0) return [];
-    return widths.map((width) => width / total * 100);
+    return sizes.map((size) => size / total * 100);
   }
 
-  function applyPaneSizes(panes, sizes) {
+  function applyPaneSizes(panes, axis, sizes) {
     panes.forEach((pane, index) => {
-      pane.style.width = `${sizes[index]}%`;
-      pane.style.flexBasis = `${sizes[index]}%`;
+      const size = Number.isFinite(sizes[index]) && sizes[index] > 0 ? sizes[index] : 1;
+      pane.style.flex = `${size} 1 0%`;
+      pane.style.flexBasis = '0%';
+      pane.style[axis.sizeStyle] = 'auto';
     });
   }
 
-  function initFallbackSplit(panes, options) {
-    const sizes = options.sizes;
-    const minSizes = options.minSize;
-    const destroyFns = [];
-    applyPaneSizes(panes, sizes);
+  function resolvePairDelta(startSizes, pairIndex, delta, minSizes) {
+    const nextSizes = startSizes.slice();
+    const leftIndex = pairIndex;
+    const rightIndex = pairIndex + 1;
+    const pairTotal = startSizes[leftIndex] + startSizes[rightIndex];
+    const leftMin = minSizes[leftIndex] || 0;
+    const rightMin = minSizes[rightIndex] || 0;
+    const maxLeft = Math.max(leftMin, pairTotal - rightMin);
+    const nextLeft = clamp(startSizes[leftIndex] + delta, leftMin, maxLeft);
+    nextSizes[leftIndex] = nextLeft;
+    nextSizes[rightIndex] = Math.max(rightMin, pairTotal - nextLeft);
+    return nextSizes;
+  }
 
-    panes.slice(0, -1).forEach((pane, index) => {
-      const gutter = createGutter(index + 1, 'horizontal', options);
-      pane.after(gutter);
+  function applyPixelSizesAsPercent(panes, axis, pixelSizes) {
+    const total = pixelSizes.reduce((sum, size) => sum + size, 0);
+    if (total <= 0) return [];
+    const percent = pixelSizes.map((size) => size / total * 100);
+    applyPaneSizes(panes, axis, percent);
+    return percent;
+  }
 
-      const onPointerDown = (event) => {
-        event.preventDefault();
-        gutter.setPointerCapture?.(event.pointerId);
-        document.body.classList.add(options.resizingClass);
-        options.onDragStart?.(getPaneSizes(panes), event);
-
-        const startX = event.clientX;
-        const startWidths = panes.map((item) => item.getBoundingClientRect().width);
-        const totalWidth = startWidths.reduce((sum, width) => sum + width, 0);
-        const leftIndex = index;
-        const rightIndex = index + 1;
-
-        const onMove = (moveEvent) => {
-          const dx = moveEvent.clientX - startX;
-          let leftWidth = startWidths[leftIndex] + dx;
-          let rightWidth = startWidths[rightIndex] - dx;
-          const leftMin = minSizes[leftIndex] || 0;
-          const rightMin = minSizes[rightIndex] || 0;
-
-          if (leftWidth < leftMin) {
-            rightWidth -= leftMin - leftWidth;
-            leftWidth = leftMin;
-          }
-          if (rightWidth < rightMin) {
-            leftWidth -= rightMin - rightWidth;
-            rightWidth = rightMin;
-          }
-
-          panes[leftIndex].style.width = `${clamp(leftWidth, leftMin, totalWidth) / totalWidth * 100}%`;
-          panes[leftIndex].style.flexBasis = panes[leftIndex].style.width;
-          panes[rightIndex].style.width = `${clamp(rightWidth, rightMin, totalWidth) / totalWidth * 100}%`;
-          panes[rightIndex].style.flexBasis = panes[rightIndex].style.width;
-          options.onDrag?.(getPaneSizes(panes), moveEvent);
-        };
-
-        const onUp = (upEvent) => {
-          global.removeEventListener('pointermove', onMove);
-          global.removeEventListener('pointerup', onUp);
-          document.body.classList.remove(options.resizingClass);
-          const nextSizes = getPaneSizes(panes);
-          writeStoredSizes(options.storageKey, nextSizes);
-          options.onDragEnd?.(nextSizes, upEvent);
-        };
-
-        global.addEventListener('pointermove', onMove);
-        global.addEventListener('pointerup', onUp, { once: true });
-      };
-
-      gutter.addEventListener('pointerdown', onPointerDown);
-      destroyFns.push(() => {
-        gutter.removeEventListener('pointerdown', onPointerDown);
-        gutter.remove();
-      });
-    });
-
-    return {
-      destroy() {
-        destroyFns.splice(0).forEach((fn) => fn());
-        panes.forEach((pane) => {
-          pane.style.width = '';
-          pane.style.flexBasis = '';
-        });
-      },
-      getSizes: () => getPaneSizes(panes),
-    };
+  function setResizeState(active, direction) {
+    document.body.classList.toggle('pto-is-pane-resizing', active);
+    if (active) {
+      document.body.dataset.ptoResizeDirection = direction;
+    } else {
+      delete document.body.dataset.ptoResizeDirection;
+    }
   }
 
   function initResizablePanes(rawOptions = {}) {
     const root = asElement(rawOptions.root) || document;
     const panes = normalizePanes(rawOptions.panes, root);
     if (panes.length < 2) {
-      return { destroy() {}, getSizes: () => [] };
-    }
-
-    const fallbackSizes = rawOptions.sizes || panes.map(() => 100 / panes.length);
-    const options = {
-      sizes: readStoredSizes(rawOptions.storageKey, fallbackSizes),
-      minSize: rawOptions.minSize || panes.map(() => 220),
-      gutterSize: rawOptions.gutterSize || 12,
-      gutterClass: rawOptions.gutterClass,
-      gutterLabel: rawOptions.gutterLabel,
-      storageKey: rawOptions.storageKey,
-      resizingClass: rawOptions.resizingClass || 'pto-is-pane-resizing',
-      onDragStart: rawOptions.onDragStart,
-      onDrag: rawOptions.onDrag,
-      onDragEnd: rawOptions.onDragEnd,
-    };
-
-    root.style?.setProperty?.('--pto-workbench-shell-gutter', `${options.gutterSize}px`);
-
-    if (typeof global.Split === 'function') {
-      const split = global.Split(panes, {
-        sizes: options.sizes,
-        minSize: options.minSize,
-        gutterSize: options.gutterSize,
-        snapOffset: rawOptions.snapOffset ?? 0,
-        cursor: 'col-resize',
-        gutter: (index, direction) => createGutter(index, direction, options),
-        onDragStart: (sizes) => {
-          document.body.classList.add(options.resizingClass);
-          options.onDragStart?.(sizes);
-        },
-        onDrag: (sizes) => {
-          options.onDrag?.(sizes);
-        },
-        onDragEnd: (sizes) => {
-          document.body.classList.remove(options.resizingClass);
-          writeStoredSizes(options.storageKey, sizes);
-          options.onDragEnd?.(sizes);
-        },
-      });
       return {
-        destroy() {
-          document.body.classList.remove(options.resizingClass);
-          split.destroy();
-        },
-        getSizes: () => getPaneSizes(panes),
+        destroy() {},
+        getSizes: () => [],
+        setSizes() {},
+        refresh() {},
       };
     }
 
-    return initFallbackSplit(panes, options);
+    const parent = panes[0].parentElement;
+    const axis = axisFor(rawOptions.direction);
+    const fallbackSizes = normalizeSizes(rawOptions.sizes || rawOptions.defaultSize, panes.length);
+    const initialSizes = readStoredSizes(rawOptions.storageKey, fallbackSizes);
+    const minSizes = normalizeMinSizes(rawOptions.minSize ?? 0, panes.length);
+    const gutterSize = Number.isFinite(rawOptions.gutterSize) ? rawOptions.gutterSize : 10;
+    const keyboardStep = Number.isFinite(rawOptions.keyboardStep) ? rawOptions.keyboardStep : 24;
+    const destroyFns = [];
+
+    if (parent) parent.dataset.splitDirection = axis.direction;
+    if (root.dataset) root.dataset.splitDirection = axis.direction;
+    root.style?.setProperty?.('--pto-workbench-shell-gutter', `${gutterSize}px`);
+    parent?.style?.setProperty?.('--pto-workbench-shell-gutter', `${gutterSize}px`);
+    applyPaneSizes(panes, axis, initialSizes);
+
+    const emit = (name, sizes, event) => {
+      if (name === 'start') rawOptions.onDragStart?.(sizes, event);
+      if (name === 'drag') rawOptions.onDrag?.(sizes, event);
+      if (name === 'end') rawOptions.onDragEnd?.(sizes, event);
+      rawOptions.onResize?.(sizes, { phase: name, event, direction: axis.direction });
+    };
+
+    panes.slice(0, -1).forEach((pane, index) => {
+      const gutter = createSplitGutter(index + 1, axis.direction, rawOptions);
+      gutter.style.setProperty('--pto-workbench-shell-gutter', `${gutterSize}px`);
+      pane.after(gutter);
+      rawOptions.onGutterCreate?.(gutter, { index, direction: axis.direction });
+
+      const applyDelta = (startSizes, delta, event, phase) => {
+        const nextPixels = resolvePairDelta(startSizes, index, delta, minSizes);
+        const nextSizes = applyPixelSizesAsPercent(panes, axis, nextPixels);
+        emit(phase, nextSizes, event);
+        return nextSizes;
+      };
+
+      const onPointerDown = (event) => {
+        if (event.button != null && event.button !== 0) return;
+        event.preventDefault();
+        gutter.setPointerCapture?.(event.pointerId);
+        setResizeState(true, axis.direction);
+        const startCoordinate = event[axis.coordinate];
+        const startSizes = panePixelSizes(panes, axis);
+        emit('start', panePercentSizes(panes, axis), event);
+
+        const onMove = (moveEvent) => {
+          const delta = moveEvent[axis.coordinate] - startCoordinate;
+          applyDelta(startSizes, delta, moveEvent, 'drag');
+        };
+
+        const onUp = (upEvent) => {
+          global.removeEventListener('pointermove', onMove);
+          global.removeEventListener('pointerup', onUp);
+          gutter.releasePointerCapture?.(upEvent.pointerId);
+          setResizeState(false, axis.direction);
+          const sizes = panePercentSizes(panes, axis);
+          writeStoredSizes(rawOptions.storageKey, sizes);
+          emit('end', sizes, upEvent);
+        };
+
+        global.addEventListener('pointermove', onMove);
+        global.addEventListener('pointerup', onUp, { once: true });
+      };
+
+      const onKeyDown = (event) => {
+        if (rawOptions.keyboard === false) return;
+        const multiplier = event.shiftKey ? 4 : 1;
+        let delta = 0;
+        if (axis.negativeKeys.has(event.key)) delta = -keyboardStep * multiplier;
+        if (axis.positiveKeys.has(event.key)) delta = keyboardStep * multiplier;
+        if (!delta) return;
+        event.preventDefault();
+        const sizes = applyDelta(panePixelSizes(panes, axis), delta, event, 'drag');
+        writeStoredSizes(rawOptions.storageKey, sizes);
+        emit('end', sizes, event);
+      };
+
+      gutter.addEventListener('pointerdown', onPointerDown);
+      gutter.addEventListener('keydown', onKeyDown);
+      destroyFns.push(() => {
+        gutter.removeEventListener('pointerdown', onPointerDown);
+        gutter.removeEventListener('keydown', onKeyDown);
+        gutter.remove();
+      });
+    });
+
+    return {
+      destroy() {
+        setResizeState(false, axis.direction);
+        destroyFns.splice(0).forEach((fn) => fn());
+        panes.forEach((pane) => {
+          pane.style.flex = '';
+          pane.style.flexBasis = '';
+          pane.style[axis.sizeStyle] = '';
+        });
+        if (parent) delete parent.dataset.splitDirection;
+        if (root.dataset) delete root.dataset.splitDirection;
+      },
+      getSizes: () => panePercentSizes(panes, axis),
+      setSizes(nextSizes) {
+        const sizes = normalizeSizes(nextSizes, panes.length);
+        applyPaneSizes(panes, axis, sizes);
+        writeStoredSizes(rawOptions.storageKey, sizes);
+        rawOptions.onResize?.(sizes, { phase: 'api', direction: axis.direction });
+      },
+      refresh() {
+        rawOptions.onResize?.(panePercentSizes(panes, axis), {
+          phase: 'refresh',
+          direction: axis.direction,
+        });
+      },
+    };
+  }
+
+  function initNestedResizablePanes(rawOptions = {}) {
+    const configs = Array.isArray(rawOptions)
+      ? rawOptions
+      : (rawOptions.splits || []);
+    const defaults = Array.isArray(rawOptions) ? {} : (rawOptions.defaults || {});
+    const instances = configs.map((config) => initResizablePanes({ ...defaults, ...config }));
+    return {
+      instances,
+      destroy() {
+        instances.splice(0).forEach((instance) => instance.destroy());
+      },
+      getSizes() {
+        return instances.map((instance) => instance.getSizes());
+      },
+      refresh() {
+        instances.forEach((instance) => instance.refresh());
+      },
+    };
   }
 
   function initCanvasControls(rawOptions = {}) {
@@ -241,7 +354,9 @@
       rawOptions.onZoomChange?.(zoom, { source, zoomIndex, levels });
       rawOptions.onDetailChange?.(detailsVisible, { source });
       if (detailToggle) {
-        detailToggle.textContent = detailsVisible ? (rawOptions.detailOnLabel || '细节开') : (rawOptions.detailOffLabel || '细节关');
+        detailToggle.textContent = detailsVisible
+          ? (rawOptions.detailOnLabel || 'Details on')
+          : (rawOptions.detailOffLabel || 'Details off');
         detailToggle.setAttribute('aria-pressed', detailsVisible ? 'true' : 'false');
       }
       if (zoomReadout) zoomReadout.textContent = `${Math.round(zoom * 100)}%`;
@@ -309,12 +424,16 @@
     const resizable = initResizablePanes({
       root,
       panes: rawOptions.panes,
+      direction: rawOptions.direction || 'horizontal',
       sizes: rawOptions.sizes,
+      defaultSize: rawOptions.defaultSize,
       minSize: rawOptions.minSize,
       gutterSize: rawOptions.gutterSize,
       storageKey: rawOptions.storageKey,
       gutterClass: rawOptions.gutterClass,
       gutterLabel: rawOptions.gutterLabel,
+      keyboard: rawOptions.keyboard,
+      keyboardStep: rawOptions.keyboardStep,
       onDragStart: rawOptions.onDragStart,
       onDrag: (sizes, event) => {
         rawOptions.onDrag?.(sizes, event);
@@ -352,9 +471,11 @@
   }
 
   global.PtoWorkbenchShell = {
+    createSplitGutter,
     getZoomLevels,
-    initResizablePanes,
     initCanvasControls,
+    initNestedResizablePanes,
+    initResizablePanes,
     initWorkbenchShell,
   };
 })(window);

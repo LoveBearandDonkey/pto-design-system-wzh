@@ -1,0 +1,34 @@
+.pto-ide-frame[data-host="vscode-webview"] {
+  --ide-frame-page-bg: var(--vscode-sideBar-background, var(--surface-3));
+  --ide-frame-bg: var(--vscode-sideBar-background, var(--background-elevated));
+  --ide-frame-chrome-bg: transparent;
+  --ide-frame-pane-bg: var(--vscode-editor-background, var(--background));
+  --ide-frame-pane-border: var(--vscode-panel-border, var(--border-subtle));
+  --foreground: var(--vscode-foreground, rgba(255, 255, 255, 0.9));
+  --foreground-secondary: color-mix(in srgb, var(--vscode-foreground, rgba(255, 255, 255, 0.9)) 64%, transparent);
+  --foreground-muted: color-mix(in srgb, var(--vscode-foreground, rgba(255, 255, 255, 0.9)) 42%, transparent);
+  --primary: var(--vscode-focusBorder, #5b8cff);
+  --focus-ring: color-mix(in srgb, var(--vscode-focusBorder, var(--primary)) 44%, transparent);
+  font-family: var(--vscode-font-family, var(--font-sans));
+}
+
+.pto-ide-frame[data-host="vscode-webview"] .pto-ide-frame__standalone-chrome,
+.pto-ide-frame[data-host="vscode-webview"] .pto-ide-frame__explorer,
+.pto-ide-frame[data-host="vscode-webview"] .pto-ide-frame__tabstrip,
+.pto-ide-frame[data-host="vscode-webview"] .pto-ide-frame__status-strip {
+  display: none !important;
+}
+
+.pto-ide-frame[data-host="vscode-webview"] .pto-ide-frame__domain-toolbar {
+  min-height: 32px;
+  border-top: 0;
+  border-bottom: 0;
+}
+
+.pto-ide-frame[data-host="vscode-webview"] .pto-ide-frame__embedded-layout {
+  padding: 0;
+}
+
+.pto-ide-frame[data-host="vscode-webview"] .pto-ide-frame__pane {
+  border-radius: 0;
+}

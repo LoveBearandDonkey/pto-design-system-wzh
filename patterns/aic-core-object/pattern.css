@@ -1,9 +1,45 @@
+:root {
+  --pto-aic-core-bg: #343434;
+  --pto-aic-core-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  --pto-aic-buffer-bg: rgba(77, 151, 255, 0.16);
+  --pto-aic-buffer-border: rgba(77, 151, 255, 0.34);
+  --pto-aic-cache-bg: rgba(164, 176, 189, 0.16);
+  --pto-aic-cache-border: rgba(164, 176, 189, 0.34);
+  --pto-aic-queue-bg: rgba(255, 154, 84, 0.10);
+  --pto-aic-queue-border: rgba(255, 154, 84, 0.52);
+  --pto-aic-panel-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --pto-aic-label: #ffffff;
+  --pto-aic-label-secondary: rgba(255, 255, 255, 0.92);
+  --pto-aic-cache-label: #d7dee6;
+  --pto-aic-badge-border: rgba(255, 255, 255, 0.10);
+  --pto-aic-badge-bg: rgba(255, 255, 255, 0.05);
+  --pto-aic-badge-fg: rgba(255, 255, 255, 0.74);
+}
+
+:root[data-theme='light'] {
+  --pto-aic-core-bg: var(--surface-2);
+  --pto-aic-core-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --pto-aic-buffer-bg: color-mix(in srgb, var(--primary) 11%, var(--surface-1));
+  --pto-aic-buffer-border: color-mix(in srgb, var(--primary) 28%, var(--border-default));
+  --pto-aic-cache-bg: color-mix(in srgb, var(--surface-1) 72%, var(--surface-3));
+  --pto-aic-cache-border: var(--border-default);
+  --pto-aic-queue-bg: color-mix(in srgb, var(--warning) 10%, var(--surface-1));
+  --pto-aic-queue-border: color-mix(in srgb, var(--warning) 38%, var(--border-default));
+  --pto-aic-panel-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  --pto-aic-label: var(--foreground);
+  --pto-aic-label-secondary: var(--foreground-secondary);
+  --pto-aic-cache-label: var(--foreground-secondary);
+  --pto-aic-badge-border: var(--comp-tag-border);
+  --pto-aic-badge-bg: var(--comp-tag-bg);
+  --pto-aic-badge-fg: var(--comp-tag-fg);
+}
+
 .pto-aic-core-pattern-page {
   min-height: 100vh;
   margin: 0;
-  background: #1f1f1f;
-  color: #ffffff;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
 }
 
 .pto-aic-core-pattern-main {
@@ -24,7 +60,7 @@
 .pto-aic-core-pattern-subtitle {
   margin: 0;
   max-width: 980px;
-  color: rgba(255, 255, 255, 0.62);
+  color: var(--foreground-secondary);
   font-size: 13px;
   line-height: 1.6;
 }
@@ -47,9 +83,9 @@
   min-height: 22px;
   padding: 0 8px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.74);
+  border: 1px solid var(--pto-aic-badge-border);
+  background: var(--pto-aic-badge-bg);
+  color: var(--pto-aic-badge-fg);
   font: 10px/1.2 var(--text-mono, ui-monospace, monospace);
 }
 
@@ -62,9 +98,9 @@
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.86);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.04);
+  color: var(--foreground-secondary);
+  border: 1px solid var(--border-default);
+  background: var(--surface-disabled);
 }
 
 .pto-aic-core-pattern-chip::before {
@@ -102,14 +138,14 @@
   max-width: 1000px;
   padding: 28px 28px 32px;
   border-radius: 30px;
-  background: #343434;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  background: var(--pto-aic-core-bg);
+  box-shadow: var(--pto-aic-core-shadow);
   position: relative;
 }
 
 .pto-aic-core__title {
   margin: 0 0 24px;
-  color: #ffffff;
+  color: var(--pto-aic-label);
   font-size: 24px;
   font-weight: 800;
   letter-spacing: 0;
@@ -185,9 +221,9 @@
   box-sizing: border-box;
   padding: 10px 10px 9px;
   border-radius: 16px;
-  background: rgba(77, 151, 255, 0.16);
-  border: 1px solid rgba(77, 151, 255, 0.34);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  background: var(--pto-aic-buffer-bg);
+  border: 1px solid var(--pto-aic-buffer-border);
+  box-shadow: var(--pto-aic-panel-highlight);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -203,7 +239,7 @@
 }
 
 .pto-aic-core__buffer-label {
-  color: #ffffff;
+  color: var(--pto-aic-label);
   font-size: 14px;
   font-weight: 800;
   letter-spacing: 0;
@@ -211,7 +247,7 @@
 }
 
 .pto-aic-core__buffer-capacity {
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--pto-aic-label-secondary);
   font-size: 14px;
   font-weight: 500;
   line-height: 1;
@@ -270,15 +306,15 @@
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  background: rgba(164, 176, 189, 0.16);
-  border: 1px solid rgba(164, 176, 189, 0.34);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  background: var(--pto-aic-cache-bg);
+  border: 1px solid var(--pto-aic-cache-border);
+  box-shadow: var(--pto-aic-panel-highlight);
   position: relative;
   z-index: 2;
 }
 
 .pto-aic-core__cache-label {
-  color: #d7dee6;
+  color: var(--pto-aic-cache-label);
   font-size: 14px;
   font-weight: 600;
   line-height: 1;
@@ -329,8 +365,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-  background: rgba(255, 154, 84, 0.10);
-  border: 1px solid rgba(255, 154, 84, 0.52);
+  background: var(--pto-aic-queue-bg);
+  border: 1px solid var(--pto-aic-queue-border);
   position: relative;
   z-index: 2;
 }

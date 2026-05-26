@@ -103,8 +103,7 @@ Do not use `.btn-solid` or white selected buttons for tabs. Reserve white fill f
 
 ### Panels & cards
 
-- `.workbench-frame` — page-level three-pane workbench grid with padding and gutters
-- `.workbench-pane` — filled gray workbench column; use for left / center / right panes
+- `.workbench-frame`, `.workbench-frame-split`, `.workbench-pane` — structural split-pane classes for `workbench-shell`; visual fills belong to the consuming pattern
 - `.workbench-pane-body-fill` — inner gray body fill for canvas or dense inspector content
 - `.panel-shell` — outermost panel container with header / body
 - `.panel-shell.panel-shell-quiet` — main workbench section surface; neutral fill, no visual border
@@ -113,6 +112,12 @@ Do not use `.btn-solid` or white selected buttons for tabs. Reserve white fill f
 - `.card-demo`, `.card-demo-header`, `.card-demo-title`, `.card-demo-description`, `.card-demo-content`, `.card-demo-footer` — content card primitives
 
 When retrofitting an existing demo, remove legacy card frames that do not exist in these shared classes. Do not keep old full borders, left highlight rails, inset-left shadows, or pseudo-element side bars by changing their colors to PTO tokens.
+
+### Pattern boundaries
+
+- `workbench-shell` — resize kernel only. Use `PtoWorkbenchShell.initResizablePanes`, `createSplitGutter`, or `initNestedResizablePanes`; ratio sizes divide the space left after fixed gutters. Do not use it for page chrome, pane fill, pane titles, or canvas controls.
+- `ide-frame` — PTO IDE framework shell. Use `.pto-ide-frame*` classes, `data-host="standalone"` or `data-host="vscode-webview"`, and `PtoIdeFrame.init`; product pages fill the slots. The host window defaults to 4:3 and standalone explorer starts at 300px via `data-pixel-sizes`. Page bg is one gray step lighter than the IDE window; top chrome is transparent and borderless with window open/close controls. Preview tabs live inside the preview/editor pane, not in a separate top chrome band. Playback uses `floating-playback-control` through `data-ide-floating-playback`; do not recreate a footer playback bar. Do not put business sample data, placeholder tab names, placeholder code rows, or default textual slot content in the pattern and do not override `.pto-workbench-shell__*` internals.
+- `vscode.css` — maps VS Code `--vscode-*` variables and hides standalone chrome in webviews.
 
 ### Navigation
 
@@ -135,6 +140,8 @@ Use inspector sections for dense right rails. Do not wrap every metric row in a 
 
 - Control-flow viewer: `.cf-panel`, `.cf-node`, `.cf-toggle-btn`, `.cf-reopen-btn`, etc.
 - Color panel: `.color-panel`
+- Floating playback controls: use `patterns/floating-playback-control/pattern.css` and `pattern.js`; consume `.pto-floating-playback*` classes or `window.PtoFloatingPlaybackControl.createControl()`, then call `init()` and `initScrubberHover()`. Do not recreate the floating shell, range thumb, collapse sync, or scrubber hover locally.
+- Glass surfaces: add `data-liquid-glass` only to floating auxiliary overlays, not page sections, cards, dense tables, or primary content panels. `scripts/liquid-glass.js` owns support flags only; CSS must keep native `backdrop-filter` blur visible before adding static highlight styling. Do not add cursor-following glow.
 
 For full class index, grep `css/style.css` or open `design-system-preview.html`.
 

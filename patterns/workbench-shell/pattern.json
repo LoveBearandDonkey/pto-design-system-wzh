@@ -1,43 +1,42 @@
 {
   "id": "workbench-shell",
-  "name": "Workbench Shell",
+  "name": "Workbench Split Kernel",
   "type": "hybrid",
-  "description": "Reusable PTO application shell for topbar + resizable three-pane workbenches with borderless rounded gray pane cards and a canvas viewport control group. The shell owns Split.js pane dragging, persisted pane sizes, resize callbacks, and standardized 40%-120% canvas zoom controls.",
+  "description": "Low-level PTO split and resize kernel for horizontal, vertical, and nested panes. It owns gutter DOM, hover/focus/drag state, min sizes, default sizes, localStorage persistence, resize callbacks, keyboard resize, and destroy lifecycle. Pane sizes are ratio weights over the space left after fixed gutters, so gutters do not push the final pane outside the split frame. It does not own page chrome, IDE visuals, pane fills, pane header typography, topbars, titles, badges, canvas controls, or fixed preview heights.",
   "source": {
     "visualContract": [
-      "ascend-950-workbench-demo/index.html",
-      "ascend-950-workbench-demo/feature_taxonomy.html",
-      "patterns/memory-architecture/pattern.js",
-      "tokens/components.css workbench-frame and inspector variables"
+      "patterns/workbench-shell/pattern.css only styles split layout and gutters",
+      "patterns/workbench-shell/pattern.js owns resize behavior and persistence",
+      "patterns/ide-frame/pattern.json consumes this kernel for IDE chrome"
     ],
     "patternHtml": "patterns/workbench-shell/pattern.html",
     "patternCss": "patterns/workbench-shell/pattern.css",
     "renderScript": "patterns/workbench-shell/pattern.js",
-    "thirdParty": "Split.js 1.6.5 when available; pointer-event fallback is built into pattern.js"
+    "thirdParty": "none"
   },
   "useWhen": [
-    "building PTO pages with a fixed topbar and three major work regions",
-    "making left source/filter panes, center graph or hardware canvases, and right inspector panes draggable",
-    "standardizing canvas zoom controls, detail toggles, and resize-driven canvas refit behavior"
+    "adding draggable split panes to a PTO page or pattern",
+    "sharing min-size, persisted size, and gutter behavior across horizontal and vertical layouts",
+    "supporting nested split regions without copying pointer or keyboard resize code"
   ],
   "requiredApis": [
     "window.PtoWorkbenchShell.initResizablePanes(options)",
-    "window.PtoWorkbenchShell.initCanvasControls(options)",
-    "window.PtoWorkbenchShell.initWorkbenchShell(options)",
-    "window.PtoWorkbenchShell.getZoomLevels(options)"
+    "window.PtoWorkbenchShell.createSplitGutter(index, direction, options)",
+    "window.PtoWorkbenchShell.initNestedResizablePanes(options)"
+  ],
+  "compatibilityApis": [
+    "window.PtoWorkbenchShell.initWorkbenchShell(options) is deprecated; use initResizablePanes or ide-frame for visual shells",
+    "window.PtoWorkbenchShell.initCanvasControls(options) is deprecated in this pattern; move canvas UI into a canvas-controls or product-specific pattern"
   ],
   "allowedOverrides": [
-    "pane selectors, initial sizes, min sizes, storage key, and gutter size",
-    "canvas zoom range, default zoom, and callbacks for applying zoom to a page-specific renderer",
-    "topbar content, pane body content, and inspector section content",
-    "outer page height and preview embedding chrome"
+    "pane selectors, direction, initial ratio sizes, min sizes, storage key, gutter size, callbacks, and keyboard resize step",
+    "outer product layout and all pane content",
+    "custom gutter class only when the product pattern documents the alternative"
   ],
   "forbiddenOverrides": [
-    "adding pane borders or flattening the three pane cards into a single black divided surface",
-    "reimplementing Split.js gutters and localStorage size persistence in each product page",
-    "creating page-local canvas zoom buttons with different min/max/step behavior",
-    "styling draggable gutters with one-off colors, large handles, or hidden focus states",
-    "scaling only route overlays, tags, or tooltips instead of applying one unified canvas scale contract"
+    "putting page background, topbar, brand, title, subtitle, badge, pane background, pane header typography, or canvas controls back into workbench-shell",
+    "overriding .pto-workbench-shell__split-gutter internals from higher-level patterns",
+    "reimplementing pointer drag, keyboard resize, persisted sizes, or destroy lifecycle locally"
   ],
-  "agentReuseRule": "Read this JSON first. For a new topbar + three-pane PTO workbench, load pattern.css and pattern.js, include Split.js once if the page already vendors it, and call initWorkbenchShell with pane selectors plus canvas callbacks. Keep page-specific renderers such as memory-architecture inside the center pane; do not duplicate shell dragging or zoom controller code locally."
+  "agentReuseRule": "Read this JSON first. Use workbench-shell only as a resize kernel. For IDE-style pages, load ide-frame and let it provide the visual shell while calling PtoWorkbenchShell.initResizablePanes for split behavior. Do not use workbench-shell as a product chrome or pane styling system."
 }

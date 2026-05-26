@@ -5,9 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PTO Pattern - Model Graphviz</title>
   <script>
-    if (new URLSearchParams(window.location.search).has('embed')) {
-      document.documentElement.dataset.embedPreview = 'true';
-    }
+    (() => {
+      const params = new URLSearchParams(window.location.search);
+      const applyTheme = (theme) => {
+        if (theme === 'light' || theme === 'dark' || theme === 'glass') {
+          document.documentElement.dataset.theme = theme;
+        }
+      };
+      if (params.has('embed')) {
+        document.documentElement.dataset.embedPreview = 'true';
+      }
+      applyTheme(params.get('theme'));
+      window.addEventListener('message', (event) => {
+        if (event.data?.type === 'pto-preview-theme') {
+          applyTheme(event.data.theme);
+        }
+      });
+    })();
   </script>
   <link rel="stylesheet" href="../../tokens/foundation.css">
   <link rel="stylesheet" href="../../tokens/semantic.css">
@@ -18,8 +32,8 @@
   <main class="pto-model-graphviz-pattern-main">
     <h1 class="pto-model-graphviz-pattern-title">Model Graphviz</h1>
     <p class="pto-model-graphviz-pattern-subtitle">
-      Renderer-driven model graph visual contract extracted from <code>graphviz/torchvista_graphviz_deepseek_v4.html</code>.
-      The preview below embeds the real DeepSeek V4 and V3.2 graph pages directly so the design-system pattern is checked against the actual renderer, not a recreated sample.
+      Renderer-driven model graph visual contract extracted from <code>graphviz/deepseek_v32_source_graph.html</code>.
+      The preview below embeds the real DeepSeek V3.2 graph page directly so the design-system pattern is checked against the approved renderer, not a recreated sample.
     </p>
     <div class="pto-model-graphviz-pattern-meta">
       <span class="pto-model-graphviz-pattern-badge">pattern id: model-graphviz</span>
@@ -29,33 +43,8 @@
       <span class="pto-model-graphviz-pattern-badge">tensor: rounded rect</span>
       <span class="pto-model-graphviz-pattern-badge">default fold: depth 2</span>
       <span class="pto-model-graphviz-pattern-badge">colormap: s=.82 l=.40</span>
-      <span class="pto-model-graphviz-pattern-badge">report priority: P0/P1/P2 red-orange-yellow</span>
       <span class="pto-model-graphviz-pattern-badge">DOT layout: graph pad + cluster margin</span>
     </div>
-
-    <section class="pto-model-graphviz-pattern-section">
-      <h2 class="pto-model-graphviz-pattern-section-title">Report Overlay Contract</h2>
-      <p class="pto-model-graphviz-pattern-section-note">
-        Rendered sample for report overlays on top of the model graph. Container titles use a centered same-fill pill with the priority tag on the left; labels use SVG geometric centering and the title overlay sits above graph edges without adding visible border strokes.
-      </p>
-      <div
-        id="ptoModelGraphvizOverlaySample"
-        class="pto-model-graphviz-stage pto-model-graphviz-report-stage"
-        aria-label="Model Graphviz report overlay sample"></div>
-    </section>
-
-    <section class="pto-model-graphviz-pattern-section">
-      <h2 class="pto-model-graphviz-pattern-section-title">DeepSeek V4 Source Page</h2>
-      <p class="pto-model-graphviz-pattern-section-note">
-        Direct iframe of <code>graphviz/torchvista_graphviz_deepseek_v4.html</code>. This is the canonical V4 Graphviz page, not a simplified preview graph.
-      </p>
-      <div class="pto-model-graphviz-iframe-stage pto-model-graphviz-iframe-stage-v4">
-        <iframe
-          class="pto-model-graphviz-source-frame"
-          src="../../graphviz/torchvista_graphviz_deepseek_v4.html"
-          title="DeepSeek V4 Graphviz Source Page"></iframe>
-      </div>
-    </section>
 
     <section class="pto-model-graphviz-pattern-section">
       <h2 class="pto-model-graphviz-pattern-section-title">DeepSeek V3.2 Source Page</h2>
@@ -71,15 +60,45 @@
     </section>
   </main>
 
-  <script src="./pattern.js"></script>
   <script>
-    (function renderModelGraphvizPattern() {
-      const overlaySample = document.getElementById('ptoModelGraphvizOverlaySample');
-      if (overlaySample && window.PtoModelGraphvizPattern) {
-        window.PtoModelGraphvizPattern.render(overlaySample, null, {
-          ariaLabel: 'Model Graphviz report overlay contract sample',
-        });
-      }
+    (function initModelGraphvizPatternPreview() {
+      const sourceFrames = Array.from(document.querySelectorAll('.pto-model-graphviz-source-frame'));
+      const sourceFrameBaseSrc = new WeakMap(
+        sourceFrames.map((frame) => [frame, frame.getAttribute('src') || frame.src])
+      );
+      const applySourceFrameTheme = (frame, theme) => {
+        if (theme !== 'light' && theme !== 'dark' && theme !== 'glass') return;
+        try {
+          const url = new URL(sourceFrameBaseSrc.get(frame) || frame.src, window.location.href);
+          url.searchParams.set('theme', theme);
+          if (frame.src !== url.href) {
+            frame.src = url.href;
+            return;
+          }
+        } catch (_error) {}
+
+        try {
+          frame.contentWindow?.postMessage({
+            type: 'pto-preview-theme',
+            theme,
+          }, '*');
+        } catch (_error) {}
+
+        try {
+          frame.contentDocument.documentElement.dataset.theme = theme;
+        } catch (_error) {}
+      };
+      const syncSourceFrameThemes = () => {
+        const theme = document.documentElement.dataset.theme || 'dark';
+        sourceFrames.forEach((frame) => applySourceFrameTheme(frame, theme));
+      };
+      sourceFrames.forEach((frame) => frame.addEventListener('load', syncSourceFrameThemes));
+      window.addEventListener('message', (event) => {
+        if (event.data?.type === 'pto-preview-theme') {
+          window.requestAnimationFrame(syncSourceFrameThemes);
+        }
+      });
+      window.requestAnimationFrame(syncSourceFrameThemes);
 
       const mainNode = document.querySelector('.pto-model-graphviz-pattern-main');
       if (!mainNode) return;

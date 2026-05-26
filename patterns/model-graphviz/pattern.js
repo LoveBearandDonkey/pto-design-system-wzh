@@ -609,7 +609,6 @@
     defaultDotLayout: { ...DEFAULT_DOT_LAYOUT },
     sourcePages: {
       deepseekV32: '../../graphviz/deepseek_v32_source_graph.html',
-      deepseekV4: '../../graphviz/torchvista_graphviz_deepseek_v4.html',
     },
     defaultGraphs: {
       deepseekV32: DEEPSEEK_V32_DEFAULT_GRAPH,

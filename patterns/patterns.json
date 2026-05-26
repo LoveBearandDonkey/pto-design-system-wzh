@@ -35,6 +35,16 @@
       "id": "workbench-shell",
       "path": "patterns/workbench-shell/pattern.json",
       "preview": "patterns/workbench-shell/pattern.html"
+    },
+    {
+      "id": "ide-frame",
+      "path": "patterns/ide-frame/pattern.json",
+      "preview": "patterns/ide-frame/pattern.html"
+    },
+    {
+      "id": "floating-playback-control",
+      "path": "patterns/floating-playback-control/pattern.json",
+      "preview": "patterns/floating-playback-control/pattern.html"
     }
   ]
 }
