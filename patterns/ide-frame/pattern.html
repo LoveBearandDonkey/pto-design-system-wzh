@@ -25,15 +25,6 @@
           applyTheme(event.data.theme);
         }
       });
-      window.addEventListener('wheel', (event) => {
-        if (document.documentElement.dataset.embedPreview !== 'true' || window.parent === window) return;
-        window.parent.postMessage({
-          type: 'pto-pattern-preview-wheel',
-          deltaX: event.deltaX,
-          deltaY: event.deltaY,
-        }, '*');
-        event.preventDefault();
-      }, { passive: false });
     })();
   </script>
   <link rel="stylesheet" href="../../tokens/foundation.css">

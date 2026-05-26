@@ -474,12 +474,12 @@
     }
 
     #layout-shell { order: 1; }
-    #color-palette { order: 2; }
-    #buttons { order: 3; }
-    #toggle-chip { order: 4; }
-    #labels-badges { order: 5; }
-    #panels-containers { order: 6; }
-    #pattern-previews { order: 7; }
+    #pattern-previews { order: 2; }
+    #color-palette { order: 3; }
+    #buttons { order: 4; }
+    #toggle-chip { order: 5; }
+    #labels-badges { order: 6; }
+    #panels-containers { order: 7; }
     #data-viz-exempt { order: 8; }
     #module-matrix { order: 9; }
 
@@ -1757,6 +1757,7 @@
 
     #pattern-previews .preview-embed-frame[data-pattern-preview='ide-frame'] {
       height: 1680px;
+      pointer-events: none;
     }
 
     #pattern-previews .preview-embed-frame[data-pattern-preview='floating-playback-control'] {
@@ -2012,13 +2013,13 @@
     <aside class="preview-nav" aria-label="Component categories">
       <div class="preview-nav-title">PTO UI Kit</div>
       <a class="preview-nav-link is-active" href="#overview" data-filter="featured">Featured</a>
+      <a class="preview-nav-link" href="#pattern-previews" data-filter="patterns">Patterns</a>
       <a class="preview-nav-link" href="#color-palette" data-filter="foundations">Foundations</a>
       <a class="preview-nav-link" href="#buttons" data-filter="actions">Actions</a>
       <a class="preview-nav-link" href="#toggle-chip" data-filter="selection">Selection</a>
       <a class="preview-nav-link" href="#labels-badges" data-filter="metadata">Metadata</a>
       <a class="preview-nav-link" href="#panels-containers" data-filter="surfaces">Surfaces</a>
       <a class="preview-nav-link" href="#layout-shell" data-filter="layout">Layout</a>
-      <a class="preview-nav-link" href="#pattern-previews" data-filter="patterns">Patterns</a>
       <a class="preview-nav-link" href="#data-viz-exempt" data-filter="visualization">Visualization</a>
       <a class="preview-nav-link" href="#module-matrix" data-filter="migration">Migration</a>
     </aside>
@@ -2328,10 +2329,10 @@
           </div>
           <div class="preview-stage preview-stack">
             <div class="preview-inline">
-              <a class="btn btn-ghost" href="./patterns/ide-frame/pattern.html?v=ide-frame-v3">Open Full Preview</a>
+              <a class="btn btn-ghost" href="./patterns/ide-frame/pattern.html?v=ide-frame-v4">Open Full Preview</a>
             </div>
             <div class="preview-embed">
-              <iframe class="preview-embed-frame" data-pattern-preview="ide-frame" data-src="./patterns/ide-frame/pattern.html?embed=1&amp;v=ide-frame-v3" src="about:blank" title="PTO IDE Frame Pattern Preview" loading="lazy"></iframe>
+              <iframe class="preview-embed-frame" data-pattern-preview="ide-frame" data-src="./patterns/ide-frame/pattern.html?embed=1&amp;v=ide-frame-v4" src="about:blank" title="PTO IDE Frame Pattern Preview" loading="lazy"></iframe>
             </div>
           </div>
           <div class="preview-meta">
