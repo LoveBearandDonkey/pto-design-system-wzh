@@ -32,8 +32,33 @@ design-system-share/
 ├── scripts/audit-theme.mjs      ← light/dark token、硬编码颜色、对比度检查
 ├── assets/                      ← pattern 运行时需要的 SVG 资源（例如 fx.svg）
 ├── swimlane/styles.css          ← swimlane 模块样式（预览页要用）
-└── patterns/                    ← 9 个可复用 pattern（IDE Frame / Workbench / 泳道 / 内存架构 / AIV / AIC / Pass-IR / Graphviz / 悬浮播放控制）
+└── patterns/                    ← 页面级 / 可视化级复用 pattern，优先级高于基础组件拼装
+    ├── patterns.json            ← pattern 注册表
+    ├── ide-frame/               ← PTO 典型 IDE 框架：topbar / activity rail / 目录树 / 代码区 / View slot
+    ├── workbench-shell/         ← 可拖拽分屏 resize kernel，只负责 split / gutter / localStorage
+    ├── floating-playback-control/ ← 悬浮播放、step、scrubber 控制条
+    ├── model-graphviz/          ← TorchVista / DeepSeek V3.2 Graphviz / report overlay
+    ├── memory-architecture/     ← 910B / 950 内存架构图与 route overlay
+    ├── aic-core-object/         ← AIC core object 可配置结构图
+    ├── aiv-core-object/         ← AIV core object 可配置结构图
+    ├── pass-ir-graph-node/      ← Pass-IR graph node 卡片和 compact/group 状态
+    └── swimlane-task/           ← 执行 trace / timeline 泳道任务条 canvas renderer
 ```
+
+## Patterns 是重点
+
+`patterns/` 不是 demo 素材库，而是 PTO 页面搭建的高层积木。遇到 IDE 工作台、多分屏分析、Graphviz、泳道、内存架构图、Pass-IR 节点、播放控制时，先命中 pattern，再填业务内容；不要只用基础按钮和卡片临摹截图。
+
+| Pattern | 什么时候用 | 入口文件 |
+|---|---|---|
+| `ide-frame` | PTO IDE / 工作台 / 多视图分析页面的整体框架 | `patterns/ide-frame/pattern.html` |
+| `workbench-shell` | 任意需要拖拽调整大小的分屏 | `patterns/workbench-shell/pattern.js` |
+| `floating-playback-control` | step、播放、暂停、scrubber、回放控制 | `patterns/floating-playback-control/pattern.js` |
+| `model-graphviz` | TorchVista / 模型 Graphviz / 报告 overlay | `patterns/model-graphviz/pattern.html` |
+| `memory-architecture` | 910B / 950 内存层级、MTE route、AIC/AIV 组合图 | `patterns/memory-architecture/pattern.js` |
+| `aic-core-object` / `aiv-core-object` | 单独渲染 AIC / AIV 内部结构 | `patterns/aic-core-object/pattern.js` / `patterns/aiv-core-object/pattern.js` |
+| `pass-ir-graph-node` | Pass-IR 节点卡、group node、compact node | `patterns/pass-ir-graph-node/pattern.js` |
+| `swimlane-task` | 执行 trace / timeline 的泳道任务条 | `patterns/swimlane-task/pattern.js` |
 
 ## 在三种环境里加载
 
