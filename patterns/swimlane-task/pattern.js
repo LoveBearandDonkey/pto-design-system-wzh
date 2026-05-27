@@ -173,12 +173,12 @@
     tooltip.innerHTML = html;
     tooltip.classList.add('is-visible');
     tooltip.setAttribute('aria-hidden', 'false');
-    positionTooltip(tooltip, event, options.bounds || tooltip.parentElement, event?.currentTarget || null, options.offset);
+    positionTooltip(tooltip, event, options.bounds || tooltip.parentElement, options.target || event?.currentTarget || null, options.offset);
   }
 
   function moveTooltip(tooltip, event, options = {}) {
     if (!tooltip?.classList.contains('is-visible')) return;
-    positionTooltip(tooltip, event, options.bounds || tooltip.parentElement, event?.currentTarget || null, options.offset);
+    positionTooltip(tooltip, event, options.bounds || tooltip.parentElement, options.target || event?.currentTarget || null, options.offset);
   }
 
   function hideTooltip(tooltip) {
@@ -190,31 +190,87 @@
   function initHoverTooltip(options = {}) {
     const root = options.root || null;
     if (!root) return null;
-    const targets = typeof options.targets === 'string'
-      ? Array.from(root.querySelectorAll(options.targets))
+    const selector = typeof options.targets === 'string' ? options.targets : null;
+    const targets = selector
+      ? []
       : Array.from(options.targets || [root]).filter(Boolean);
     const tooltip = options.tooltip || createTooltip(options.tooltipOptions);
     const appendTo = options.appendTo || root;
     const bounds = options.bounds || appendTo;
     const destroyFns = [];
+    let activeTarget = null;
 
     if (!tooltip.parentElement) appendTo.appendChild(tooltip);
 
-    targets.forEach((target) => {
-      const resolveTask = (event) => options.getTask?.(target, event) || target.__ptoSwimlaneTask || null;
-      const enter = (event) => {
-        const task = resolveTask(event);
-        if (!task) return;
-        target.classList?.add('is-hovered');
-        showTooltip(tooltip, task, event, {
-          ...options,
-          bounds,
-        });
+    const resolveTask = (target, event) => options.getTask?.(target, event) || target.__ptoSwimlaneTask || null;
+    const showTarget = (target, event) => {
+      const task = target ? resolveTask(target, event) : null;
+      if (!task) return;
+      if (activeTarget && activeTarget !== target) activeTarget.classList?.remove('is-hovered');
+      activeTarget = target;
+      activeTarget.classList?.add('is-hovered');
+      showTooltip(tooltip, task, event, {
+        ...options,
+        bounds,
+        target,
+      });
+    };
+    const moveTarget = (target, event) => {
+      if (!activeTarget) return;
+      moveTooltip(tooltip, event, {
+        ...options,
+        bounds,
+        target: target || activeTarget,
+      });
+    };
+    const hideTarget = (target = activeTarget) => {
+      target?.classList?.remove('is-hovered');
+      if (!target || target === activeTarget) activeTarget = null;
+      hideTooltip(tooltip);
+    };
+
+    if (selector) {
+      const targetFromEvent = (event) => {
+        const target = event.target?.closest?.(selector);
+        return target && root.contains(target) ? target : null;
       };
-      const move = (event) => moveTooltip(tooltip, event, { ...options, bounds });
+      const over = (event) => {
+        const target = targetFromEvent(event);
+        if (!target || target === activeTarget) return;
+        showTarget(target, event);
+      };
+      const move = (event) => moveTarget(activeTarget, event);
+      const out = (event) => {
+        if (!activeTarget) return;
+        if (event.relatedTarget && activeTarget.contains(event.relatedTarget)) return;
+        const nextTarget = event.relatedTarget?.closest?.(selector);
+        if (nextTarget && root.contains(nextTarget)) return;
+        hideTarget();
+      };
+      const focusIn = (event) => showTarget(targetFromEvent(event), event);
+      const focusOut = () => hideTarget();
+
+      root.addEventListener('pointerover', over);
+      root.addEventListener('pointermove', move);
+      root.addEventListener('pointerout', out);
+      root.addEventListener('focusin', focusIn);
+      root.addEventListener('focusout', focusOut);
+      destroyFns.push(() => {
+        root.removeEventListener('pointerover', over);
+        root.removeEventListener('pointermove', move);
+        root.removeEventListener('pointerout', out);
+        root.removeEventListener('focusin', focusIn);
+        root.removeEventListener('focusout', focusOut);
+      });
+    }
+
+    targets.forEach((target) => {
+      const enter = (event) => {
+        showTarget(target, event);
+      };
+      const move = (event) => moveTarget(target, event);
       const leave = () => {
-        target.classList?.remove('is-hovered');
-        hideTooltip(tooltip);
+        hideTarget(target);
       };
 
       target.addEventListener('pointerenter', enter);
@@ -235,6 +291,7 @@
       tooltip,
       destroy() {
         destroyFns.splice(0).forEach((destroy) => destroy());
+        activeTarget?.classList?.remove('is-hovered');
         if (options.tooltip !== tooltip) tooltip.remove();
       },
     };

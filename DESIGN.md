@@ -363,7 +363,7 @@ Current extraction progress:
 - `aiv-core-object`: shared config-driven object renderer registered and previewed
 - `pass-ir-graph-node`: shared hybrid renderer registered and previewed; original Pass-IR business page still uses its local renderer until a separate integration pass is approved
 - `model-graphviz`: shared SVG visual renderer registered and previewed; original TorchVista Graphviz page still owns DOT generation, D3 zoom, popup behavior, and graph reloads until a separate integration pass is approved
-- `workbench-shell`: shared split / resize kernel registered and previewed; old visual shell APIs are compatibility-only
+- `workbench-shell`: shared split / resize kernel registered as a secondary dependency; old visual shell APIs are compatibility-only and it is not shown as a top-level preview card
 - `ide-frame`: shared PTO IDE framework shell registered and previewed with standalone and VS Code webview host modes; content-free slots only
 - `floating-playback-control`: shared DOM/CSS playback toolbar registered, previewed, and adopted by Memory Viewer v1/v2
 
