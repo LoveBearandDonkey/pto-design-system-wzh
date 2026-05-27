@@ -31,7 +31,7 @@
 <body>
   <main class="pattern-stage">
     <h1 class="pattern-title">Swimlane Task Pattern</h1>
-    <p class="pattern-subtitle">Canvas renderer sourced from `pypto-swimlane-perf-tool/js/swimlane.js` task-bar logic.</p>
+    <p class="pattern-subtitle">Canvas renderer sourced from `pypto-swimlane-perf-tool/js/swimlane.js` task-bar and hover tooltip logic.</p>
     <div class="pto-pattern-swimlane-task">
       <div class="pto-pattern-swimlane-task__row">
         <div class="pto-pattern-swimlane-task__label">event 01</div>
@@ -61,22 +61,22 @@
       const rows = [
         {
           color: '#4d79d4',
-          task: { label: 'Query-Linear', inputRawMagic: [], outputRawMagic: [] },
+          task: { opName: 'Query-Linear', label: 'Query-Linear', laneKind: 'AIC', laneId: 'aic-0', totalCycle: 184, inputRawMagic: [], outputRawMagic: [] },
           state: {},
         },
         {
           color: '#7b57bf',
-          task: { label: 'dispatch', inputRawMagic: new Array(6).fill(0), outputRawMagic: new Array(4).fill(0) },
+          task: { opName: 'dispatch', label: 'dispatch', laneKind: 'AICPU', laneId: 'ctrl-0', totalCycle: 96, status: 'accounted', inputRawMagic: new Array(6).fill(0), outputRawMagic: new Array(4).fill(0) },
           state: { isSelected: true },
         },
         {
           color: '#4da56d',
-          task: { label: 'attention matmul', inputRawMagic: new Array(3).fill(0), outputRawMagic: new Array(3).fill(0) },
+          task: { opName: 'attention matmul', label: 'attention matmul', laneKind: 'AIC', laneId: 'aic-2', totalCycle: 412, clcCycle: 366, gap: 46, gapRatio: 0.112, status: 'wait', dominantCounter: 'aic_pipe_stall', wrapId: 'W12', inputRawMagic: new Array(3).fill(0), outputRawMagic: new Array(3).fill(0) },
           state: { isRelated: true, isEmphasized: true },
         },
         {
           color: '#d98f55',
-          task: { label: 'kernel', inputRawMagic: new Array(2).fill(0), outputRawMagic: [] },
+          task: { opName: 'kernel', label: 'kernel', laneKind: 'MTE', laneId: 'mte-out', totalCycle: 73, status: 'overlap', inputRawMagic: new Array(2).fill(0), outputRawMagic: [] },
           state: {},
         },
       ];
@@ -137,6 +137,11 @@
       }
 
       render();
+      helper.initHoverTooltip({
+        root: document.querySelector('.pto-pattern-swimlane-task'),
+        targets: '.pto-pattern-swimlane-task__canvas',
+        getTask: (target) => rows[Number(target.dataset.patternRow)]?.task,
+      });
       window.addEventListener('resize', render);
 
       if (isEmbedPreview && 'ResizeObserver' in window) {

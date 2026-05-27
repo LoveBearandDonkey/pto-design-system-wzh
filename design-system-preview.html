@@ -881,7 +881,7 @@
     .agent-table td code {
       font-family: var(--font-mono);
       font-size: 10.5px;
-      background: rgba(255,255,255,0.06);
+      background: color-mix(in srgb, var(--foreground) 6%, transparent);
       padding: 1px 5px;
       border-radius: 4px;
     }
@@ -1937,7 +1937,7 @@
             <div class="agent-label">Pattern Reuse Rules</div>
             <table class="agent-table">
               <tr><td>Stable entry</td><td>Every pattern must expose a stable consumer entry. Static visual primitives use documented CSS classes; DOM/SVG/canvas generation, drag behavior, zoom, routing, persistence, or synchronized state must go through a <code>window.Pto*Pattern</code> or <code>window.Pto*</code> helper. Business pages must not copy generated DOM or restyle internal pattern classes.</td></tr>
-              <tr><td><code>swimlane-task-bar</code></td><td>Use <code>patterns/swimlane-task/pattern.js</code> and call <code>window.PtoSwimlaneTaskPattern.drawTaskBar</code>. The canonical task bar is canvas-rendered, sourced from <code>pypto-swimlane-perf-tool/js/swimlane.js</code>. Do not rebuild it with DOM/CSS or rewrite segment math locally.</td></tr>
+              <tr><td><code>swimlane-task-bar</code></td><td>Use <code>patterns/swimlane-task/pattern.js</code> and call <code>window.PtoSwimlaneTaskPattern.drawTaskBar</code> plus <code>initHoverTooltip</code>. The canonical task bar is canvas-rendered, sourced from <code>pypto-swimlane-perf-tool/js/swimlane.js</code>, and the hover tip mirrors the PMU swimlane <code>.sl-tooltip</code> interaction. Do not rebuild it with DOM/CSS or rewrite segment math or hover tip behavior locally.</td></tr>
               <tr><td><code>memory-architecture-layout</code></td><td>Use <code>patterns/memory-architecture/pattern.js</code>. Call <code>window.PtoMemoryArchitecturePattern.renderArchitecture</code> to build the stage, <code>createRouteOverlay</code> for MTE routes, and <code>attachHoverInteractions</code> for hardware tips. Extend preset data for 910B/950; do not copy raw <code>mem_viewer</code> HTML or redraw route geometry locally.</td></tr>
               <tr><td><code>aic-core-object</code></td><td>Use <code>patterns/aic-core-object/pattern.js</code> and call <code>window.PtoAicCorePattern.render</code>. The shell is config-driven from the design draft; extend the preset data for 950B instead of cloning the generated DOM or restyling the chrome locally.</td></tr>
               <tr><td><code>aiv-core-object</code></td><td>Use <code>patterns/aiv-core-object/pattern.js</code> and call <code>window.PtoAivCorePattern.render</code>. The shell is config-driven from the approved AIV draft; extend the preset data for later chip variants instead of copying the generated DOM or changing card geometry locally.</td></tr>
@@ -2229,7 +2229,7 @@
         <article class="preview-card preview-card-full-row">
           <div class="preview-card-head">
             <h3 class="preview-card-title">泳道事件 Pattern</h3>
-            <div class="preview-card-class">swimlane 模块：Canvas 任务条渲染器</div>
+            <div class="preview-card-class">swimlane 模块：Canvas 任务条 + hover tip</div>
           </div>
           <div class="preview-stage preview-stack">
             <div class="preview-inline">
@@ -2242,7 +2242,7 @@
           <div class="preview-meta">
             <span class="token-badge">pattern id: swimlane-task-bar</span>
             <span class="token-badge">source: patterns/swimlane-task/pattern.js</span>
-            <span class="token-badge">contract: canvas renderer</span>
+            <span class="token-badge">contract: canvas renderer + hover tip</span>
             <span class="state-badge">Pattern</span>
           </div>
         </article>
@@ -2405,7 +2405,7 @@
           <div class="preview-meta">
             <span class="token-badge">solid: primary workflow commit</span>
             <span class="token-badge">soft: entry / open / import / choose</span>
-            <span class="state-badge">Rule</span>
+            <span class="state-badge">规则</span>
           </div>
         </article>
 
@@ -2429,12 +2429,12 @@
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Solid</h3>
+            <h3 class="preview-card-title">主按钮 Solid</h3>
             <div class="preview-card-class">.btn .btn-solid</div>
           </div>
           <div class="preview-stage">
             <button class="btn btn-solid" type="button">提交</button>
-            <button class="btn btn-solid preview-hover" type="button">Hover</button>
+            <button class="btn btn-solid preview-hover" type="button">悬浮</button>
           </div>
           <div class="preview-meta">
             <span class="token-badge">bg: --foreground</span>
@@ -2445,12 +2445,12 @@
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Ghost</h3>
+            <h3 class="preview-card-title">幽灵按钮 Ghost</h3>
             <div class="preview-card-class">.btn .btn-ghost</div>
           </div>
           <div class="preview-stage">
             <button class="btn btn-ghost" type="button">取消</button>
-            <button class="btn btn-ghost preview-hover" type="button">Hover</button>
+            <button class="btn btn-ghost preview-hover" type="button">悬浮</button>
             <button class="btn btn-ghost btn-icon" type="button" aria-label="关闭"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
             <button class="btn btn-ghost btn-icon preview-hover" type="button" aria-label="添加"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg></button>
           </div>
@@ -2463,7 +2463,7 @@
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Disabled</h3>
+            <h3 class="preview-card-title">禁用态 Disabled</h3>
             <div class="preview-card-class">[disabled]</div>
           </div>
           <div class="preview-stage">
@@ -2481,59 +2481,59 @@
 
     <!-- ② Toggle & Chip -->
     <section class="preview-section block-card" id="toggle-chip" data-categories="featured selection">
-      <h2 class="preview-section-title">Selection Controls</h2>
+      <h2 class="preview-section-title">选择控件</h2>
       <div class="preview-grid">
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Toggle</h3>
-            <div class="preview-card-class">outline toggle, icon + label</div>
+            <h3 class="preview-card-title">双态切换 Toggle</h3>
+            <div class="preview-card-class">轮廓切换：图标 + 文字</div>
           </div>
           <div class="preview-stage">
             <button class="toggle-outline" type="button" aria-pressed="false">
               <span class="toggle-outline-icon">I</span>
-              Italic
+              斜体
             </button>
             <button class="toggle-outline" type="button" aria-pressed="true">
               <span class="toggle-outline-icon">B</span>
-              Bold
+              粗体
             </button>
           </div>
           <div class="preview-meta">
             <span class="token-badge">border: --border-default</span>
             <span class="token-badge">pressed bg: foreground 7% tint</span>
             <span class="token-badge">radius: 6px</span>
-            <span class="state-badge">Shared</span>
+            <span class="state-badge">通用</span>
           </div>
         </article>
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Toggle Sizes</h3>
+            <h3 class="preview-card-title">Toggle 尺寸</h3>
             <div class="preview-card-class">size=&quot;sm&quot; / default / &quot;lg&quot;</div>
           </div>
           <div class="preview-stage">
-            <button class="toggle-outline toggle-outline-sm" type="button" aria-pressed="false">Small</button>
-            <button class="toggle-outline" type="button" aria-pressed="false">Default</button>
-            <button class="toggle-outline toggle-outline-lg" type="button" aria-pressed="false">Large</button>
+            <button class="toggle-outline toggle-outline-sm" type="button" aria-pressed="false">小号</button>
+            <button class="toggle-outline" type="button" aria-pressed="false">默认</button>
+            <button class="toggle-outline toggle-outline-lg" type="button" aria-pressed="false">大号</button>
           </div>
           <div class="preview-meta">
             <span class="token-badge">sm: h-8 px-2.5</span>
             <span class="token-badge">default: h-8 px-2.5</span>
             <span class="token-badge">lg: h-9 px-3</span>
-            <span class="state-badge">Shared</span>
+            <span class="state-badge">通用</span>
           </div>
         </article>
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Toggle Group</h3>
+            <h3 class="preview-card-title">Toggle 分组</h3>
             <div class="preview-card-class">.sw-toggle-btn / .sw-view-mode-btn / .model-btn.active</div>
           </div>
           <div class="preview-stage">
             <div class="preview-inline">
-              <button class="toggle-outline" type="button" aria-pressed="true">Before</button>
-              <button class="toggle-outline" type="button" aria-pressed="false">After</button>
+              <button class="toggle-outline" type="button" aria-pressed="true">优化前</button>
+              <button class="toggle-outline" type="button" aria-pressed="false">优化后</button>
             </div>
             <div class="preview-inline">
               <button class="toggle-outline" type="button" aria-pressed="false">单视图</button>
@@ -2549,14 +2549,14 @@
           <div class="preview-meta">
             <span class="token-badge">base: outline toggle</span>
             <span class="token-badge">selected via aria-pressed</span>
-            <span class="state-badge">Shared</span>
+            <span class="state-badge">通用</span>
           </div>
         </article>
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Chip Filter</h3>
-            <div class="preview-card-class">.sw-chip-btn + compact filter semantics</div>
+            <h3 class="preview-card-title">Chip 过滤</h3>
+            <div class="preview-card-class">.sw-chip-btn + 紧凑过滤语义</div>
           </div>
           <div class="preview-stage">
             <button class="sw-chip-btn is-active" type="button" aria-pressed="true">AIC</button>
@@ -2566,7 +2566,7 @@
           <div class="preview-meta">
             <span class="token-badge">compact spacing</span>
             <span class="token-badge">selected: var(--state-selected) + var(--foreground)</span>
-            <span class="state-badge">Module Variant</span>
+            <span class="state-badge">模块变体</span>
           </div>
         </article>
 
@@ -2574,48 +2574,48 @@
     </section>
 
     <section class="preview-section block-card" id="labels-badges" data-categories="metadata">
-      <h2 class="preview-section-title">Metadata &amp; Status</h2>
+      <h2 class="preview-section-title">元信息与状态</h2>
       <div class="preview-grid">
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Neutral Badge</h3>
+            <h3 class="preview-card-title">中性徽章</h3>
             <div class="preview-card-class">.badge-neutral</div>
           </div>
           <div class="preview-stage">
-            <span class="state-badge">Default</span>
-            <span class="state-badge">Inspector</span>
-            <span class="state-badge">Shared</span>
+            <span class="state-badge">默认</span>
+            <span class="state-badge">检视器</span>
+            <span class="state-badge">通用</span>
           </div>
           <div class="preview-meta">
             <span class="token-badge">bg: --surface-disabled</span>
             <span class="token-badge">border: --border-default</span>
             <span class="token-badge">fg: --foreground-secondary</span>
-            <span class="state-badge">Shared</span>
+            <span class="state-badge">通用</span>
           </div>
         </article>
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Semantic Status</h3>
-            <div class="preview-card-class">.badge-neutral + semantic color</div>
+            <h3 class="preview-card-title">语义化状态</h3>
+            <div class="preview-card-class">.badge-neutral + 语义颜色</div>
           </div>
           <div class="preview-stage">
-            <span class="status-tag status-tag-success"><span aria-hidden="true">✓ </span>success</span>
-            <span class="status-tag status-tag-pending"><span aria-hidden="true">… </span>pending</span>
-            <span class="status-tag status-tag-warning"><span aria-hidden="true">⚠ </span>warning</span>
-            <span class="status-tag status-tag-error"><span aria-hidden="true">✕ </span>error</span>
+            <span class="status-tag status-tag-success"><span aria-hidden="true">✓ </span>成功</span>
+            <span class="status-tag status-tag-pending"><span aria-hidden="true">… </span>进行中</span>
+            <span class="status-tag status-tag-warning"><span aria-hidden="true">⚠ </span>警告</span>
+            <span class="status-tag status-tag-error"><span aria-hidden="true">✕ </span>错误</span>
           </div>
           <div class="preview-meta">
             <span class="token-badge">base: neutral badge shape</span>
             <span class="token-badge">semantic colors: success / info / warning / danger</span>
-            <span class="state-badge">Shared</span>
+            <span class="state-badge">通用</span>
           </div>
         </article>
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Inline Label</h3>
+            <h3 class="preview-card-title">行内标签</h3>
             <div class="preview-card-class">.label-inline</div>
           </div>
           <div class="preview-stage">
@@ -2627,23 +2627,23 @@
           <div class="preview-meta">
             <span class="token-badge">label: --foreground-muted</span>
             <span class="token-badge">value: --foreground</span>
-            <span class="state-badge">Shared</span>
+            <span class="state-badge">通用</span>
           </div>
         </article>
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Module-Only Status Pill</h3>
-            <div class="preview-card-class">timeline / swimlane / graph status</div>
+            <h3 class="preview-card-title">模块专属状态药丸</h3>
+            <div class="preview-card-class">timeline / swimlane / graph 状态</div>
           </div>
           <div class="preview-stage">
-            <span class="state-badge" style="background: rgba(255,255,255,0.08); color: #f0f0f0;">Gap</span>
-            <span class="state-badge" style="background: rgba(255,190,0,0.14); color: #ffc75a;">Fallback</span>
-            <span class="state-badge" style="background: rgba(0,196,140,0.15); color: #55d8aa;">Resolved</span>
+            <span class="state-badge" style="background: rgba(255,255,255,0.08); color: #f0f0f0;">空缺</span>
+            <span class="state-badge" style="background: rgba(255,190,0,0.14); color: #ffc75a;">回退</span>
+            <span class="state-badge" style="background: rgba(0,196,140,0.15); color: #55d8aa;">已修复</span>
           </div>
           <div class="preview-meta">
             <span class="token-badge">status-specific semantic tint</span>
-            <span class="state-badge">Exempt</span>
+            <span class="state-badge">豁免</span>
           </div>
         </article>
 
@@ -2651,27 +2651,27 @@
     </section>
 
     <section class="preview-section block-card" id="panels-containers" data-categories="featured surfaces">
-      <h2 class="preview-section-title">Surfaces &amp; Cards</h2>
+      <h2 class="preview-section-title">容器与卡片</h2>
       <div class="preview-grid">
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Swimlane Resource Panel</h3>
-            <div class="preview-card-class">.sw-resource-panel -> CardHeader + CardContent</div>
+            <h3 class="preview-card-title">泳道资源面板</h3>
+            <div class="preview-card-class">.sw-resource-panel → CardHeader + CardContent</div>
           </div>
           <div class="preview-stage">
             <div class="card-demo">
               <div class="card-demo-header">
-                <div class="card-demo-title">Local Resource Library</div>
-                <div class="card-demo-description">Load stitched traces, inspect available samples, and keep resource actions grouped in one compact card.</div>
+                <div class="card-demo-title">本地资源库</div>
+                <div class="card-demo-description">加载拼接 trace、查看可用样本，并将所有资源相关动作集中到一张紧凑卡片里。</div>
               </div>
               <div class="card-demo-content">
                 <div class="card-demo-field">
-                  <div class="card-demo-label">Current Source</div>
+                  <div class="card-demo-label">当前来源</div>
                   <div class="card-demo-input">stitched_after.json</div>
                 </div>
                 <div class="card-demo-field">
-                  <div class="card-demo-label">Samples</div>
+                  <div class="card-demo-label">样本</div>
                   <div class="card-demo-input">before / after / diff</div>
                 </div>
               </div>
@@ -2680,33 +2680,33 @@
           <div class="preview-meta">
             <span class="token-badge">slots: header + content</span>
             <span class="token-badge">bg: --background-elevated</span>
-            <span class="state-badge">Shared</span>
+            <span class="state-badge">通用</span>
           </div>
         </article>
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Execution Overlay Detail Panel</h3>
-            <div class="preview-card-class">.eo-detail-panel -> CardHeader + CardAction + CardContent</div>
+            <h3 class="preview-card-title">执行 Overlay 详情面板</h3>
+            <div class="preview-card-class">.eo-detail-panel → CardHeader + CardAction + CardContent</div>
           </div>
           <div class="preview-stage">
             <div class="card-demo">
               <div class="card-demo-header">
                 <div class="card-demo-header-row">
                   <div>
-                    <div class="card-demo-title">Node Detail</div>
-                    <div class="card-demo-description">Execution diagnostics, dependency lookup, and node metadata should read like a structured analysis card.</div>
+                    <div class="card-demo-title">节点详情</div>
+                    <div class="card-demo-description">执行诊断、依赖查找和节点元信息应当呈现为一张结构化的分析卡片。</div>
                   </div>
                   <button class="btn btn-ghost btn-icon" type="button" aria-label="关闭"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
                 </div>
               </div>
               <div class="card-demo-content">
                 <div class="card-demo-field">
-                  <div class="card-demo-label">Node</div>
+                  <div class="card-demo-label">节点</div>
                   <div class="card-demo-input">q_proj_fused</div>
                 </div>
                 <div class="card-demo-field">
-                  <div class="card-demo-label">Pipeline</div>
+                  <div class="card-demo-label">流水线</div>
                   <div class="card-demo-input">Query · Core 3</div>
                 </div>
               </div>
@@ -2715,41 +2715,41 @@
           <div class="preview-meta">
             <span class="token-badge">slots: header + action + content</span>
             <span class="token-badge">action: link/ghost button</span>
-            <span class="state-badge">Shared</span>
+            <span class="state-badge">通用</span>
           </div>
         </article>
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Swimlane Task Popup</h3>
-            <div class="preview-card-class">.sw-task-popup -> CardContent + CardFooter</div>
+            <h3 class="preview-card-title">泳道任务弹窗</h3>
+            <div class="preview-card-class">.sw-task-popup → CardContent + CardFooter</div>
           </div>
           <div class="preview-stage">
             <div class="card-demo">
               <div class="card-demo-header">
-                <div class="card-demo-title">Task Detail</div>
-                <div class="card-demo-description">Popup detail should behave like a content card with clear metadata rows and footer actions.</div>
+                <div class="card-demo-title">任务详情</div>
+                <div class="card-demo-description">弹窗详情应当表现为一张内容卡片：清晰的元信息字段 + 底部操作按钮。</div>
               </div>
               <div class="card-demo-content">
                 <div class="card-demo-field">
-                  <div class="card-demo-label">Kernel</div>
+                  <div class="card-demo-label">内核</div>
                   <div class="card-demo-input">matmul_128x64</div>
                 </div>
                 <div class="card-demo-field">
-                  <div class="card-demo-label">Window</div>
+                  <div class="card-demo-label">时间窗口</div>
                   <div class="card-demo-input">12.4ms → 18.1ms</div>
                 </div>
               </div>
               <div class="card-demo-footer">
-                <button class="btn btn-solid" type="button">Focus Task</button>
-                <button class="btn" type="button">Open Source</button>
+                <button class="btn btn-solid" type="button">聚焦该任务</button>
+                <button class="btn" type="button">打开源码</button>
               </div>
             </div>
           </div>
           <div class="preview-meta">
             <span class="token-badge">slots: content + footer</span>
             <span class="token-badge">footer: stacked actions</span>
-            <span class="state-badge">Shared</span>
+            <span class="state-badge">通用</span>
           </div>
         </article>
 
@@ -2757,12 +2757,12 @@
     </section>
 
     <section class="preview-section block-card" id="data-viz-exempt" data-categories="visualization foundations">
-      <h2 class="preview-section-title">Visualization Exceptions</h2>
+      <h2 class="preview-section-title">可视化例外</h2>
       <div class="preview-grid">
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Swimlane Stitch Colors</h3>
+            <h3 class="preview-card-title">泳道拼接色</h3>
             <div class="preview-card-class">--sw-stitch-0 ~ --sw-stitch-4</div>
           </div>
           <div class="preview-stage">
@@ -2776,13 +2776,13 @@
           </div>
           <div class="preview-meta">
             <span class="token-badge">role: stitched lanes</span>
-            <span class="state-badge">Exempt</span>
+            <span class="state-badge">豁免</span>
           </div>
         </article>
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Dependency Lines</h3>
+            <h3 class="preview-card-title">依赖连线</h3>
             <div class="preview-card-class">.sw-dep-line-* / .sw-dep-dot-*</div>
           </div>
           <div class="preview-stage">
@@ -2794,14 +2794,14 @@
           </div>
           <div class="preview-meta">
             <span class="token-badge">role: relation encoding</span>
-            <span class="state-badge">Exempt</span>
+            <span class="state-badge">豁免</span>
           </div>
         </article>
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Graph Node / Edge Semantics</h3>
-            <div class="preview-card-class">model / graph / overlay semantics</div>
+            <h3 class="preview-card-title">图节点 / 边语义色</h3>
+            <div class="preview-card-class">model / graph / overlay 语义色</div>
           </div>
           <div class="preview-stage">
             <div class="preview-inline">
@@ -2812,14 +2812,14 @@
           </div>
           <div class="preview-meta">
             <span class="token-badge">role: chart semantics</span>
-            <span class="state-badge">Exempt</span>
+            <span class="state-badge">豁免</span>
           </div>
         </article>
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Colormap Modules</h3>
-            <div class="preview-card-class">heatmap / latency / density / scalar ramp</div>
+            <h3 class="preview-card-title">Colormap 模块</h3>
+            <div class="preview-card-class">热力图 / 时延 / 密度 / 标量渐变</div>
           </div>
           <div class="preview-stage">
             <div class="preview-inline">
@@ -2830,25 +2830,25 @@
           <div class="preview-meta">
             <span class="token-badge">role: scalar mapping / colormap</span>
             <span class="token-badge">examples: heat, latency, density</span>
-            <span class="state-badge">Exempt</span>
+            <span class="state-badge">豁免</span>
           </div>
         </article>
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Module Surface</h3>
-            <div class="preview-card-class">graph / swimlane / canvas surface</div>
+            <h3 class="preview-card-title">模块画布</h3>
+            <div class="preview-card-class">graph / swimlane / canvas 画布</div>
           </div>
           <div class="preview-stage">
             <div class="preview-panel">
-              <div class="preview-panel-title">Canvas Surface</div>
+              <div class="preview-panel-title">Canvas 画布</div>
               <div class="preview-panel-sub">图面板、泳道布景、overlay surface 允许保留模块特定处理，不并入 Card。</div>
             </div>
           </div>
           <div class="preview-meta">
             <span class="token-badge">surface gradient</span>
             <span class="token-badge">border: module-specific</span>
-            <span class="state-badge">Exempt</span>
+            <span class="state-badge">豁免</span>
           </div>
         </article>
 
@@ -2857,7 +2857,7 @@
 
     <!-- ③ Module Mapping -->
     <section class="preview-section block-card" id="module-matrix" data-categories="migration reference actions selection surfaces">
-      <h2 class="preview-section-title">Migration Matrix</h2>
+      <h2 class="preview-section-title">迁移映射</h2>
       <div class="preview-grid">
 
         <article class="preview-card">
@@ -2869,9 +2869,9 @@
             <div class="preview-inline">
               <button class="btn" type="button">
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="flex-shrink:0"><path d="M1.5 4h4.5l1 1.5H14a.5.5 0 01.5.5v7a.5.5 0 01-.5.5H2a.5.5 0 01-.5-.5V4z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Open Pass Folder
+                打开 Pass 目录
               </button>
-              <button class="btn" type="button">Open single JSON</button>
+              <button class="btn" type="button">打开单个 JSON</button>
             </div>
           </div>
           <div class="preview-meta">
@@ -2883,7 +2883,7 @@
         <article class="preview-card">
           <div class="preview-card-head">
             <h3 class="preview-card-title">Swimlane 工具栏</h3>
-            <div class="preview-card-class">resource entry / search utility</div>
+            <div class="preview-card-class">资源入口 / 搜索工具</div>
           </div>
           <div class="preview-stage">
             <button class="btn" type="button">加载本地资源</button>
@@ -2899,30 +2899,30 @@
 
         <article class="preview-card">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Action List In Card</h3>
-            <div class="preview-card-class">Card content pattern: .cp-btn / .mm-btn / .panel-toggle-btn</div>
+            <h3 class="preview-card-title">卡片内操作列表</h3>
+            <div class="preview-card-class">卡片内容模式：.cp-btn / .mm-btn / .panel-toggle-btn</div>
           </div>
           <div class="preview-stage">
             <div class="preview-stack" style="max-width: 320px;">
               <button class="cp-btn" type="button">
                 <span class="cp-btn-icon icon-purple">A</span>
                 <span class="cp-btn-text">
-                  <span class="cp-btn-label">Semantic</span>
-                  <span class="cp-btn-sub">inspector mode</span>
+                  <span class="cp-btn-label">语义</span>
+                  <span class="cp-btn-sub">检视模式</span>
                 </span>
               </button>
               <button class="cp-btn action-row-selected" type="button">
                 <span class="cp-btn-icon icon-blue">L</span>
                 <span class="cp-btn-text">
-                  <span class="cp-btn-label">Latency</span>
-                  <span class="cp-btn-sub">current mode</span>
+                  <span class="cp-btn-label">时延</span>
+                  <span class="cp-btn-sub">当前模式</span>
                 </span>
               </button>
               <button class="cp-btn" type="button">
                 <span class="cp-btn-icon icon-green">C</span>
                 <span class="cp-btn-text">
-                  <span class="cp-btn-label">Compact</span>
-                  <span class="cp-btn-sub">dense layout</span>
+                  <span class="cp-btn-label">紧凑</span>
+                  <span class="cp-btn-sub">高密度布局</span>
                 </span>
               </button>
             </div>
@@ -2981,42 +2981,42 @@
       const HIGHLIGHT_RAMPS = [
         {
           title: 'copy-blue',
-          subtitle: 'mem-viewer `L1 / copy-in` legend',
+          subtitle: 'mem-viewer `L1 / copy-in` 图例',
           sourceLabel: '#3577F6',
           sourceColor: '#3577F6',
           values: { 0: '#F5F8FF', 100: '#DDE8FD', 200: '#B1CAFC', 300: '#76A3F9', 400: '#3C7CF6', 500: '#0B5BF4', 600: '#094CCD', 700: '#073CA1', 800: '#052C75', 900: '#031D4E', 1000: '#020F27' },
         },
         {
           title: 'l0a-violet',
-          subtitle: 'mem-viewer `L0A` block',
+          subtitle: 'mem-viewer `L0A` 块',
           sourceLabel: '#A855F7',
           sourceColor: '#A855F7',
           values: { 0: '#FAF5FF', 100: '#EEDDFD', 200: '#D7B1FB', 300: '#B977F9', 400: '#9B3CF6', 500: '#820BF4', 600: '#6E0ACD', 700: '#5608A1', 800: '#3F0675', 900: '#2A044E', 1000: '#150227' },
         },
         {
           title: 'l0b-deep-violet',
-          subtitle: 'mem-viewer `L0B` block',
+          subtitle: 'mem-viewer `L0B` 块',
           sourceLabel: '#4F46E5',
           sourceColor: '#4F46E5',
           values: { 0: '#F6F7FF', 100: '#E0E2FF', 200: '#BFC3FF', 300: '#959BFF', 400: '#6A71FF', 500: '#4F46E5', 600: '#4338CA', 700: '#3730A3', 800: '#2A257A', 900: '#1C1953', 1000: '#0E0C2C' },
         },
         {
           title: 'accum-orange',
-          subtitle: 'mem-viewer `L0C / accum` legend',
+          subtitle: 'mem-viewer `L0C / accum` 图例',
           sourceLabel: '#F97316',
           sourceColor: '#F97316',
           values: { 0: '#FFF9F5', 100: '#FEEADC', 200: '#FDCFAF', 300: '#FBAB74', 400: '#FA8838', 500: '#F96A06', 600: '#D15905', 700: '#A44604', 800: '#773303', 900: '#502202', 1000: '#281101' },
         },
         {
           title: 'ub-green',
-          subtitle: 'mem-viewer `UB / vector tile` legend',
+          subtitle: 'mem-viewer `UB / vector tile` 图例',
           sourceLabel: '#87C80F',
           sourceColor: '#87C80F',
           values: { 0: '#FBFEF6', 100: '#F2FDDE', 200: '#E1F9B3', 300: '#CAF57A', 400: '#B3F141', 500: '#A0ED12', 600: '#86C70F', 700: '#6A9D0C', 800: '#4D7209', 900: '#334C06', 1000: '#1A2603' },
         },
         {
           title: 'mte-amber',
-          subtitle: 'mem-viewer `MTE2 / MTE3` legend',
+          subtitle: 'mem-viewer `MTE2 / MTE3` 图例',
           sourceLabel: '#EAB308',
           sourceColor: '#EAB308',
           values: { 0: '#FFFDF3', 100: '#FEF6D8', 200: '#FDEB9D', 300: '#FBDC59', 400: '#F4CB22', 500: '#EAB308', 600: '#CA8A04', 700: '#A16207', 800: '#854D0E', 900: '#713F12', 1000: '#422006' },

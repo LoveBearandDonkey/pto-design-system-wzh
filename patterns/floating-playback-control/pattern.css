@@ -145,6 +145,7 @@
   border-radius: var(--floating-playback-collapsed-radius);
   background: var(--floating-playback-collapsed-bg);
   border-color: var(--floating-playback-collapsed-border);
+  box-shadow: var(--floating-playback-collapsed-shadow);
 }
 
 .pto-floating-playback__toggle {
@@ -195,7 +196,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transform: translateX(1px);
+  transform: none;
 }
 
 .pto-floating-playback__icon {
@@ -233,6 +234,11 @@
 
 .pto-floating-playback__shell.is-expanded .pto-floating-playback__collapsed-button {
   display: none;
+}
+
+.pto-floating-playback__collapsed-button .pto-floating-playback__icon {
+  width: 16px;
+  height: 16px;
 }
 
 .pto-floating-playback__controls {

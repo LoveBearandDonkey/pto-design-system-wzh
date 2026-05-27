@@ -335,7 +335,7 @@ Rules:
 - allowed overrides must be explicit CSS variables or geometry fields documented by the pattern
 - forbidden overrides include internal radius, segment typography, divider shadows, and state rules unless the pattern source itself is updated
 
-For swimlane task bars, reuse pattern id `swimlane-task-bar`. The canonical source is the canvas renderer in `patterns/swimlane-task/pattern.js`, aligned to `pypto-swimlane-perf-tool/js/swimlane.js`. Do not rebuild it with DOM/CSS or rewrite segment math, color mixing, border alpha, or label truncation locally.
+For swimlane task bars, reuse pattern id `swimlane-task-bar`. The canonical source is the canvas renderer and hover tooltip helper in `patterns/swimlane-task/pattern.js`, aligned to `pypto-swimlane-perf-tool/js/swimlane.js` and the PMU swimlane `.sl-tooltip` interaction. Do not rebuild it with DOM/CSS or rewrite segment math, color mixing, border alpha, label truncation, or hover tip behavior locally.
 
 For memory hierarchy diagrams, reuse pattern id `memory-architecture-layout`. The canonical source is the hybrid renderer in `patterns/memory-architecture/pattern.js`, extracted from `mem_viewer` DOM, BPG grid logic, MTE overlay behavior, and hardware hover tips. New hardware pages such as 950B should extend the preset/config surface there instead of copying `mem_viewer/index.html` or redrawing route geometry in page-local code.
 
@@ -357,7 +357,7 @@ For floating playback controls, reuse pattern id `floating-playback-control`. Th
 
 Current extraction progress:
 
-- `swimlane-task-bar`: shared canvas renderer registered and previewed
+- `swimlane-task-bar`: shared canvas renderer and hover tooltip helper registered and previewed
 - `memory-architecture-layout`: shared full-stage 950B renderer registered and previewed
 - `aic-core-object`: shared config-driven object renderer registered and previewed
 - `aiv-core-object`: shared config-driven object renderer registered and previewed

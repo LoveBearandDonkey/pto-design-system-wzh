@@ -52,6 +52,7 @@
     "--floating-playback-expanded-width",
     "--floating-playback-collapsed-size",
     "--floating-playback-collapsed-bg",
+    "--floating-playback-collapsed-shadow",
     "--floating-playback-button-bg",
     "--floating-playback-primary-bg",
     "--floating-playback-scrubber-track"

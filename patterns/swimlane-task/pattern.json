@@ -2,20 +2,23 @@
   "id": "swimlane-task-bar",
   "name": "Swimlane Task Bar",
   "type": "canvas",
-  "description": "Canvas-rendered three-segment task bar used for timed events in swimlane and timeline surfaces.",
+  "description": "Canvas-rendered three-segment task bar and hover tooltip used for timed events in swimlane and timeline surfaces.",
   "source": {
-    "visualContract": "pypto-swimlane-perf-tool/js/swimlane.js task-bar render block",
+    "visualContract": "pypto-swimlane-perf-tool/js/swimlane.js task-bar render block and PMU swimlane .sl-tooltip hover behavior",
     "renderScript": "patterns/swimlane-task/pattern.js",
     "patternHtml": "patterns/swimlane-task/pattern.html",
     "patternCss": "patterns/swimlane-task/pattern.css"
   },
   "useWhen": [
     "Displaying a timed task in a swimlane, timeline, or execution trace surface.",
-    "Showing input, compute, and output subsegments inside one task duration."
+    "Showing input, compute, and output subsegments inside one task duration.",
+    "Showing a task hover tooltip with op, lane, timing, status, dominant counter, and wrap metadata."
   ],
   "requiredApis": [
     "window.PtoSwimlaneTaskPattern.drawTaskBar",
-    "window.PtoSwimlaneTaskPattern.buildTaskSegmentSpec"
+    "window.PtoSwimlaneTaskPattern.buildTaskSegmentSpec",
+    "window.PtoSwimlaneTaskPattern.formatTaskTooltip",
+    "window.PtoSwimlaneTaskPattern.initHoverTooltip"
   ],
   "previewStructure": [
     "pto-pattern-swimlane-task",
@@ -38,6 +41,16 @@
     "task.label",
     "task.displayName",
     "task.rawName",
+    "task.opName",
+    "task.laneKind",
+    "task.laneId",
+    "task.totalCycle",
+    "task.clcCycle",
+    "task.gap",
+    "task.gapRatio",
+    "task.status",
+    "task.dominantCounter",
+    "task.wrapId",
     "task.inputRawMagic",
     "task.outputRawMagic",
     "isSelected",
@@ -54,5 +67,5 @@
     "text truncation rules",
     "DOM/CSS reimplementation of the task bar"
   ],
-  "agentReuseRule": "Import patterns/swimlane-task/pattern.js and call window.PtoSwimlaneTaskPattern.drawTaskBar. Do not rebuild the task bar with DOM/CSS or rewrite the segment math locally."
+  "agentReuseRule": "Import patterns/swimlane-task/pattern.js and call window.PtoSwimlaneTaskPattern.drawTaskBar for the canvas bar and initHoverTooltip for hover tips. Do not rebuild the task bar or tooltip behavior with page-local DOM/CSS or rewrite the segment math locally."
 }

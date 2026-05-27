@@ -72,6 +72,174 @@
     return DEFAULTS.borderDefault;
   }
 
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function taskTitle(task = {}) {
+    return task.opName || task.displayName || task.rawName || task.label || task.name || task.id || 'task';
+  }
+
+  function numericValue(value) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : null;
+  }
+
+  function durationText(value, unit = 'cycles') {
+    const number = numericValue(value);
+    if (number == null) return null;
+    return `${number.toFixed(0)} ${unit}`;
+  }
+
+  function tooltipRow(label, value, className = '') {
+    if (value == null || value === '') return '';
+    const valueClass = className ? ` ${className}` : '';
+    return `<div class="pto-swimlane-task-tooltip__row"><span class="pto-swimlane-task-tooltip__key">${escapeHtml(label)}</span><span class="pto-swimlane-task-tooltip__value${valueClass}">${escapeHtml(value)}</span></div>`;
+  }
+
+  function formatTaskTooltip(task = {}, options = {}) {
+    const durationUnit = options.durationUnit || 'cycles';
+    const title = taskTitle(task);
+    const lane = task.lane || [
+      task.laneKind,
+      task.laneId,
+    ].filter(Boolean).join(' / ');
+    const total = durationText(task.totalCycle ?? task.duration ?? task.value, durationUnit);
+    const clc = durationText(task.clcCycle, durationUnit);
+    const status = task.status || task.derived?.status || '';
+    const gap = numericValue(task.gap ?? task.derived?.gap);
+    const gapRatio = numericValue(task.gapRatio ?? task.derived?.gapRatio);
+    const gapText = gap == null
+      ? ''
+      : `${gap >= 0 ? '+' : ''}${gap.toFixed(0)} ${durationUnit}${gapRatio == null ? '' : ` (${(gapRatio * 100).toFixed(1)}%)`}`;
+    const dominant = task.dominantCounter || task.derived?.dominantCounter;
+    const statusClass = status === 'wait'
+      ? 'is-bad'
+      : status === 'overlap'
+        ? 'is-warn'
+        : status
+          ? 'is-ok'
+          : '';
+
+    return [
+      `<div class="pto-swimlane-task-tooltip__title">${escapeHtml(title)}</div>`,
+      tooltipRow('lane', lane),
+      tooltipRow('total', total),
+      tooltipRow('clc', clc),
+      tooltipRow('gap', gapText),
+      tooltipRow('status', status, statusClass),
+      tooltipRow('dominant', dominant),
+      tooltipRow('wrap', task.wrapId),
+    ].join('');
+  }
+
+  function createTooltip(options = {}) {
+    const tooltip = document.createElement('div');
+    tooltip.className = ['pto-swimlane-task-tooltip', options.className].filter(Boolean).join(' ');
+    tooltip.setAttribute('role', 'tooltip');
+    tooltip.setAttribute('aria-hidden', 'true');
+    return tooltip;
+  }
+
+  function positionTooltip(tooltip, event, bounds, target = null, offset = {}) {
+    if (!tooltip || !bounds) return;
+    const boundsRect = bounds.getBoundingClientRect();
+    const tipRect = tooltip.getBoundingClientRect();
+    const offsetX = offset.x ?? 14;
+    const offsetY = offset.y ?? 14;
+    let x = Number.isFinite(event?.clientX) ? event.clientX - boundsRect.left + offsetX : 0;
+    let y = Number.isFinite(event?.clientY) ? event.clientY - boundsRect.top + offsetY : 0;
+
+    if (!Number.isFinite(event?.clientX) && target) {
+      const targetRect = target.getBoundingClientRect();
+      x = targetRect.left - boundsRect.left + targetRect.width / 2 + offsetX;
+      y = targetRect.top - boundsRect.top + targetRect.height / 2 + offsetY;
+    }
+
+    const maxX = Math.max(8, boundsRect.width - tipRect.width - 8);
+    const maxY = Math.max(8, boundsRect.height - tipRect.height - 8);
+    tooltip.style.left = `${Math.max(8, Math.min(maxX, x))}px`;
+    tooltip.style.top = `${Math.max(8, Math.min(maxY, y))}px`;
+  }
+
+  function showTooltip(tooltip, task, event, options = {}) {
+    if (!tooltip || !task) return;
+    const html = options.getTooltipHtml?.(task, event) || formatTaskTooltip(task, options);
+    tooltip.innerHTML = html;
+    tooltip.classList.add('is-visible');
+    tooltip.setAttribute('aria-hidden', 'false');
+    positionTooltip(tooltip, event, options.bounds || tooltip.parentElement, event?.currentTarget || null, options.offset);
+  }
+
+  function moveTooltip(tooltip, event, options = {}) {
+    if (!tooltip?.classList.contains('is-visible')) return;
+    positionTooltip(tooltip, event, options.bounds || tooltip.parentElement, event?.currentTarget || null, options.offset);
+  }
+
+  function hideTooltip(tooltip) {
+    if (!tooltip) return;
+    tooltip.classList.remove('is-visible');
+    tooltip.setAttribute('aria-hidden', 'true');
+  }
+
+  function initHoverTooltip(options = {}) {
+    const root = options.root || null;
+    if (!root) return null;
+    const targets = typeof options.targets === 'string'
+      ? Array.from(root.querySelectorAll(options.targets))
+      : Array.from(options.targets || [root]).filter(Boolean);
+    const tooltip = options.tooltip || createTooltip(options.tooltipOptions);
+    const appendTo = options.appendTo || root;
+    const bounds = options.bounds || appendTo;
+    const destroyFns = [];
+
+    if (!tooltip.parentElement) appendTo.appendChild(tooltip);
+
+    targets.forEach((target) => {
+      const resolveTask = (event) => options.getTask?.(target, event) || target.__ptoSwimlaneTask || null;
+      const enter = (event) => {
+        const task = resolveTask(event);
+        if (!task) return;
+        target.classList?.add('is-hovered');
+        showTooltip(tooltip, task, event, {
+          ...options,
+          bounds,
+        });
+      };
+      const move = (event) => moveTooltip(tooltip, event, { ...options, bounds });
+      const leave = () => {
+        target.classList?.remove('is-hovered');
+        hideTooltip(tooltip);
+      };
+
+      target.addEventListener('pointerenter', enter);
+      target.addEventListener('pointermove', move);
+      target.addEventListener('pointerleave', leave);
+      target.addEventListener('focus', enter);
+      target.addEventListener('blur', leave);
+      destroyFns.push(() => {
+        target.removeEventListener('pointerenter', enter);
+        target.removeEventListener('pointermove', move);
+        target.removeEventListener('pointerleave', leave);
+        target.removeEventListener('focus', enter);
+        target.removeEventListener('blur', leave);
+      });
+    });
+
+    return {
+      tooltip,
+      destroy() {
+        destroyFns.splice(0).forEach((destroy) => destroy());
+        if (options.tooltip !== tooltip) tooltip.remove();
+      },
+    };
+  }
+
   function drawTaskBar(ctx, options) {
     const task = options.task || {};
     const barX = options.x || 0;
@@ -177,6 +345,12 @@
     mixHexColors,
     resolveDisplayColor,
     resolveBorderColor,
+    formatTaskTooltip,
+    createTooltip,
+    showTooltip,
+    moveTooltip,
+    hideTooltip,
+    initHoverTooltip,
     drawTaskBar,
   };
 })(window);
