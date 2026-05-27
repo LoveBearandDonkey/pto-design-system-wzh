@@ -26,9 +26,9 @@
   <link rel="stylesheet" href="../../tokens/foundation.css">
   <link rel="stylesheet" href="../../tokens/semantic.css">
   <link rel="stylesheet" href="../../tokens/components.css">
-  <link rel="stylesheet" href="../aic-core-object/pattern.css">
-  <link rel="stylesheet" href="../aiv-core-object/pattern.css">
-  <link rel="stylesheet" href="./pattern.css">
+  <link rel="stylesheet" href="../aic-core-object/pattern.css?v=memory-hover-v4">
+  <link rel="stylesheet" href="../aiv-core-object/pattern.css?v=memory-hover-v4">
+  <link rel="stylesheet" href="./pattern.css?v=memory-hover-v4">
 </head>
 <body class="pto-pattern-memory-arch__page">
   <main class="pto-pattern-memory-arch__main">
@@ -62,9 +62,9 @@
     </section>
   </main>
 
-  <script src="../aiv-core-object/pattern.js"></script>
-  <script src="../aic-core-object/pattern.js"></script>
-  <script src="./pattern.js"></script>
+  <script src="../aiv-core-object/pattern.js?v=memory-hover-v4"></script>
+  <script src="../aic-core-object/pattern.js?v=memory-hover-v4"></script>
+  <script src="./pattern.js?v=memory-hover-v4"></script>
   <script>
     (function renderMemoryArchitecturePattern() {
       const helper = window.PtoMemoryArchitecturePattern;
@@ -74,7 +74,7 @@
 
       const syncFrameHeight = () => {
         if (!isEmbedPreview || window.parent === window) return;
-        const contentNode = document.querySelector('[data-pto-mem-arch="true"]') || document.querySelector('.pto-pattern-memory-arch__stage') || stage;
+        const contentNode = document.querySelector('.pto-pattern-memory-arch__stage') || document.querySelector('[data-pto-mem-arch="true"]') || stage;
         const nextHeight = Math.ceil(contentNode.getBoundingClientRect().height);
         if (nextHeight > 0) {
           const resolvedHeight = nextHeight + 4;

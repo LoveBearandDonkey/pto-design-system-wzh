@@ -123,7 +123,8 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__focus-strip {
 }
 
 html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
-  padding-bottom: 0;
+  box-sizing: border-box;
+  padding: 8px 8px 14px;
 }
 
 [data-pto-mem-arch="true"] {
@@ -158,6 +159,7 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   min-height: 100%;
   border-radius: 28px;
   box-sizing: border-box;
+  --pto-mem950-node-shadow: inset 0 1px 0 color-mix(in srgb, var(--foreground) 5%, transparent);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--foreground) 5%, transparent);
   overflow: hidden;
 }
@@ -237,6 +239,7 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
 
 .pto-mem950__core-slot {
   position: relative;
+  border-radius: 30px;
   flex: 0 0 auto;
 }
 
@@ -269,8 +272,9 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
 .pto-mem950 [data-mem950-node].is-hovered,
 .pto-mem950 [data-aic-node].is-hovered,
 .pto-mem950 [data-aiv-node].is-hovered {
-  outline: 1px solid color-mix(in srgb, var(--foreground) 28%, transparent);
-  outline-offset: 2px;
+  box-shadow:
+    var(--pto-mem950-node-shadow, none),
+    0 0 0 2px color-mix(in srgb, var(--foreground) 28%, transparent);
 }
 
 .pto-mem950.is-path-focused [data-aic-node],
@@ -281,22 +285,81 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   transition:
     opacity var(--duration-fast) var(--easing-default),
     filter var(--duration-fast) var(--easing-default),
-    outline-color var(--duration-fast) var(--easing-default),
     box-shadow var(--duration-fast) var(--easing-default);
 }
 
 .pto-mem950.is-path-focused .is-hardware-active {
   opacity: 1 !important;
   filter: none !important;
-  outline: 2px solid color-mix(in srgb, var(--warning) 82%, white);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--warning) 16%, transparent);
+  box-shadow:
+    var(--pto-mem950-node-shadow, none),
+    0 0 0 2px color-mix(in srgb, var(--warning) 82%, white),
+    0 0 0 6px color-mix(in srgb, var(--warning) 16%, transparent);
   position: relative;
   z-index: 8;
 }
 
 .pto-mem950.is-path-focused .is-path-focus-source {
-  outline-style: solid;
+  box-shadow:
+    var(--pto-mem950-node-shadow, none),
+    0 0 0 2px color-mix(in srgb, var(--warning) 88%, white),
+    0 0 0 6px color-mix(in srgb, var(--warning) 18%, transparent);
+}
+
+.pto-mem950__core-slot.is-hovered,
+.pto-mem950__core-slot.is-hardware-active,
+.pto-mem950__core-slot.is-path-focus-source {
+  box-shadow: none;
+}
+
+.pto-mem950__core-slot.is-hovered > .pto-mem950__core-mount > .pto-aiv-core {
+  box-shadow:
+    var(--pto-aiv-core-shadow, none),
+    0 0 0 2px color-mix(in srgb, var(--foreground) 28%, transparent);
+}
+
+.pto-mem950__core-slot.is-hardware-active > .pto-mem950__core-mount > .pto-aiv-core {
+  box-shadow:
+    var(--pto-aiv-core-shadow, none),
+    0 0 0 2px color-mix(in srgb, var(--warning) 82%, white),
+    0 0 0 6px color-mix(in srgb, var(--warning) 16%, transparent);
+}
+
+.pto-mem950__core-slot.is-hovered > .pto-mem950__core-mount > .pto-aic-core {
+  box-shadow:
+    var(--pto-aic-core-shadow, none),
+    0 0 0 2px color-mix(in srgb, var(--foreground) 28%, transparent);
+}
+
+.pto-mem950__core-slot.is-hardware-active > .pto-mem950__core-mount > .pto-aic-core {
+  box-shadow:
+    var(--pto-aic-core-shadow, none),
+    0 0 0 2px color-mix(in srgb, var(--warning) 82%, white),
+    0 0 0 6px color-mix(in srgb, var(--warning) 16%, transparent);
+}
+
+.pto-mem950 .pto-aiv-core__cache,
+.pto-mem950 .pto-aiv-core__buffer,
+.pto-mem950 .pto-aiv-core__exec {
+  --pto-mem950-node-shadow: var(--pto-aiv-panel-highlight, none);
+}
+
+.pto-mem950 .pto-aic-core__buffer,
+.pto-mem950 .pto-aic-core__cache {
+  --pto-mem950-node-shadow: var(--pto-aic-panel-highlight, none);
+}
+
+.pto-mem950 .pto-aiv-core__scalar,
+.pto-mem950 .pto-aiv-core__vector,
+.pto-mem950 .pto-aic-core__cube,
+.pto-mem950 .pto-aic-core__scalar,
+.pto-mem950 .pto-aic-core__scheduler {
+  --pto-mem950-node-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.pto-mem950 .pto-aiv-core__buffer-header {
+  transform: translateY(5px);
+  margin-bottom: 1px;
 }
 
 .pto-mem950.is-path-focused .pto-mem950__overlay [data-route-id] {

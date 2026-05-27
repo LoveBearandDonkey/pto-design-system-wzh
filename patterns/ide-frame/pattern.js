@@ -363,7 +363,8 @@
 
     const syncFrameHeight = () => {
       if (!isEmbedPreview || global.parent === global) return;
-      const nextHeight = Math.ceil(document.body.getBoundingClientRect().height);
+      const contentNode = document.querySelector('.pto-ide-frame-preview') || document.body;
+      const nextHeight = Math.ceil(contentNode.getBoundingClientRect().height);
       if (nextHeight > 0) {
         global.parent.postMessage({
           type: 'pto-pattern-preview-height',

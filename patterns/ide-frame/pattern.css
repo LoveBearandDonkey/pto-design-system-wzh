@@ -686,6 +686,11 @@ html[data-embed-preview="true"] .pto-ide-frame-preview {
   padding: 0;
 }
 
+html[data-embed-preview="true"] .pto-ide-frame-preview-page {
+  min-height: 0;
+  overflow: hidden;
+}
+
 html[data-embed-preview="true"] .pto-ide-frame-preview > h1,
 html[data-embed-preview="true"] .pto-ide-frame-preview > p,
 html[data-embed-preview="true"] .pto-ide-frame-preview__label {
