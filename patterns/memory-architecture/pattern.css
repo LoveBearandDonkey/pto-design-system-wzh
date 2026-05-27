@@ -215,6 +215,61 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   z-index: 5;
 }
 
+.pto-mem950 [data-mem950-node].is-hovered,
+.pto-mem950 [data-aic-node].is-hovered,
+.pto-mem950 [data-aiv-node].is-hovered {
+  outline: 1px solid color-mix(in srgb, var(--foreground) 28%, transparent);
+  outline-offset: 2px;
+}
+
+.pto-mem950__hover-tip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 30;
+  width: max-content;
+  max-width: 280px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface-1) 92%, transparent);
+  color: var(--foreground);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-sans);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(-9999px, -9999px, 0);
+  transition: opacity 120ms ease;
+  backdrop-filter: var(--surface-backdrop-filter-soft, none);
+  -webkit-backdrop-filter: var(--surface-backdrop-filter-soft, none);
+}
+
+.pto-mem950__hover-tip.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.pto-mem950__hover-tip-title {
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.pto-mem950__hover-tip-body {
+  margin-top: 5px;
+  color: var(--foreground-secondary);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.pto-mem950__hover-tip-meta {
+  margin-top: 8px;
+  color: var(--foreground-muted);
+  font: 10px/1.2 var(--text-mono, ui-monospace, monospace);
+  text-transform: uppercase;
+}
+
 .pto-mem950__notes {
   display: flex;
   flex-wrap: wrap;

@@ -32,8 +32,8 @@
   <main class="pto-model-graphviz-pattern-main">
     <h1 class="pto-model-graphviz-pattern-title">Model Graphviz</h1>
     <p class="pto-model-graphviz-pattern-subtitle">
-      Renderer-driven model graph visual contract extracted from <code>graphviz/deepseek_v32_source_graph.html</code>.
-      The preview below embeds the real DeepSeek V3.2 graph page directly so the design-system pattern is checked against the approved renderer, not a recreated sample.
+      Renderer-driven model graph visual contract extracted from the source-checked DeepSeek V3.2 graph.
+      The bundled assets include the final V3.2 visualizer and extracted architecture schemas for DeepSeek V3.2, Qwen7B, and Gemma.
     </p>
     <div class="pto-model-graphviz-pattern-meta">
       <span class="pto-model-graphviz-pattern-badge">pattern id: model-graphviz</span>
@@ -47,14 +47,24 @@
     </div>
 
     <section class="pto-model-graphviz-pattern-section">
+      <h2 class="pto-model-graphviz-pattern-section-title">Architecture Schema Assets</h2>
+      <div class="pto-model-graphviz-pattern-assets">
+        <a href="./assets/deepseek_v32_model_architecture.json">DeepSeek V3.2 JSON</a>
+        <a href="./assets/qwen7b_model_architecture.json">Qwen7B JSON</a>
+        <a href="./assets/gemma_model_architecture.json">Gemma JSON</a>
+        <a href="./assets/index.json">Asset index</a>
+      </div>
+    </section>
+
+    <section class="pto-model-graphviz-pattern-section">
       <h2 class="pto-model-graphviz-pattern-section-title">DeepSeek V3.2 Source Page</h2>
       <p class="pto-model-graphviz-pattern-section-note">
-        Direct iframe of <code>graphviz/deepseek_v32_source_graph.html</code>. This is the source-checked V3.2 architecture page with the approved default depth-2 opening state.
+        Direct iframe of the bundled final V3.2 architecture visualizer. This is the source-checked page with clean Module / Op / State node semantics and the approved default depth-2 opening state.
       </p>
       <div class="pto-model-graphviz-iframe-stage pto-model-graphviz-iframe-stage-v32">
         <iframe
           class="pto-model-graphviz-source-frame"
-          src="../../graphviz/deepseek_v32_source_graph.html"
+          src="./assets/deepseek_v32_modelviz.html"
           title="DeepSeek V3.2 Graphviz Source Page"></iframe>
       </div>
     </section>

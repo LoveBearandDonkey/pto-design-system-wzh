@@ -2,11 +2,15 @@
   "id": "model-graphviz",
   "name": "Model Graphviz",
   "type": "svg",
-  "description": "Reusable SVG visual contract for TorchVista/Graphviz model architecture maps and report overlays. Captures the approved DeepSeek V3.2 graph style: default depth-2 folding, pill module/op nodes, rounded-rect tensor nodes, parent cluster shells with 10% white expanded fill, white edges, centered type labels, normalized safe colormap at s=0.82/l=0.40, strict semantic module hierarchy, parent-to-child fill inheritance for op/module nodes, folded representative edge dedupe, stable expand/collapse viewport anchoring, centered report-priority container title pills, no-extra-border priority tags, right-center fold controls, right-inset expand controls, no graph shadows, and no-border clicked-operator preview cards with dark code surfaces.",
+  "description": "Reusable SVG visual contract for TorchVista/Graphviz model architecture maps and report overlays. Captures the approved DeepSeek V3.2 graph style and bundles clean architecture schema assets for DeepSeek V3.2, Qwen7B, and Gemma. The contract keeps default depth-2 folding, pill module/op nodes, rounded-rect tensor/state nodes, parent cluster shells with 10% white expanded fill, white edges, centered type labels, normalized safe colormap at s=0.82/l=0.40, strict semantic module hierarchy, parent-to-child fill inheritance for op/module nodes, folded representative edge dedupe, stable expand/collapse viewport anchoring, centered report-priority container title pills, no-extra-border priority tags, right-center fold controls, right-inset expand controls, no graph shadows, and no-border clicked-operator preview cards with dark code surfaces.",
   "source": {
     "visualContract": [
       "graphviz/deepseek_v32_source_graph.html",
       "graphviz/deepseek_v32_report_overlay_demo.html",
+      "patterns/model-graphviz/assets/deepseek_v32_modelviz.html",
+      "patterns/model-graphviz/assets/deepseek_v32_model_architecture.json",
+      "patterns/model-graphviz/assets/qwen7b_model_architecture.json",
+      "patterns/model-graphviz/assets/gemma_model_architecture.json",
       "patterns/model-graphviz/pattern.html",
       "patterns/model-graphviz/pattern.css",
       "patterns/model-graphviz/pattern.js"
@@ -15,7 +19,14 @@
     "patternCss": "patterns/model-graphviz/pattern.css",
     "renderScript": "patterns/model-graphviz/pattern.js",
     "originalModule": "graphviz/deepseek_v32_source_graph.html",
-    "parityNote": "The pattern preview embeds the real DeepSeek V3.2 Graphviz page with an iframe for parity. The original Graphviz page still owns DOT generation, Graphviz layout, D3 zoom, popup behavior, and expand/collapse graph reloads. New model graph pages should reuse this pattern contract for visual styling, report overlay placement, and renderer math."
+    "schemaAssets": {
+      "deepseekV32": "patterns/model-graphviz/assets/deepseek_v32_model_architecture.json",
+      "qwen7b": "patterns/model-graphviz/assets/qwen7b_model_architecture.json",
+      "gemma": "patterns/model-graphviz/assets/gemma_model_architecture.json",
+      "index": "patterns/model-graphviz/assets/index.json"
+    },
+    "bundledPreview": "patterns/model-graphviz/assets/deepseek_v32_modelviz.html",
+    "parityNote": "The pattern preview embeds the bundled final DeepSeek V3.2 Graphviz page with an iframe for parity. The Graphviz page still owns DOT generation, Graphviz layout, D3 zoom, popup behavior, and expand/collapse graph reloads. New model graph pages should reuse this pattern contract for visual styling, report overlay placement, renderer math, and architecture schema ingestion."
   },
   "layoutContract": {
     "dotGraphMargin": 0.22,
@@ -45,15 +56,28 @@
   "variants": [
     {
       "id": "deepseek-v32-source",
-      "sourcePage": "graphviz/deepseek_v32_source_graph.html",
+      "sourcePage": "patterns/model-graphviz/assets/deepseek_v32_modelviz.html",
+      "schemaFile": "patterns/model-graphviz/assets/deepseek_v32_model_architecture.json",
       "defaultCollapseDepth": 2,
-      "notes": "Expands Transformer Core and Decoder Block by default, folds deeper semantic modules, uses tensor styling for hidden/block/output tensors, no shadows, normalized colormap s=0.82/l=0.40, right-center fold controls, graph margin/pad, cluster margin, and report-overlay priority title pills when the report page is loaded."
+      "notes": "Final source-checked DeepSeek V3.2 clean architecture schema: 61 main layers, dense 0-2, MoE 3-60, Module/Op/State node semantics, tensor facts on edges, no shapes or constraints inside node labels."
     },
     {
       "id": "deepseek-v32-report-overlay",
       "sourcePage": "graphviz/deepseek_v32_report_overlay_demo.html",
       "defaultCollapseDepth": 2,
       "notes": "Infinite-canvas report overlay page using the source Graphviz iframe, transparent top header, right panel-shell inspector, Mapped Nodes graph focusing, red/orange/yellow priority fills, centered container title pills, and invisible-only enlarged border hit targets."
+    },
+    {
+      "id": "qwen7b-source-schema",
+      "schemaFile": "patterns/model-graphviz/assets/qwen7b_model_architecture.json",
+      "defaultCollapseDepth": 2,
+      "notes": "Clean Qwen-7B source/config architecture schema: 32 decoder layers, folded layer template, tensor facts on edges."
+    },
+    {
+      "id": "gemma-source-schema",
+      "schemaFile": "patterns/model-graphviz/assets/gemma_model_architecture.json",
+      "defaultCollapseDepth": 2,
+      "notes": "Clean Gemma text-decoder source/config architecture schema: 30 decoder layers, folded attention/MLP/MoE structure, tensor facts on edges."
     }
   ],
   "useWhen": [

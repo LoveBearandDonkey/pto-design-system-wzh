@@ -86,6 +86,15 @@ Use `patterns/workbench-shell` only as the draggable split kernel. It does not o
 
 If a matched pattern is rendered, canvas, SVG, or hybrid, do not rebuild it with static HTML/CSS. Load its `pattern.css` and `pattern.js`, then call its documented `window.Pto*Pattern` or `window.Pto*` API.
 
+Before changing or reusing a pattern preview, run this capability contract check so preview copy cannot drift from implementation:
+
+1. Read the matching `design-system-preview.html` card and list every capability it claims, such as hover tips, playback, collapse, resize, zoom, overlay, or scrubber behavior.
+2. Confirm each claimed capability is declared in `patterns/<pattern-id>/pattern.json`, especially in `requiredApis`, `allowedOverrides`, and `forbiddenOverrides`.
+3. Confirm `patterns/<pattern-id>/pattern.js` actually exports the named `window.Pto*Pattern` / `window.Pto*` API and implements the behavior.
+4. Confirm `patterns/<pattern-id>/pattern.html` calls that API in the preview so the behavior can be visually verified.
+
+If any of these four points disagree, fix the shared pattern contract or preview before consuming it in a product page. Do not leave a preview card promising behavior that is not exported and exercised by the pattern.
+
 ### 3. Choose iframe or direct embedding
 
 Use an iframe when preserving a complete source page is more important than local composition. This is the right choice for parity previews and for pages where the original source owns heavy runtime behavior, such as Graphviz DOT generation, D3 zoom, popup behavior, graph reloads, or report-overlay focus state.

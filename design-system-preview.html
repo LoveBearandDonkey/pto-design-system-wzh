@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="./tokens/components.css">
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="./patterns/workbench-shell/pattern.css">
+  <link rel="stylesheet" href="./patterns/floating-playback-control/pattern.css">
   <link rel="stylesheet" href="./patterns/ide-frame/pattern.css">
   <link rel="stylesheet" href="./swimlane/styles.css">
   <style>
@@ -97,12 +98,6 @@
       white-space: nowrap;
     }
 
-    .blocks-toolbar .home-link {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-    }
-
     .blocks-toolbar .toolbar-sep {
       height: 24px;
       margin: 0 4px;
@@ -139,12 +134,10 @@
       opacity: var(--lucide-icon-opacity-current, var(--lucide-icon-opacity-strong));
     }
 
-    .home-link .lucide-icon,
     .btn-ghost .lucide-icon {
       --lucide-icon-opacity-current: var(--lucide-icon-opacity-secondary);
     }
 
-    .home-link:hover .lucide-icon,
     .btn-ghost:hover .lucide-icon {
       --lucide-icon-opacity-current: var(--lucide-icon-opacity-strong);
     }
@@ -1811,26 +1804,20 @@
 <body>
   <header class="toolbar blocks-toolbar">
     <div class="toolbar-l">
-      <a class="btn btn-ghost btn-icon home-link" href="./launch.html" title="Home" aria-label="Home">
-        <svg class="lucide-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="m3 11 9-8 9 8"></path>
-          <path d="M5 10v10h14V10"></path>
-          <path d="M9 20v-6h6v6"></path>
-        </svg>
-      </a>
       <span class="toolbar-logo">PyPTO Design System</span>
       <span class="toolbar-sep" aria-hidden="true"></span>
       <nav class="blocks-nav" aria-label="Primary">
-        <a class="is-active" href="./design-system-preview.html">Components</a>
-        <a href="#pattern-previews">Patterns</a>
+        <a class="is-active" href="./design-system-preview.html">组件</a>
+        <a href="#pattern-previews">模式</a>
         <a href="./DESIGN.md">Design.md</a>
       </nav>
     </div>
     <div class="toolbar-r">
+      <a class="btn btn-ghost" href="https://yinyucheng0601.github.io/compute-graph-viewer/launch.html">首页入口</a>
       <div class="preview-control-group" aria-label="Theme mode">
-        <button class="theme-switch-btn is-active" type="button" data-theme-mode="dark">Dark</button>
-        <button class="theme-switch-btn" type="button" data-theme-mode="light">Light</button>
-        <button class="theme-switch-btn" type="button" data-theme-mode="glass">Glass</button>
+        <button class="theme-switch-btn is-active" type="button" data-theme-mode="dark">深色</button>
+        <button class="theme-switch-btn" type="button" data-theme-mode="light">浅色</button>
+        <button class="theme-switch-btn" type="button" data-theme-mode="glass">玻璃</button>
       </div>
     </div>
   </header>
@@ -1839,7 +1826,7 @@
     <div class="preview-main blocks-list">
     <header class="preview-head" id="overview">
       <div class="preview-inline">
-        <a class="btn btn-ghost" href="#pattern-previews">Browse patterns</a>
+        <a class="btn btn-ghost" href="#pattern-previews">浏览模式库</a>
       </div>
       <h1 class="preview-title">PyPTO Design System</h1>
       <p class="preview-sub">基于 Shadcn 实现的 PTO 3.0 设计风格组件库，配合 design.md 和 skill 使用。本页面展示基础组件、tokens 和 patterns 入口。</p>
@@ -1951,7 +1938,7 @@
             <table class="agent-table">
               <tr><td>Stable entry</td><td>Every pattern must expose a stable consumer entry. Static visual primitives use documented CSS classes; DOM/SVG/canvas generation, drag behavior, zoom, routing, persistence, or synchronized state must go through a <code>window.Pto*Pattern</code> or <code>window.Pto*</code> helper. Business pages must not copy generated DOM or restyle internal pattern classes.</td></tr>
               <tr><td><code>swimlane-task-bar</code></td><td>Use <code>patterns/swimlane-task/pattern.js</code> and call <code>window.PtoSwimlaneTaskPattern.drawTaskBar</code>. The canonical task bar is canvas-rendered, sourced from <code>pypto-swimlane-perf-tool/js/swimlane.js</code>. Do not rebuild it with DOM/CSS or rewrite segment math locally.</td></tr>
-              <tr><td><code>memory-architecture-layout</code></td><td>Use <code>patterns/memory-architecture/pattern.js</code>. Call <code>window.PtoMemoryArchitecturePattern.renderArchitecture</code> to build the stage, <code>createRouteOverlay</code> for MTE routes, <code>attachHoverInteractions</code> for hardware tips, and <code>setDetailVisibility</code> / <code>applyCanvasScale</code> for page controls. Extend preset data for 910B/950; do not copy raw <code>mem_viewer</code> HTML or redraw route geometry locally.</td></tr>
+              <tr><td><code>memory-architecture-layout</code></td><td>Use <code>patterns/memory-architecture/pattern.js</code>. Call <code>window.PtoMemoryArchitecturePattern.renderArchitecture</code> to build the stage, <code>createRouteOverlay</code> for MTE routes, and <code>attachHoverInteractions</code> for hardware tips. Extend preset data for 910B/950; do not copy raw <code>mem_viewer</code> HTML or redraw route geometry locally.</td></tr>
               <tr><td><code>aic-core-object</code></td><td>Use <code>patterns/aic-core-object/pattern.js</code> and call <code>window.PtoAicCorePattern.render</code>. The shell is config-driven from the design draft; extend the preset data for 950B instead of cloning the generated DOM or restyling the chrome locally.</td></tr>
               <tr><td><code>aiv-core-object</code></td><td>Use <code>patterns/aiv-core-object/pattern.js</code> and call <code>window.PtoAivCorePattern.render</code>. The shell is config-driven from the approved AIV draft; extend the preset data for later chip variants instead of copying the generated DOM or changing card geometry locally.</td></tr>
               <tr><td><code>workbench-shell</code></td><td>Resize kernel only. Use <code>patterns/workbench-shell/pattern.css</code> and <code>patterns/workbench-shell/pattern.js</code>, then call <code>window.PtoWorkbenchShell.initResizablePanes</code>, <code>createSplitGutter</code>, or <code>initNestedResizablePanes</code> for horizontal / vertical / nested splits. Do not put page chrome, pane fills, topbars, titles, canvas controls, or IDE typography into this pattern.</td></tr>
@@ -1998,12 +1985,12 @@
       </details>
       <div class="preview-controls">
         <div class="preview-control-group">
-          <span class="preview-control-label">Solid Tone</span>
-          <button class="theme-switch-btn" type="button" data-accent-scope="default">Default</button>
-          <button class="theme-switch-btn is-active" type="button" data-accent-scope="accent">Accent</button>
+          <span class="preview-control-label">主色调</span>
+          <button class="theme-switch-btn" type="button" data-accent-scope="default">默认</button>
+          <button class="theme-switch-btn is-active" type="button" data-accent-scope="accent">强调色</button>
         </div>
         <div class="preview-control-group">
-          <span class="preview-control-label">Accent</span>
+          <span class="preview-control-label">强调色</span>
           <input class="accent-picker" id="accentPicker" type="color" value="#5b8cff" aria-label="Accent color picker">
           <input class="accent-input" id="accentInput" type="text" value="#5B8CFF" spellcheck="false" aria-label="Accent hex input">
         </div>
@@ -2012,20 +1999,20 @@
 
     <aside class="preview-nav" aria-label="Component categories">
       <div class="preview-nav-title">PTO UI Kit</div>
-      <a class="preview-nav-link is-active" href="#overview" data-filter="featured">Featured</a>
-      <a class="preview-nav-link" href="#pattern-previews" data-filter="patterns">Patterns</a>
-      <a class="preview-nav-link" href="#color-palette" data-filter="foundations">Foundations</a>
-      <a class="preview-nav-link" href="#buttons" data-filter="actions">Actions</a>
-      <a class="preview-nav-link" href="#toggle-chip" data-filter="selection">Selection</a>
-      <a class="preview-nav-link" href="#labels-badges" data-filter="metadata">Metadata</a>
-      <a class="preview-nav-link" href="#panels-containers" data-filter="surfaces">Surfaces</a>
-      <a class="preview-nav-link" href="#layout-shell" data-filter="layout">Layout</a>
-      <a class="preview-nav-link" href="#data-viz-exempt" data-filter="visualization">Visualization</a>
-      <a class="preview-nav-link" href="#module-matrix" data-filter="migration">Migration</a>
+      <a class="preview-nav-link is-active" href="#overview" data-filter="featured">精选</a>
+      <a class="preview-nav-link" href="#pattern-previews" data-filter="patterns">模式库</a>
+      <a class="preview-nav-link" href="#color-palette" data-filter="foundations">基础色板</a>
+      <a class="preview-nav-link" href="#buttons" data-filter="actions">操作按钮</a>
+      <a class="preview-nav-link" href="#toggle-chip" data-filter="selection">选择控件</a>
+      <a class="preview-nav-link" href="#labels-badges" data-filter="metadata">元信息</a>
+      <a class="preview-nav-link" href="#panels-containers" data-filter="surfaces">容器卡片</a>
+      <a class="preview-nav-link" href="#layout-shell" data-filter="layout">布局框架</a>
+      <a class="preview-nav-link" href="#data-viz-exempt" data-filter="visualization">可视化例外</a>
+      <a class="preview-nav-link" href="#module-matrix" data-filter="migration">迁移映射</a>
     </aside>
 
     <section class="preview-section preview-section-viewer block-card" id="layout-shell" data-categories="featured layout surfaces patterns">
-      <h2 class="preview-section-title">PTO 典型 IDE Frame</h2>
+      <h2 class="preview-section-title">PTO 典型 IDE 框架</h2>
       <div class="preview-fullpage">
         <section class="pto-ide-frame preview-feature-ide" data-ide-frame data-host="standalone" aria-label="PTO typical IDE frame">
           <header class="pto-ide-frame__topbar pto-ide-frame__standalone-chrome">
@@ -2172,7 +2159,7 @@
                     </div>
                   </div>
                   <header class="pto-ide-frame__pane-header">
-                    <h2 class="pto-ide-frame__pane-title">Preview</h2>
+                    <h2 class="pto-ide-frame__pane-title">预览</h2>
                     <span class="pto-ide-frame__pane-meta">index.html</span>
                   </header>
                   <div class="pto-ide-frame__pane-body" data-ide-slot="preview">
@@ -2215,8 +2202,8 @@
 
                 <aside class="pto-ide-frame__pane" data-ide-pane="inspector">
                   <header class="pto-ide-frame__pane-header">
-                    <h2 class="pto-ide-frame__pane-title">View</h2>
-                    <span class="pto-ide-frame__pane-meta">view slot</span>
+                    <h2 class="pto-ide-frame__pane-title">视图</h2>
+                    <span class="pto-ide-frame__pane-meta">视图插槽</span>
                   </header>
                   <div class="pto-ide-frame__pane-body" data-ide-slot="inspector">
                     <div class="preview-empty-view">请运行 skill，并定义本窗口视图</div>
@@ -2226,26 +2213,27 @@
 
               <footer class="pto-ide-frame__status-strip pto-ide-frame__standalone-chrome" data-ide-slot="status">
                 <span>PTO 3.0</span>
-                <span>view composition pending</span>
+                <span>等待视图组合</span>
               </footer>
             </div>
           </div>
+          <div class="pto-ide-frame__floating-playback-mount" data-ide-slot="playback" data-ide-floating-playback data-total-steps="128" data-step="32" data-playback-state="memory path trace"></div>
         </section>
       </div>
     </section>
 
     <section class="preview-section block-card" id="pattern-previews" data-categories="featured patterns layout visualization">
-      <h2 class="preview-section-title">Pattern Library</h2>
+      <h2 class="preview-section-title">模式库</h2>
       <div class="preview-grid">
 
         <article class="preview-card preview-card-full-row">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Swimlane Event Pattern</h3>
-            <div class="preview-card-class">swimlane module: canvas task-bar renderer</div>
+            <h3 class="preview-card-title">泳道事件 Pattern</h3>
+            <div class="preview-card-class">swimlane 模块：Canvas 任务条渲染器</div>
           </div>
           <div class="preview-stage preview-stack">
             <div class="preview-inline">
-              <a class="btn btn-ghost" href="./patterns/swimlane-task/pattern.html">Open Full Preview</a>
+              <a class="btn btn-ghost" href="./patterns/swimlane-task/pattern.html">查看完整示例</a>
             </div>
             <div class="preview-embed">
               <iframe class="preview-embed-frame" data-pattern-preview="swimlane-task" data-src="./patterns/swimlane-task/pattern.html?embed=1" src="about:blank" title="Swimlane Task Pattern Preview" loading="lazy"></iframe>
@@ -2261,12 +2249,12 @@
 
         <article class="preview-card preview-card-full-row">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">910B / 950 Memory Architecture Pattern</h3>
-            <div class="preview-card-class">full-stage object: GM / L2 / AIC / AIV / UB / L0C route overlay + hover tips</div>
+            <h3 class="preview-card-title">910B / 950 存储架构 Pattern</h3>
+            <div class="preview-card-class">全画布对象：GM / L2 / AIC / AIV / UB / L0C 路径覆盖 + 悬浮提示</div>
           </div>
           <div class="preview-stage preview-stack">
             <div class="preview-inline">
-              <a class="btn btn-ghost" href="./patterns/memory-architecture/pattern.html">Open Full Preview</a>
+              <a class="btn btn-ghost" href="./patterns/memory-architecture/pattern.html">查看完整示例</a>
             </div>
             <div class="preview-embed">
               <iframe class="preview-embed-frame" data-pattern-preview="memory-architecture" data-src="./patterns/memory-architecture/pattern.html?embed=1" src="about:blank" title="910B / 950 Memory Architecture Pattern Preview" loading="lazy"></iframe>
@@ -2282,12 +2270,12 @@
 
         <article class="preview-card preview-card-full-row">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Pass-IR Graph Node Pattern</h3>
-            <div class="preview-card-class">pass-ir module: hybrid graph node renderer</div>
+            <h3 class="preview-card-title">Pass-IR 图节点 Pattern</h3>
+            <div class="preview-card-class">pass-ir 模块：混合图节点渲染器</div>
           </div>
           <div class="preview-stage preview-stack">
             <div class="preview-inline">
-              <a class="btn btn-ghost" href="./patterns/pass-ir-graph-node/pattern.html">Open Full Preview</a>
+              <a class="btn btn-ghost" href="./patterns/pass-ir-graph-node/pattern.html">查看完整示例</a>
             </div>
             <div class="preview-embed">
               <iframe class="preview-embed-frame" data-pattern-preview="pass-ir-graph-node" data-src="./patterns/pass-ir-graph-node/pattern.html?embed=1" src="about:blank" title="Pass-IR Graph Node Pattern Preview" loading="lazy"></iframe>
@@ -2303,12 +2291,12 @@
 
         <article class="preview-card preview-card-full-row">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Workbench Split Kernel Pattern</h3>
-            <div class="preview-card-class">resize kernel: horizontal / vertical / nested split helpers</div>
+            <h3 class="preview-card-title">工作台分栏内核 Pattern</h3>
+            <div class="preview-card-class">分栏内核：横向 / 纵向 / 嵌套分栏辅助函数</div>
           </div>
           <div class="preview-stage preview-stack">
             <div class="preview-inline">
-              <a class="btn btn-ghost" href="./patterns/workbench-shell/pattern.html">Open Full Preview</a>
+              <a class="btn btn-ghost" href="./patterns/workbench-shell/pattern.html">查看完整示例</a>
             </div>
             <div class="preview-embed">
               <iframe class="preview-embed-frame" data-pattern-preview="workbench-shell" data-src="./patterns/workbench-shell/pattern.html?embed=1" src="about:blank" title="Workbench Split Kernel Pattern Preview" loading="lazy"></iframe>
@@ -2324,12 +2312,12 @@
 
         <article class="preview-card preview-card-full-row">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">PTO IDE Frame Pattern</h3>
-            <div class="preview-card-class">framework shell: standalone host + VS Code webview adapter + content-free slots</div>
+            <h3 class="preview-card-title">PTO IDE 框架 Pattern</h3>
+            <div class="preview-card-class">框架壳：独立宿主 + VS Code webview 适配 + 无内容插槽</div>
           </div>
           <div class="preview-stage preview-stack">
             <div class="preview-inline">
-              <a class="btn btn-ghost" href="./patterns/ide-frame/pattern.html?v=ide-frame-v4">Open Full Preview</a>
+              <a class="btn btn-ghost" href="./patterns/ide-frame/pattern.html?v=ide-frame-v4">查看完整示例</a>
             </div>
             <div class="preview-embed">
               <iframe class="preview-embed-frame" data-pattern-preview="ide-frame" data-src="./patterns/ide-frame/pattern.html?embed=1&amp;v=ide-frame-v4" src="about:blank" title="PTO IDE Frame Pattern Preview" loading="lazy"></iframe>
@@ -2345,12 +2333,12 @@
 
         <article class="preview-card preview-card-full-row">
           <div class="preview-card-head">
-            <h3 class="preview-card-title">Floating Playback Control Pattern</h3>
-            <div class="preview-card-class">mem_viewer module: bottom playback shell + timeline scrubber state helper</div>
+            <h3 class="preview-card-title">悬浮播放控件 Pattern</h3>
+            <div class="preview-card-class">mem_viewer 模块：底部播放壳 + 时间轴拖拽状态辅助</div>
           </div>
           <div class="preview-stage preview-stack">
             <div class="preview-inline">
-              <a class="btn btn-ghost" href="./patterns/floating-playback-control/pattern.html">Open Full Preview</a>
+              <a class="btn btn-ghost" href="./patterns/floating-playback-control/pattern.html">查看完整示例</a>
             </div>
             <div class="preview-embed">
               <iframe class="preview-embed-frame" data-pattern-preview="floating-playback-control" data-src="./patterns/floating-playback-control/pattern.html?embed=1" src="about:blank" title="Floating Playback Control Pattern Preview" loading="lazy"></iframe>
@@ -2952,6 +2940,7 @@
     </div>
   </main>
   <script src="./patterns/workbench-shell/pattern.js"></script>
+  <script src="./patterns/floating-playback-control/pattern.js"></script>
   <script src="./patterns/ide-frame/pattern.js"></script>
   <script>
     (() => {

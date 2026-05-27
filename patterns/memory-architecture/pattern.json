@@ -2,7 +2,7 @@
   "id": "memory-architecture-layout",
   "name": "Memory Architecture Layout",
   "type": "hybrid",
-  "description": "Full-stage PTO memory architecture shell for 950B-class diagrams. It composes the shared AIC/AIV internal renderers, chip-level memory rails, and an SVG overlay for MTE/CV shared routes.",
+  "description": "Full-stage PTO memory architecture shell for 950B-class diagrams. It composes the shared AIC/AIV internal renderers, chip-level memory rails, an SVG overlay for MTE/CV shared routes, and shared hardware hover tips.",
   "source": {
     "visualContract": [
       "patterns/aic-core-object/pattern.js",
@@ -24,11 +24,13 @@
   ],
   "requiredApis": [
     "window.PtoMemoryArchitecturePattern.renderArchitecture(container, presetOrKey)",
-    "window.PtoMemoryArchitecturePattern.createRouteOverlay(container, presetOrKey)"
+    "window.PtoMemoryArchitecturePattern.createRouteOverlay(container, presetOrKey)",
+    "window.PtoMemoryArchitecturePattern.attachHoverInteractions(container, presetOrKey, options)"
   ],
   "allowedOverrides": [
     "preset rails, core membership, titles, route list, and route labels",
     "choosing which shared AIC/AIV presets are mounted into each core slot",
+    "hover tip copy through preset hoverTips or attachHoverInteractions options",
     "container framing outside the pattern root"
   ],
   "forbiddenOverrides": [

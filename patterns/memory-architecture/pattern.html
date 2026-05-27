@@ -77,6 +77,7 @@
 
       helper.renderArchitecture(stage, 'ascend950b');
       const overlay = helper.createRouteOverlay(stage, 'ascend950b');
+      helper.attachHoverInteractions?.(stage, 'ascend950b');
       overlay?.render();
 
       if (isEmbedPreview && 'ResizeObserver' in window) {

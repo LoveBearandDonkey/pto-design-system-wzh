@@ -205,6 +205,112 @@
         'UB → L2/GM via MTE3',
         '950 direct CV lanes: L0C→UB and UB→L1',
       ],
+      hoverTips: {
+        'rail:GM': {
+          title: 'Global Memory',
+          body: 'Chip-level memory source and sink for the full-stage architecture.',
+        },
+        'rail:L2': {
+          title: 'L2 Cache',
+          body: 'Shared cache rail feeding AIV DCache or UB and AIC DCache or L1 through MTE2 paths.',
+        },
+        'core:AIV1': {
+          title: 'AIV 1',
+          body: 'Vector-side core object with DCache, ICache, Scalar, UB, SIMT, SIMD, and Vector lanes.',
+        },
+        'core:AIC': {
+          title: 'AIC',
+          body: 'Cube-side compute object with L1, L0 buffers, CUBE, Scalar, dispatch, and execution queues.',
+        },
+        'core:AIV2': {
+          title: 'AIV 2',
+          body: 'Second vector-side core object used by the 950B split memory-stage layout.',
+        },
+        'buffer:UB': {
+          title: 'UB',
+          body: 'Unified Buffer for AIV vector-side data staging and MTE3 return paths.',
+        },
+        'buffer:L1': {
+          title: 'L1',
+          body: 'AIC local memory feeding L0A, L0B, BT, and FP lanes.',
+        },
+        'buffer:L0A': {
+          title: 'L0A',
+          body: 'AIC matrix operand buffer for CUBE input staging.',
+        },
+        'buffer:L0B': {
+          title: 'L0B',
+          body: 'AIC matrix operand buffer for CUBE input staging.',
+        },
+        'buffer:L0C': {
+          title: 'L0C',
+          body: 'AIC CUBE output buffer; 950 direct CV lanes can forward data toward AIV UB.',
+        },
+        'buffer:BT': {
+          title: 'BT',
+          body: 'AIC bias or transform-side buffer lane connected through MTE1.',
+        },
+        'buffer:FP': {
+          title: 'FP',
+          body: 'AIC FixPipe buffer lane for post-CUBE data movement.',
+        },
+        'cache:DCache': {
+          title: 'DCache',
+          body: 'Data cache endpoint for memory transport and scalar-side access.',
+        },
+        'cache:ICache': {
+          title: 'ICache',
+          body: 'Instruction cache feeding the scalar or scheduler-side control path.',
+        },
+        'scalar:Scalar': {
+          title: 'Scalar',
+          body: 'Scalar control block coordinating local compute and memory movement.',
+        },
+        'exec:SIMT': {
+          title: 'SIMT',
+          body: 'AIV SIMT execution lane connected to scalar control and vector output.',
+        },
+        'exec:SIMD': {
+          title: 'SIMD',
+          body: 'AIV SIMD execution lane connected to UB data and vector output.',
+        },
+        'vector:Vector': {
+          title: 'Vector',
+          body: 'AIV vector execution endpoint receiving SIMT and SIMD results.',
+        },
+        'cube:CUBE': {
+          title: 'CUBE',
+          body: 'AIC matrix compute block fed by L0A, L0B, and BT buffers.',
+        },
+        'scheduler:Dispatch': {
+          title: 'Dispatch',
+          body: 'AIC dispatch block issuing work into cube, FixPipe, and MTE queues.',
+        },
+        'queue:Cube Queue': {
+          title: 'Cube Queue',
+          body: 'Dispatch queue for CUBE-side compute operations.',
+        },
+        'queue:FixPipe Queue': {
+          title: 'FixPipe Queue',
+          body: 'Dispatch queue for FixPipe operations.',
+        },
+        'queue:MTE1 Queue': {
+          title: 'MTE1 Queue',
+          body: 'Dispatch queue for local memory transfer engine work.',
+        },
+        'queue:MTE2 Queue': {
+          title: 'MTE2 Queue',
+          body: 'Dispatch queue for L2-to-local memory transfer work.',
+        },
+        'transport:MTE1': {
+          title: 'MTE1',
+          body: 'Local AIC transport lane between L1 and L0 or FixPipe buffers.',
+        },
+        'transport:FixPipe': {
+          title: 'FixPipe',
+          body: 'AIC post-processing transport lane.',
+        },
+      },
     },
   };
 
@@ -218,6 +324,47 @@
     if (className) el.className = className;
     if (textContent !== undefined) el.textContent = textContent;
     return el;
+  }
+
+  function clearChildren(el) {
+    while (el.firstChild) el.removeChild(el.firstChild);
+  }
+
+  function readableNodeKey(key) {
+    const [, label = key] = String(key || '').split(/:(.*)/);
+    return label || String(key || '');
+  }
+
+  function nodeKindLabel(target) {
+    if (target.dataset.mem950Node) return 'memory architecture';
+    if (target.dataset.aicNode) return 'AIC object';
+    if (target.dataset.aivNode) return 'AIV object';
+    return 'hardware object';
+  }
+
+  function tipForTarget(target, preset, options = {}) {
+    const key = target.dataset.mem950Node || target.dataset.aicNode || target.dataset.aivNode || '';
+    const custom = options.getTip?.(key, target, preset);
+    const tip = custom || options.hoverTips?.[key] || preset?.hoverTips?.[key];
+    if (typeof tip === 'string') {
+      return {
+        title: readableNodeKey(key),
+        body: tip,
+        meta: nodeKindLabel(target),
+      };
+    }
+    if (tip) {
+      return {
+        title: tip.title || readableNodeKey(key),
+        body: tip.body || tip.description || '',
+        meta: tip.meta || nodeKindLabel(target),
+      };
+    }
+    return {
+      title: readableNodeKey(key),
+      body: `${readableNodeKey(key)} in the ${preset?.name || 'memory architecture'} pattern.`,
+      meta: nodeKindLabel(target),
+    };
   }
 
   function svgNode(tagName, attrs) {
@@ -575,6 +722,102 @@
     };
   }
 
+  function attachHoverInteractions(container, presetOrKey, options = {}) {
+    const preset = resolvePreset(presetOrKey);
+    const root = container?.querySelector?.('.pto-mem950') || container;
+    if (!root || !preset) return null;
+
+    const selector = options.selector || '[data-mem950-node], [data-aic-node], [data-aiv-node]';
+    const tooltip = node('div', 'pto-mem950__hover-tip');
+    tooltip.setAttribute('role', 'tooltip');
+    tooltip.setAttribute('aria-hidden', 'true');
+    root.appendChild(tooltip);
+
+    let activeTarget = null;
+
+    const positionTooltip = (clientX, clientY, fallbackTarget = activeTarget) => {
+      const rootRect = root.getBoundingClientRect();
+      const tipRect = tooltip.getBoundingClientRect();
+      let x = Number.isFinite(clientX) ? clientX - rootRect.left + 14 : 0;
+      let y = Number.isFinite(clientY) ? clientY - rootRect.top + 14 : 0;
+
+      if (!Number.isFinite(clientX) && fallbackTarget) {
+        const targetRect = fallbackTarget.getBoundingClientRect();
+        x = targetRect.left - rootRect.left + targetRect.width / 2 + 12;
+        y = targetRect.top - rootRect.top + Math.min(targetRect.height, 28);
+      }
+
+      const maxX = Math.max(8, rootRect.width - tipRect.width - 8);
+      const maxY = Math.max(8, rootRect.height - tipRect.height - 8);
+      tooltip.style.left = `${Math.max(8, Math.min(maxX, x))}px`;
+      tooltip.style.top = `${Math.max(8, Math.min(maxY, y))}px`;
+    };
+
+    const renderTooltip = (target) => {
+      const tip = tipForTarget(target, preset, options);
+      clearChildren(tooltip);
+      tooltip.appendChild(node('div', 'pto-mem950__hover-tip-title', tip.title));
+      if (tip.body) tooltip.appendChild(node('div', 'pto-mem950__hover-tip-body', tip.body));
+      if (tip.meta) tooltip.appendChild(node('div', 'pto-mem950__hover-tip-meta', tip.meta));
+    };
+
+    const show = (target, event = null) => {
+      if (!target) return;
+      if (activeTarget && activeTarget !== target) activeTarget.classList.remove('is-hovered');
+      activeTarget = target;
+      activeTarget.classList.add('is-hovered');
+      renderTooltip(target);
+      tooltip.classList.add('is-visible');
+      tooltip.setAttribute('aria-hidden', 'false');
+      positionTooltip(event?.clientX, event?.clientY, target);
+    };
+
+    const hide = () => {
+      activeTarget?.classList.remove('is-hovered');
+      activeTarget = null;
+      tooltip.classList.remove('is-visible');
+      tooltip.setAttribute('aria-hidden', 'true');
+    };
+
+    const targetFromEvent = (event) => {
+      const target = event.target?.closest?.(selector);
+      return target && root.contains(target) ? target : null;
+    };
+
+    const onPointerOver = (event) => show(targetFromEvent(event), event);
+    const onPointerMove = (event) => {
+      if (activeTarget) positionTooltip(event.clientX, event.clientY, activeTarget);
+    };
+    const onPointerOut = (event) => {
+      if (!activeTarget) return;
+      if (event.relatedTarget && activeTarget.contains(event.relatedTarget)) return;
+      const nextTarget = event.relatedTarget?.closest?.(selector);
+      if (nextTarget && root.contains(nextTarget)) return;
+      hide();
+    };
+    const onFocusIn = (event) => show(targetFromEvent(event));
+    const onFocusOut = () => hide();
+
+    root.addEventListener('pointerover', onPointerOver);
+    root.addEventListener('pointermove', onPointerMove);
+    root.addEventListener('pointerout', onPointerOut);
+    root.addEventListener('focusin', onFocusIn);
+    root.addEventListener('focusout', onFocusOut);
+
+    return {
+      tooltip,
+      destroy() {
+        root.removeEventListener('pointerover', onPointerOver);
+        root.removeEventListener('pointermove', onPointerMove);
+        root.removeEventListener('pointerout', onPointerOut);
+        root.removeEventListener('focusin', onFocusIn);
+        root.removeEventListener('focusout', onFocusOut);
+        activeTarget?.classList.remove('is-hovered');
+        tooltip.remove();
+      },
+    };
+  }
+
   function renderBufferGrid() {
     return null;
   }
@@ -584,6 +827,7 @@
     resolvePreset,
     renderArchitecture,
     createRouteOverlay,
+    attachHoverInteractions,
     renderBufferGrid,
   };
 })(window);
