@@ -295,6 +295,10 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   z-index: 8;
 }
 
+.pto-mem950.is-path-focused .is-path-focus-source {
+  outline-style: solid;
+}
+
 .pto-mem950.is-path-focused .pto-mem950__overlay [data-route-id] {
   opacity: 0.22;
   transition:

@@ -440,6 +440,169 @@
     };
   }
 
+  function selectorForHardwareTarget(target) {
+    const key = target?.dataset?.mem950Node || target?.dataset?.aicNode || target?.dataset?.aivNode || '';
+    if (!key) return '';
+    if (target.dataset.mem950Node) return `[data-mem950-node="${attrValue(key)}"]`;
+    const core = target.closest?.('.pto-mem950__core-slot');
+    const corePrefix = core?.id ? `#${attrValue(core.id)} ` : '';
+    if (target.dataset.aicNode) return `${corePrefix}[data-aic-node="${attrValue(key)}"]`;
+    if (target.dataset.aivNode) return `${corePrefix}[data-aiv-node="${attrValue(key)}"]`;
+    return '';
+  }
+
+  function routeIdsForCore(coreId, suffix) {
+    if (coreId === 'mem950-aiv2') return [`l2-to-aiv2${suffix}`, 'aiv2-to-l2'];
+    return [`l2-to-aiv1${suffix}`, 'aiv1-to-l2'];
+  }
+
+  function vectorFocusForCore(coreId) {
+    const prefix = coreId === 'mem950-aiv2' ? '#mem950-aiv2' : '#mem950-aiv1';
+    const [inRoute, outRoute] = routeIdsForCore(coreId, '');
+    return {
+      selectors: [
+        '[data-mem950-node="rail:L2"]',
+        `${prefix} [data-aiv-node="buffer:UB"]`,
+        `${prefix} [data-aiv-node="vector:Vector"]`,
+      ],
+      routes: [inRoute, outRoute],
+    };
+  }
+
+  function cubeFocus() {
+    return {
+      selectors: [
+        '[data-mem950-node="rail:L2"]',
+        '#mem950-aic [data-aic-node="buffer:L1"]',
+        '#mem950-aic [data-aic-node="buffer:L0A"]',
+        '#mem950-aic [data-aic-node="buffer:L0B"]',
+        '#mem950-aic [data-aic-node="cube:CUBE"]',
+        '#mem950-aic [data-aic-node="buffer:L0C"]',
+      ],
+      routes: ['l2-to-aic'],
+    };
+  }
+
+  function directCvFocus() {
+    return {
+      selectors: [
+        '#mem950-aic [data-aic-node="buffer:L0C"]',
+        '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
+        '#mem950-aiv2 [data-aiv-node="buffer:UB"]',
+        '#mem950-aic [data-aic-node="buffer:L1"]',
+      ],
+      routes: ['aic-to-aiv1', 'aiv2-to-aic'],
+    };
+  }
+
+  function pathFocusForTarget(target, preset) {
+    const key = target?.dataset?.mem950Node || target?.dataset?.aicNode || target?.dataset?.aivNode || '';
+    const coreId = target?.closest?.('.pto-mem950__core-slot')?.id || '';
+    const exactSelector = selectorForHardwareTarget(target);
+
+    if (key === 'rail:L2') {
+      return {
+        selectors: ['[data-mem950-node="rail:L2"]'],
+        routes: (preset?.routes || []).filter((route) => String(route.id).startsWith('l2-to-')).map((route) => route.id),
+      };
+    }
+
+    if (key === 'buffer:UB') {
+      const focus = vectorFocusForCore(coreId);
+      if (coreId === 'mem950-aiv1') focus.routes.push('aic-to-aiv1');
+      if (coreId === 'mem950-aiv2') focus.routes.push('aiv2-to-aic');
+      return focus;
+    }
+
+    if (key === 'vector:Vector' || key === 'exec:SIMD' || key === 'exec:SIMT') {
+      return vectorFocusForCore(coreId);
+    }
+
+    if (key === 'cache:DCache' && coreId.includes('aiv')) {
+      const routePrefix = coreId === 'mem950-aiv2' ? 'l2-to-aiv2' : 'l2-to-aiv1';
+      return {
+        selectors: ['[data-mem950-node="rail:L2"]', exactSelector],
+        routes: [`${routePrefix}-dcache`],
+      };
+    }
+
+    if (key === 'buffer:L1' || key === 'buffer:L0A' || key === 'buffer:L0B' || key === 'cube:CUBE') {
+      return cubeFocus();
+    }
+
+    if (key === 'buffer:L0C') {
+      const focus = directCvFocus();
+      focus.selectors.push('#mem950-aic [data-aic-node="cube:CUBE"]');
+      return focus;
+    }
+
+    if (key === 'cache:DCache' && coreId === 'mem950-aic') {
+      return {
+        selectors: ['[data-mem950-node="rail:L2"]', exactSelector],
+        routes: ['l2-to-aic-dcache'],
+      };
+    }
+
+    return exactSelector
+      ? { selectors: [exactSelector], routes: [] }
+      : { selectors: [], routes: [] };
+  }
+
+  function attachPathFocusInteractions(container, presetOrKey, options = {}) {
+    const preset = resolvePreset(presetOrKey);
+    const root = rootFor(container);
+    if (!root || !preset) return null;
+
+    const selector = options.selector || '[data-mem950-node], [data-aic-node], [data-aiv-node]';
+    let activeTarget = null;
+
+    const targetFromEvent = (event) => {
+      const target = event.target?.closest?.(selector);
+      return target && root.contains(target) ? target : null;
+    };
+
+    const show = (target) => {
+      if (!target || target === activeTarget) return;
+      activeTarget?.classList.remove('is-path-focus-source');
+      activeTarget = target;
+      activeTarget.classList.add('is-path-focus-source');
+      const focus = options.getFocus?.(target, preset) || pathFocusForTarget(target, preset);
+      setPathFocus(root, preset, focus);
+    };
+
+    const hide = () => {
+      activeTarget?.classList.remove('is-path-focus-source');
+      activeTarget = null;
+      clearPathFocus(root);
+    };
+
+    const onPointerOver = (event) => show(targetFromEvent(event));
+    const onPointerOut = (event) => {
+      if (!activeTarget) return;
+      if (event.relatedTarget && activeTarget.contains(event.relatedTarget)) return;
+      const nextTarget = event.relatedTarget?.closest?.(selector);
+      if (nextTarget && root.contains(nextTarget)) return;
+      hide();
+    };
+    const onFocusIn = (event) => show(targetFromEvent(event));
+    const onFocusOut = () => hide();
+
+    root.addEventListener('pointerover', onPointerOver);
+    root.addEventListener('pointerout', onPointerOut);
+    root.addEventListener('focusin', onFocusIn);
+    root.addEventListener('focusout', onFocusOut);
+
+    return {
+      destroy() {
+        root.removeEventListener('pointerover', onPointerOver);
+        root.removeEventListener('pointerout', onPointerOut);
+        root.removeEventListener('focusin', onFocusIn);
+        root.removeEventListener('focusout', onFocusOut);
+        hide();
+      },
+    };
+  }
+
   function svgNode(tagName, attrs) {
     const el = document.createElementNS(SVG_NS, tagName);
     Object.entries(attrs || {}).forEach(([key, value]) => {
@@ -901,6 +1064,7 @@
     renderArchitecture,
     createRouteOverlay,
     attachHoverInteractions,
+    attachPathFocusInteractions,
     setPathFocus,
     clearPathFocus,
     renderBufferGrid,

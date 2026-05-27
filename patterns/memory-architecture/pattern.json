@@ -29,6 +29,7 @@
     "window.PtoMemoryArchitecturePattern.renderArchitecture(container, presetOrKey)",
     "window.PtoMemoryArchitecturePattern.createRouteOverlay(container, presetOrKey)",
     "window.PtoMemoryArchitecturePattern.attachHoverInteractions(container, presetOrKey, options)",
+    "window.PtoMemoryArchitecturePattern.attachPathFocusInteractions(container, presetOrKey, options)",
     "window.PtoMemoryArchitecturePattern.setPathFocus(container, presetOrKey, { selectors, routes })",
     "window.PtoMemoryArchitecturePattern.clearPathFocus(container)"
   ],
@@ -44,5 +45,5 @@
     "hand-tuning route geometry in page-local CSS",
     "changing chip-level rail widths, route label treatment, or AIC/AIV internal chrome outside the shared patterns"
   ],
-  "agentReuseRule": "Read this JSON first. For a new 950-class architecture page, load aic-core-object and aiv-core-object first, then call memory-architecture/pattern.js to mount the full-stage shell. Use setPathFocus/clearPathFocus for flow-step hover like ascend-hardware-map-v3 instead of reimplementing is-path-focused, is-hardware-active, or route glow locally. Extend presets and route data in pattern.js instead of cloning the rendered DOM."
+  "agentReuseRule": "Read this JSON first. For a new 950-class architecture page, load aic-core-object and aiv-core-object first, then call memory-architecture/pattern.js to mount the full-stage shell. Use attachPathFocusInteractions or setPathFocus/clearPathFocus for flow-step hover like ascend-hardware-map-v3 instead of reimplementing is-path-focused, is-hardware-active, or route glow locally. Extend presets and route data in pattern.js instead of cloning the rendered DOM."
 }

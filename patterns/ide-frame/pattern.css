@@ -692,6 +692,10 @@ html[data-embed-preview="true"] .pto-ide-frame-preview__label {
   display: none;
 }
 
+html[data-embed-preview="true"] .pto-ide-frame-preview__embedded-example {
+  display: none;
+}
+
 html[data-embed-preview="true"] .pto-ide-frame {
   border-radius: 0;
   border-left: 0;

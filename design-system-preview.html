@@ -999,6 +999,16 @@
       color: var(--foreground-muted);
     }
 
+    /* 在 accent scope 下，让 IDE 框架的"选中态"也跟随 accent 颜色 */
+    :root[data-accent-scope="accent"] .pto-ide-frame__rail-button.is-selected {
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    :root[data-accent-scope="accent"] .pto-ide-frame__rail-button.is-selected .pto-ide-frame__rail-icon {
+      stroke: var(--primary-foreground);
+    }
+
     .preview-tree-icon,
     .preview-tree-chevron {
       width: 15px;
@@ -1934,7 +1944,7 @@
             <table class="agent-table">
               <tr><td>Stable entry</td><td>Every pattern must expose a stable consumer entry. Static visual primitives use documented CSS classes; DOM/SVG/canvas generation, drag behavior, zoom, routing, persistence, or synchronized state must go through a <code>window.Pto*Pattern</code> or <code>window.Pto*</code> helper. Business pages must not copy generated DOM or restyle internal pattern classes.</td></tr>
               <tr><td><code>swimlane-task-bar</code></td><td>Use <code>patterns/swimlane-task/pattern.js</code> and call <code>window.PtoSwimlaneTaskPattern.drawTaskBar</code> plus <code>initHoverTooltip</code>. The canonical task bar is canvas-rendered, sourced from <code>pypto-swimlane-perf-tool/js/swimlane.js</code>, and the hover tip mirrors the PMU swimlane <code>.sl-tooltip</code> interaction. Do not rebuild it with DOM/CSS or rewrite segment math or hover tip behavior locally.</td></tr>
-              <tr><td><code>memory-architecture-layout</code></td><td>Use <code>patterns/memory-architecture/pattern.js</code>. Call <code>window.PtoMemoryArchitecturePattern.renderArchitecture</code> to build the stage, <code>createRouteOverlay</code> for MTE routes, <code>attachHoverInteractions</code> for hardware tips, and <code>setPathFocus</code> / <code>clearPathFocus</code> for <code>ascend-hardware-map-v3</code>-style flow-step hover. Extend preset data for 910B/950; do not copy raw <code>mem_viewer</code> HTML, redraw route geometry locally, or reimplement <code>is-path-focused</code> route glow.</td></tr>
+              <tr><td><code>memory-architecture-layout</code></td><td>Use <code>patterns/memory-architecture/pattern.js</code>. Call <code>window.PtoMemoryArchitecturePattern.renderArchitecture</code> to build the stage, <code>createRouteOverlay</code> for MTE routes, <code>attachHoverInteractions</code> for hardware tips, and <code>attachPathFocusInteractions</code> or <code>setPathFocus</code> / <code>clearPathFocus</code> for <code>ascend-hardware-map-v3</code>-style flow-step hover. Extend preset data for 910B/950; do not copy raw <code>mem_viewer</code> HTML, redraw route geometry locally, or reimplement <code>is-path-focused</code> route glow.</td></tr>
               <tr><td><code>aic-core-object</code></td><td>Use <code>patterns/aic-core-object/pattern.js</code> and call <code>window.PtoAicCorePattern.render</code>. The shell is config-driven from the design draft; extend the preset data for 950B instead of cloning the generated DOM or restyling the chrome locally.</td></tr>
               <tr><td><code>aiv-core-object</code></td><td>Use <code>patterns/aiv-core-object/pattern.js</code> and call <code>window.PtoAivCorePattern.render</code>. The shell is config-driven from the approved AIV draft; extend the preset data for later chip variants instead of copying the generated DOM or changing card geometry locally.</td></tr>
               <tr><td><code>workbench-shell</code></td><td>Resize kernel only. Use <code>patterns/workbench-shell/pattern.css</code> and <code>patterns/workbench-shell/pattern.js</code>, then call <code>window.PtoWorkbenchShell.initResizablePanes</code>, <code>createSplitGutter</code>, or <code>initNestedResizablePanes</code> for horizontal / vertical / nested splits. Do not put page chrome, pane fills, topbars, titles, canvas controls, or IDE typography into this pattern.</td></tr>
@@ -2241,7 +2251,7 @@
         <article class="preview-card preview-card-full-row">
           <div class="preview-card-head">
             <h3 class="preview-card-title">910B / 950 存储架构 Pattern</h3>
-            <div class="preview-card-class">全画布对象：GM / L2 / AIC / AIV / UB / L0C 路径覆盖 + path-focus hover</div>
+            <div class="preview-card-class">全画布对象：GM / L2 / AIC / AIV / UB / L0C；hover 节点或 path chip 聚焦路径</div>
           </div>
           <div class="preview-stage preview-stack">
             <div class="preview-inline">
@@ -2283,7 +2293,7 @@
         <article class="preview-card preview-card-full-row">
           <div class="preview-card-head">
             <h3 class="preview-card-title">PTO IDE 框架 Pattern</h3>
-            <div class="preview-card-class">框架壳：独立宿主 + VS Code webview 适配 + 无内容插槽</div>
+            <div class="preview-card-class">框架壳：独立宿主预览 + VS Code webview 适配契约 + 无内容插槽</div>
           </div>
           <div class="preview-stage preview-stack">
             <div class="preview-inline">
@@ -3160,6 +3170,8 @@
           '--button-solid-bg-hover',
           '--button-solid-bg-press',
           '--button-solid-fg',
+          '--ide-frame-selected-bg',
+          '--ide-frame-selected-border',
         ].forEach((token) => root.style.removeProperty(token));
       };
 
@@ -3172,6 +3184,7 @@
         const primaryForeground = relativeLuminance(rgb) > 0.42 ? '#101418' : '#F8FBFF';
 
         clearAccentOverrides();
+        root.dataset.accentScope = accentScope;
 
         if (accentScope === 'accent') {
           root.style.setProperty('--primary', rgbToHex(rgb));
@@ -3189,6 +3202,8 @@
           root.style.setProperty('--button-solid-bg-hover', rgbToHex(hover));
           root.style.setProperty('--button-solid-bg-press', rgbToHex(press));
           root.style.setProperty('--button-solid-fg', primaryForeground);
+          root.style.setProperty('--ide-frame-selected-bg', toRgba(rgb, 0.16));
+          root.style.setProperty('--ide-frame-selected-border', toRgba(rgb, 0.36));
           return true;
         }
 
