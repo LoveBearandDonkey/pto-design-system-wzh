@@ -41,7 +41,21 @@
     <div class="pto-pattern-memory-arch__meta">
       <span class="pto-pattern-memory-arch__badge">pattern id: memory-architecture-layout</span>
       <span class="pto-pattern-memory-arch__badge">default preset: ascend950b</span>
-      <span class="pto-pattern-memory-arch__badge">contract: full-stage DOM shell + shared AIC/AIV renderers + SVG route overlay</span>
+      <span class="pto-pattern-memory-arch__badge">contract: full-stage DOM shell + shared AIC/AIV renderers + SVG route overlay + path focus hover</span>
+    </div>
+    <div class="pto-pattern-memory-arch__focus-strip" aria-label="path focus hover examples">
+      <button class="pto-pattern-memory-arch__focus-chip" type="button" data-focus-flow="vector">
+        <strong>AIV Vector</strong>
+        <span>L2 → UB → Vector → L2</span>
+      </button>
+      <button class="pto-pattern-memory-arch__focus-chip" type="button" data-focus-flow="cube">
+        <strong>AIC Cube</strong>
+        <span>L2 → L1 → L0A/B → Cube</span>
+      </button>
+      <button class="pto-pattern-memory-arch__focus-chip" type="button" data-focus-flow="direct-cv">
+        <strong>950 CV lanes</strong>
+        <span>L0C → UB / UB → L1</span>
+      </button>
     </div>
     <section class="pto-pattern-memory-arch__stage">
       <div id="pattern-memory-arch-stage"></div>
@@ -79,6 +93,60 @@
       const overlay = helper.createRouteOverlay(stage, 'ascend950b');
       helper.attachHoverInteractions?.(stage, 'ascend950b');
       overlay?.render();
+
+      const focusFlows = {
+        vector: {
+          selectors: [
+            '[data-mem950-node="rail:L2"]',
+            '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
+            '#mem950-aiv1 [data-aiv-node="vector:Vector"]',
+          ],
+          routes: ['l2-to-aiv1', 'aiv1-to-l2'],
+        },
+        cube: {
+          selectors: [
+            '[data-mem950-node="rail:L2"]',
+            '#mem950-aic [data-aic-node="buffer:L1"]',
+            '#mem950-aic [data-aic-node="buffer:L0A"]',
+            '#mem950-aic [data-aic-node="buffer:L0B"]',
+            '#mem950-aic [data-aic-node="cube:CUBE"]',
+            '#mem950-aic [data-aic-node="buffer:L0C"]',
+          ],
+          routes: ['l2-to-aic'],
+        },
+        'direct-cv': {
+          selectors: [
+            '#mem950-aic [data-aic-node="buffer:L0C"]',
+            '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
+            '#mem950-aiv2 [data-aiv-node="buffer:UB"]',
+            '#mem950-aic [data-aic-node="buffer:L1"]',
+          ],
+          routes: ['aic-to-aiv1', 'aiv2-to-aic'],
+        },
+      };
+
+      function setFocusChip(chip, active) {
+        document.querySelectorAll('.pto-pattern-memory-arch__focus-chip').forEach((node) => {
+          node.classList.toggle('is-active', active && node === chip);
+        });
+      }
+
+      document.querySelectorAll('.pto-pattern-memory-arch__focus-chip').forEach((chip) => {
+        const focusPayload = focusFlows[chip.dataset.focusFlow];
+        const activate = () => {
+          if (!focusPayload) return;
+          helper.setPathFocus?.(stage, 'ascend950b', focusPayload);
+          setFocusChip(chip, true);
+        };
+        const clear = () => {
+          helper.clearPathFocus?.(stage);
+          setFocusChip(chip, false);
+        };
+        chip.addEventListener('mouseenter', activate);
+        chip.addEventListener('mouseleave', clear);
+        chip.addEventListener('focus', activate);
+        chip.addEventListener('blur', clear);
+      });
 
       if (isEmbedPreview && 'ResizeObserver' in window) {
         const resizeObserver = new ResizeObserver(() => syncFrameHeight());

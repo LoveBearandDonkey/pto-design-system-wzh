@@ -367,6 +367,79 @@
     };
   }
 
+  function attrValue(value) {
+    return String(value || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  }
+
+  function rootFor(container) {
+    return container?.querySelector?.('.pto-mem950') || container || null;
+  }
+
+  function activeRouteEndpoints(routeIds, preset) {
+    const ids = new Set(routeIds || []);
+    return (preset?.routes || [])
+      .filter((route) => ids.has(route.id))
+      .flatMap((route) => [route.from, route.to])
+      .filter(Boolean);
+  }
+
+  function clearPathFocus(container) {
+    const root = rootFor(container);
+    if (!root) return;
+    root.classList.remove('is-path-focused');
+    root.querySelectorAll('.is-hardware-active').forEach((el) => el.classList.remove('is-hardware-active'));
+    root.querySelectorAll('.is-route-active').forEach((el) => el.classList.remove('is-route-active'));
+    root.querySelectorAll('.is-internal-route-active').forEach((el) => el.classList.remove('is-internal-route-active'));
+  }
+
+  function applyInternalRouteFocus(root) {
+    root.querySelectorAll('.pto-aic-core__route[data-aic-route-from][data-aic-route-to]').forEach((routeEl) => {
+      const core = routeEl.closest('.pto-aic-core');
+      const fromEl = core?.querySelector(`[data-aic-node="${attrValue(routeEl.dataset.aicRouteFrom)}"]`);
+      const toEl = core?.querySelector(`[data-aic-node="${attrValue(routeEl.dataset.aicRouteTo)}"]`);
+      const isActive = Boolean(
+        fromEl?.classList.contains('is-hardware-active') &&
+        toEl?.classList.contains('is-hardware-active')
+      );
+      routeEl.classList.toggle('is-internal-route-active', isActive);
+      if (isActive) {
+        core?.querySelectorAll(`[data-aic-transport-to="${attrValue(routeEl.dataset.aicRouteTo)}"]`)
+          .forEach((pill) => pill.classList.add('is-internal-route-active'));
+      }
+    });
+  }
+
+  function setPathFocus(container, presetOrKey, focus = {}) {
+    const preset = resolvePreset(presetOrKey);
+    const root = rootFor(container);
+    if (!root || !preset) return null;
+
+    const selectors = Array.from(new Set([
+      ...(focus.selectors || []),
+      ...activeRouteEndpoints(focus.routes || focus.routeIds || [], preset),
+    ].filter(Boolean)));
+    const routeIds = Array.from(new Set((focus.routes || focus.routeIds || []).filter(Boolean)));
+
+    clearPathFocus(root);
+    root.classList.toggle('is-path-focused', selectors.length > 0 || routeIds.length > 0);
+
+    selectors.forEach((selector) => {
+      root.querySelectorAll(selector).forEach((el) => el.classList.add('is-hardware-active'));
+    });
+
+    routeIds.forEach((routeId) => {
+      root.querySelectorAll(`[data-route-id="${attrValue(routeId)}"]`).forEach((el) => el.classList.add('is-route-active'));
+    });
+
+    applyInternalRouteFocus(root);
+
+    return {
+      root,
+      selectors,
+      routes: routeIds,
+    };
+  }
+
   function svgNode(tagName, attrs) {
     const el = document.createElementNS(SVG_NS, tagName);
     Object.entries(attrs || {}).forEach(([key, value]) => {
@@ -828,6 +901,8 @@
     renderArchitecture,
     createRouteOverlay,
     attachHoverInteractions,
+    setPathFocus,
+    clearPathFocus,
     renderBufferGrid,
   };
 })(window);

@@ -243,15 +243,17 @@
     return card;
   }
 
-  function buildTransportPill(label) {
+  function buildTransportPill(label, transportTo = '') {
     const pill = node('span', 'pto-aic-core__transport-pill', label || '');
     pill.dataset.aicNode = `transport:${label || 'Transport'}`;
+    if (transportTo) pill.dataset.aicTransportTo = transportTo;
     return pill;
   }
 
   function buildBufferLane(laneConfig) {
     const lane = node('div', 'pto-aic-core__buffer-lane');
-    lane.appendChild(buildTransportPill(laneConfig.transport));
+    const bufferKey = laneConfig.buffer?.key || laneConfig.buffer?.label || '';
+    lane.appendChild(buildTransportPill(laneConfig.transport, `buffer:${bufferKey}`));
     lane.appendChild(buildColumn(laneConfig.buffer));
     return lane;
   }
@@ -355,6 +357,8 @@
         'stroke-width': route.strokeWidth || '1.5',
         'stroke-linecap': 'round',
         'stroke-linejoin': 'round',
+        'data-aic-route-from': route.from,
+        'data-aic-route-to': route.to,
       });
       svg.appendChild(path);
       return { route, path };

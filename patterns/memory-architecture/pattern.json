@@ -2,11 +2,13 @@
   "id": "memory-architecture-layout",
   "name": "Memory Architecture Layout",
   "type": "hybrid",
-  "description": "Full-stage PTO memory architecture shell for 950B-class diagrams. It composes the shared AIC/AIV internal renderers, chip-level memory rails, an SVG overlay for MTE/CV shared routes, and shared hardware hover tips.",
+  "description": "Full-stage PTO memory architecture shell for 950B-class diagrams. It composes the shared AIC/AIV internal renderers, chip-level memory rails, an SVG overlay for MTE/CV shared routes, shared hardware hover tips, and path-focus hover highlighting.",
   "source": {
     "visualContract": [
       "patterns/aic-core-object/pattern.js",
       "patterns/aiv-core-object/pattern.js",
+      "pto/ascend-hardware-map/ascend-hardware-map-v3.html hardware-focus hover",
+      "pto/ascend-hardware-map/ascend-950b-hardware-frame.html is-path-focused focus states",
       "CANNVisual/910B-architecture-notes.md",
       "CANNVisual/950-architecture-notes.md",
       ".tmp/cann950_extracts/面向新一代硬件，CANN技术架构的变与不变.pdf.txt",
@@ -20,17 +22,21 @@
   "useWhen": [
     "building full-chip memory hierarchy diagrams that sit above AIC/AIV detail views",
     "showing Global Memory and L2 Cache rails feeding AIV and AIC objects",
-    "illustrating 950-specific direct CV lanes without copying business-page HTML"
+    "illustrating 950-specific direct CV lanes without copying business-page HTML",
+    "hovering flow steps or chips to dim unrelated hardware, highlight endpoints, and glow active routes"
   ],
   "requiredApis": [
     "window.PtoMemoryArchitecturePattern.renderArchitecture(container, presetOrKey)",
     "window.PtoMemoryArchitecturePattern.createRouteOverlay(container, presetOrKey)",
-    "window.PtoMemoryArchitecturePattern.attachHoverInteractions(container, presetOrKey, options)"
+    "window.PtoMemoryArchitecturePattern.attachHoverInteractions(container, presetOrKey, options)",
+    "window.PtoMemoryArchitecturePattern.setPathFocus(container, presetOrKey, { selectors, routes })",
+    "window.PtoMemoryArchitecturePattern.clearPathFocus(container)"
   ],
   "allowedOverrides": [
     "preset rails, core membership, titles, route list, and route labels",
     "choosing which shared AIC/AIV presets are mounted into each core slot",
     "hover tip copy through preset hoverTips or attachHoverInteractions options",
+    "flow-step focus payloads through setPathFocus selectors and route ids",
     "container framing outside the pattern root"
   ],
   "forbiddenOverrides": [
@@ -38,5 +44,5 @@
     "hand-tuning route geometry in page-local CSS",
     "changing chip-level rail widths, route label treatment, or AIC/AIV internal chrome outside the shared patterns"
   ],
-  "agentReuseRule": "Read this JSON first. For a new 950-class architecture page, load aic-core-object and aiv-core-object first, then call memory-architecture/pattern.js to mount the full-stage shell. Extend presets and route data in pattern.js instead of cloning the rendered DOM."
+  "agentReuseRule": "Read this JSON first. For a new 950-class architecture page, load aic-core-object and aiv-core-object first, then call memory-architecture/pattern.js to mount the full-stage shell. Use setPathFocus/clearPathFocus for flow-step hover like ascend-hardware-map-v3 instead of reimplementing is-path-focused, is-hardware-active, or route glow locally. Extend presets and route data in pattern.js instead of cloning the rendered DOM."
 }

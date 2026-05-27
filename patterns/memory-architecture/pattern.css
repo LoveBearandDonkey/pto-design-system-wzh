@@ -36,6 +36,53 @@
   gap: 8px;
 }
 
+.pto-pattern-memory-arch__focus-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pto-pattern-memory-arch__focus-chip {
+  min-width: 176px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  color: var(--foreground-secondary);
+  padding: 9px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--easing-default),
+    border-color var(--duration-fast) var(--easing-default),
+    color var(--duration-fast) var(--easing-default),
+    box-shadow var(--duration-fast) var(--easing-default);
+}
+
+.pto-pattern-memory-arch__focus-chip:hover,
+.pto-pattern-memory-arch__focus-chip:focus-visible,
+.pto-pattern-memory-arch__focus-chip.is-active {
+  border-color: color-mix(in srgb, var(--warning) 68%, transparent);
+  background: color-mix(in srgb, var(--warning) 14%, var(--surface-1));
+  color: var(--foreground);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--warning) 18%, transparent);
+  outline: none;
+}
+
+.pto-pattern-memory-arch__focus-chip strong {
+  font: var(--text-body-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+}
+
+.pto-pattern-memory-arch__focus-chip span {
+  color: var(--foreground-muted);
+  font: var(--text-label);
+  letter-spacing: 0;
+}
+
 .pto-pattern-memory-arch__badge {
   display: inline-flex;
   align-items: center;
@@ -69,6 +116,10 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__title,
 html[data-embed-preview='true'] .pto-pattern-memory-arch__subtitle,
 html[data-embed-preview='true'] .pto-pattern-memory-arch__meta {
   display: none;
+}
+
+html[data-embed-preview='true'] .pto-pattern-memory-arch__focus-strip {
+  margin-bottom: 10px;
 }
 
 html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
@@ -220,6 +271,68 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
 .pto-mem950 [data-aiv-node].is-hovered {
   outline: 1px solid color-mix(in srgb, var(--foreground) 28%, transparent);
   outline-offset: 2px;
+}
+
+.pto-mem950.is-path-focused [data-aic-node],
+.pto-mem950.is-path-focused [data-aiv-node],
+.pto-mem950.is-path-focused [data-mem950-node^="rail:"] {
+  opacity: 0.56;
+  filter: saturate(0.7);
+  transition:
+    opacity var(--duration-fast) var(--easing-default),
+    filter var(--duration-fast) var(--easing-default),
+    outline-color var(--duration-fast) var(--easing-default),
+    box-shadow var(--duration-fast) var(--easing-default);
+}
+
+.pto-mem950.is-path-focused .is-hardware-active {
+  opacity: 1 !important;
+  filter: none !important;
+  outline: 2px solid color-mix(in srgb, var(--warning) 82%, white);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--warning) 16%, transparent);
+  position: relative;
+  z-index: 8;
+}
+
+.pto-mem950.is-path-focused .pto-mem950__overlay [data-route-id] {
+  opacity: 0.22;
+  transition:
+    opacity var(--duration-fast) var(--easing-default),
+    filter var(--duration-fast) var(--easing-default);
+}
+
+.pto-mem950.is-path-focused .pto-mem950__overlay [data-route-id].is-route-active {
+  opacity: 1;
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--warning) 66%, transparent));
+}
+
+.pto-mem950.is-path-focused .pto-aic-core__route {
+  opacity: 0.18;
+  filter: saturate(0.65);
+  transition:
+    opacity var(--duration-fast) var(--easing-default),
+    filter var(--duration-fast) var(--easing-default),
+    stroke-width var(--duration-fast) var(--easing-default);
+}
+
+.pto-mem950.is-path-focused .pto-aic-core__transport-pill {
+  opacity: 0.18;
+  filter: saturate(0.65);
+}
+
+.pto-mem950.is-path-focused .pto-aic-core__route.is-internal-route-active {
+  opacity: 0.96;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--warning) 58%, transparent));
+  stroke-width: 2.6;
+}
+
+.pto-mem950.is-path-focused .pto-aic-core__transport-pill.is-internal-route-active {
+  opacity: 1;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--warning) 48%, transparent));
+  background: var(--warning);
+  border-color: var(--warning);
+  color: var(--background);
 }
 
 .pto-mem950__hover-tip {

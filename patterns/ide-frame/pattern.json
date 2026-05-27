@@ -2,7 +2,7 @@
   "id": "ide-frame",
   "name": "PTO IDE Frame",
   "type": "hybrid",
-  "description": "Upper-level PTO IDE framework shell for standalone pages and VS Code webviews. It owns IDE chrome, a 4:3 host window ratio, a page background one gray step lighter than the window, darker pane/content wells, dense pane typography, window open/close controls, activity rail, pane-local preview tabs, domain toolbars, status strips, preview surfaces, renderer slots, inspector docks, optional floating playback mounting, and split initialization. Standalone explorer defaults to a 300px initial width when the host width is known. Top chrome is transparent over the IDE window and does not draw divider borders. Product pages provide all domain content. It delegates resize behavior to workbench-shell and playback chrome to floating-playback-control.",
+  "description": "Upper-level PTO IDE framework shell for standalone pages and VS Code webviews. It owns IDE chrome, a 4:3 host window ratio, a page background one gray step lighter than the window, darker pane/content wells, dense pane typography, utility window controls, activity rail, pane-local preview tabs, domain toolbars, status strips, preview surfaces, renderer slots, inspector docks, optional floating playback mounting, and split initialization. Standalone explorer defaults to a 300px initial width when the host width is known. Top chrome is transparent over the IDE window, does not draw divider borders, and does not include macOS traffic-light controls. Product pages provide all domain content. It delegates resize behavior to workbench-shell and playback chrome to floating-playback-control.",
   "source": {
     "visualContract": [
       "patterns/ide-frame/pattern.css owns .pto-ide-frame* visual classes",

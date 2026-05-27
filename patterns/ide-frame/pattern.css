@@ -142,31 +142,6 @@
   justify-content: flex-end;
 }
 
-.pto-ide-frame__traffic {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.pto-ide-frame__traffic-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--foreground-muted);
-}
-
-.pto-ide-frame__traffic-dot:nth-child(1) {
-  background: #ff5f57;
-}
-
-.pto-ide-frame__traffic-dot:nth-child(2) {
-  background: #ffbd2e;
-}
-
-.pto-ide-frame__traffic-dot:nth-child(3) {
-  background: #28c840;
-}
-
 .pto-ide-frame__host-chip {
   min-height: 30px;
   display: inline-flex;
