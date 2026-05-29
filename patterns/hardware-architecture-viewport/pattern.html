@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hardware Architecture Viewport Pattern</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../workbench-shell/pattern.css">
+  <link rel="stylesheet" href="./pattern.css">
+  <style>
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--foreground);
+      font-family: var(--font-sans);
+    }
+    main {
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+    }
+    .demo-shell {
+      height: 420px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      background: var(--surface-2);
+    }
+    .demo-stage {
+      display: grid;
+      place-items: center;
+      background: var(--surface-1);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Hardware Architecture Viewport</h1>
+    <section class="pto-hw-viewport demo-shell" id="demoViewport">
+      <header class="pto-hw-viewport__toolbar">
+        <div class="pto-hw-viewport__title">硬件架构图 <small>Ascend 950B</small></div>
+        <div class="pto-hw-viewport__controls">
+          <div class="pto-hw-viewport__segmented" aria-label="Path filter">
+            <button class="btn btn-sm is-selected" type="button" data-path-kind="compute">计算路径</button>
+            <button class="btn btn-sm" type="button" data-path-kind="memory">访存路径</button>
+            <button class="btn btn-sm" type="button" data-path-kind="control">控制路径</button>
+          </div>
+          <div class="pto-hw-viewport__tools">
+            <button class="btn btn-sm btn-ghost pto-hw-viewport__tool" type="button" data-detail aria-pressed="true">细节开</button>
+            <button class="btn btn-sm btn-ghost pto-hw-viewport__tool" type="button" data-zoom-out>−</button>
+            <button class="btn btn-sm btn-ghost pto-hw-viewport__tool" type="button" data-fit>适配</button>
+            <button class="btn btn-sm btn-ghost pto-hw-viewport__tool" type="button" data-actual>1:1</button>
+            <span class="pto-hw-viewport__readout" data-readout>100%</span>
+            <button class="btn btn-sm btn-ghost pto-hw-viewport__tool" type="button" data-zoom-in>+</button>
+          </div>
+        </div>
+      </header>
+      <div class="pto-hw-viewport__stage demo-stage" data-stage>
+        <div class="pto-hw-viewport__scale" data-scale>
+          <div style="width: 720px; height: 260px; border-radius: 24px; background: var(--surface-3); display: grid; place-items: center;">Architecture frame slot</div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="./pattern.js"></script>
+  <script>
+    window.PtoHardwareArchitectureViewport.mount('#demoViewport', {
+      mode: 'inline',
+      viewport: '[data-stage]',
+      scaleEl: '[data-scale]',
+      detailToggle: '[data-detail]',
+      zoomOut: '[data-zoom-out]',
+      zoomIn: '[data-zoom-in]',
+      fit: '[data-fit]',
+      actual: '[data-actual]',
+      readout: '[data-readout]',
+      pathButtons: '[data-path-kind]',
+      frameSize: { width: 720, height: 260 },
+      fitOnMount: true
+    });
+  </script>
+</body>
+</html>

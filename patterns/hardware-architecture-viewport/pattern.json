@@ -1,0 +1,34 @@
+{
+  "id": "hardware-architecture-viewport",
+  "name": "Hardware Architecture Viewport",
+  "type": "hybrid",
+  "description": "Shared PTO shell and controller for architecture-map host controls: architecture selection, path filters, detail visibility, zoom, fit, actual-size, iframe readiness, size sync, and hardware postMessage protocol.",
+  "source": {
+    "patternCss": "patterns/hardware-architecture-viewport/pattern.css",
+    "renderScript": "patterns/hardware-architecture-viewport/pattern.js",
+    "dependsOn": [
+      "patterns/workbench-shell/pattern.css",
+      "patterns/memory-architecture/pattern.js"
+    ]
+  },
+  "useWhen": [
+    "embedding memory-architecture-layout in a product page iframe or inline stage",
+    "providing consistent architecture-map toolbar controls across PTO modules",
+    "coordinating hardware-details, hardware-focus, hardware-ready, and hardware-size messages"
+  ],
+  "requiredApis": [
+    "window.PtoHardwareArchitectureViewport.mount(root, options)",
+    "window.PtoHardwareArchitectureViewport.closestZoomLevel(levels, value)"
+  ],
+  "allowedOverrides": [
+    "which optional slots are visible, such as path filters, compare controls, diff actions, or selected path chips",
+    "page-specific architecture list and mapping from architecture id to memory-architecture preset",
+    "page-specific callbacks for focus payloads, inspector synchronization, and business view-mode switching"
+  ],
+  "forbiddenOverrides": [
+    "introducing a new architecture toolbar visual grammar instead of using the pto-hw-viewport classes",
+    "forking zoom/readout/detail behavior without a page-specific state requirement",
+    "using page-local button sizing or toolbar spacing for architecture map controls",
+    "sending custom iframe message names for standard hardware-ready, hardware-size, hardware-details, hardware-focus, or hardware-arch-change events"
+  ]
+}

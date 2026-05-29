@@ -248,6 +248,17 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   z-index: 2;
 }
 
+.pto-mem950.is-detail-hidden .pto-aic-core__buffer-capacity,
+.pto-mem950.is-detail-hidden .pto-aiv-core__buffer-capacity,
+.pto-mem950.is-detail-hidden .pto-aic-core__cache-label,
+.pto-mem950.is-detail-hidden .pto-aiv-core__cache-label,
+.pto-mem950.is-detail-hidden .pto-aic-core__scheduler-label,
+.pto-mem950.is-detail-hidden .pto-aic-core__queue-label,
+.pto-mem950.is-detail-hidden .pto-mem950__notes {
+  opacity: 0;
+  visibility: hidden;
+}
+
 .pto-mem950__missing {
   width: 720px;
   min-height: 180px;
@@ -410,12 +421,13 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   width: max-content;
   max-width: 280px;
   padding: 10px 12px;
-  border: 1px solid var(--border-default);
+  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.16));
   border-radius: 10px;
-  background: color-mix(in srgb, var(--surface-1) 92%, transparent);
-  color: var(--foreground);
-  box-shadow: var(--shadow-md);
-  font-family: var(--font-sans);
+  background: rgba(22, 22, 22, 0.97);
+  background: color-mix(in srgb, var(--surface-1, #161616) 96%, #000000 4%);
+  color: var(--foreground, rgba(255, 255, 255, 0.9));
+  box-shadow: var(--shadow-md, 0 8px 22px rgba(0, 0, 0, 0.42));
+  font-family: var(--font-sans, Inter, "Source Han Sans SC", "PingFang SC", "Noto Sans SC", sans-serif);
   pointer-events: none;
   opacity: 0;
   transform: translate3d(-9999px, -9999px, 0);
@@ -430,7 +442,7 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
 }
 
 .pto-mem950__hover-tip-title {
-  color: var(--foreground);
+  color: var(--foreground, rgba(255, 255, 255, 0.9));
   font-size: 12px;
   font-weight: 700;
   line-height: 1.25;
@@ -438,14 +450,14 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
 
 .pto-mem950__hover-tip-body {
   margin-top: 5px;
-  color: var(--foreground-secondary);
+  color: var(--foreground-secondary, rgba(255, 255, 255, 0.62));
   font-size: 11px;
   line-height: 1.45;
 }
 
 .pto-mem950__hover-tip-meta {
   margin-top: 8px;
-  color: var(--foreground-muted);
+  color: var(--foreground-muted, rgba(255, 255, 255, 0.42));
   font: 10px/1.2 var(--text-mono, ui-monospace, monospace);
   text-transform: uppercase;
 }

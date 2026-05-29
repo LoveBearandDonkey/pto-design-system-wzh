@@ -312,6 +312,188 @@
         },
       },
     },
+    ascend910b: {
+      id: 'ascend910b',
+      name: 'Ascend 910B Memory Architecture',
+      rails: [
+        {
+          key: 'GM',
+          label: 'Global Memory',
+          tone: 'memory-shell',
+          grid: { rows: 82, cols: 8, cellSize: 12, gap: 4, shape: 'hex' },
+        },
+        {
+          key: 'L2',
+          label: 'L2 Cache',
+          tone: 'memory-rail',
+          grid: { rows: 82, cols: 4, cellSize: 12, gap: 4, shape: 'dot' },
+        },
+      ],
+      cores: [
+        {
+          id: 'mem950-aiv1',
+          kind: 'aiv',
+          title: 'AIV',
+          presetKey: 'aivLegacyV1',
+        },
+        {
+          id: 'mem950-aic',
+          kind: 'aic',
+          title: 'AIC',
+          presetKey: 'aicDraftV1',
+        },
+      ],
+      routes: [
+        {
+          id: 'l2-to-aiv1-dcache',
+          label: 'MTE2',
+          tone: 'transport',
+          from: '[data-mem950-node="rail:L2"]',
+          to: '#mem950-aiv1 [data-aiv-node="cache:DCache"]',
+          fromSide: 'right',
+          toSide: 'left',
+          toBias: 0.50,
+          style: 'lane-h-target',
+          labelDy: 0,
+        },
+        {
+          id: 'l2-to-aiv1',
+          label: 'MTE2',
+          tone: 'transport',
+          from: '[data-mem950-node="rail:L2"]',
+          to: '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
+          fromSide: 'right',
+          toSide: 'left',
+          toBias: 0.58,
+          style: 'lane-h-target',
+          labelDy: 0,
+        },
+        {
+          id: 'aiv1-to-l2',
+          label: 'MTE3',
+          tone: 'transport',
+          from: '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
+          to: '[data-mem950-node="rail:L2"]',
+          fromSide: 'left',
+          toSide: 'right',
+          fromBias: 0.82,
+          style: 'lane-h-source',
+          labelDy: 0,
+        },
+        {
+          id: 'l2-to-aic',
+          label: 'MTE2',
+          tone: 'transport',
+          from: '[data-mem950-node="rail:L2"]',
+          to: '#mem950-aic [data-aic-node="buffer:L1"]',
+          fromSide: 'right',
+          toSide: 'left',
+          toBias: 0.58,
+          style: 'lane-h-target',
+          labelDy: 0,
+        },
+        {
+          id: 'l2-to-aic-dcache',
+          label: 'MTE2',
+          tone: 'transport',
+          from: '[data-mem950-node="rail:L2"]',
+          to: '#mem950-aic [data-aic-node="cache:DCache"]',
+          fromSide: 'right',
+          toSide: 'left',
+          toBias: 0.50,
+          style: 'lane-h-target',
+          labelDy: 0,
+        },
+      ],
+      notes: [
+        '1 AIC + 1 AIV memory-stage layout (910B)',
+        'L2/GM → DCache, L1, or UB via MTE2',
+        'UB → L2/GM via MTE3',
+        'No 950 direct CV lanes; SIMD-only vector exec (no SIMT)',
+      ],
+      hoverTips: {
+        'rail:GM': {
+          title: 'Global Memory',
+          body: 'Chip-level memory source and sink for the 910B architecture.',
+        },
+        'rail:L2': {
+          title: 'L2 Cache',
+          body: 'Shared cache rail feeding AIV DCache or UB and AIC DCache or L1 through MTE2 paths.',
+        },
+        'core:AIV': {
+          title: 'AIV',
+          body: 'Vector-side core object with DCache, ICache, Scalar, UB, SIMD, and Vector lanes (no SIMT on 910B).',
+        },
+        'core:AIC': {
+          title: 'AIC',
+          body: 'Cube-side compute object with L1, L0 buffers, CUBE, Scalar, dispatch, and execution queues.',
+        },
+        'buffer:UB': {
+          title: 'UB',
+          body: 'Unified Buffer for AIV vector-side data staging and MTE3 return paths.',
+        },
+        'buffer:L1': {
+          title: 'L1',
+          body: 'AIC local memory feeding L0A, L0B, BT, and FP lanes.',
+        },
+        'buffer:L0A': {
+          title: 'L0A',
+          body: 'AIC matrix operand buffer for CUBE input staging.',
+        },
+        'buffer:L0B': {
+          title: 'L0B',
+          body: 'AIC matrix operand buffer for CUBE input staging.',
+        },
+        'buffer:L0C': {
+          title: 'L0C',
+          body: 'AIC CUBE output buffer.',
+        },
+        'buffer:BT': {
+          title: 'BT',
+          body: 'AIC bias or transform-side buffer lane connected through MTE1.',
+        },
+        'buffer:FP': {
+          title: 'FP',
+          body: 'AIC FixPipe buffer lane for post-CUBE data movement.',
+        },
+        'cache:DCache': {
+          title: 'DCache',
+          body: 'Data cache endpoint for memory transport and scalar-side access.',
+        },
+        'cache:ICache': {
+          title: 'ICache',
+          body: 'Instruction cache feeding the scalar or scheduler-side control path.',
+        },
+        'scalar:Scalar': {
+          title: 'Scalar',
+          body: 'Scalar control block coordinating local compute and memory movement.',
+        },
+        'exec:SIMD': {
+          title: 'SIMD',
+          body: 'AIV SIMD execution lane connected to UB data and vector output.',
+        },
+        'vector:Vector': {
+          title: 'Vector',
+          body: 'AIV vector execution endpoint receiving SIMD results.',
+        },
+        'cube:CUBE': {
+          title: 'CUBE',
+          body: 'AIC matrix compute block fed by L0A, L0B, and BT buffers.',
+        },
+        'scheduler:Dispatch': {
+          title: 'Dispatch',
+          body: 'AIC dispatch block issuing work into cube, FixPipe, and MTE queues.',
+        },
+        'transport:MTE1': {
+          title: 'MTE1',
+          body: 'Local AIC transport lane between L1 and L0 or FixPipe buffers.',
+        },
+        'transport:FixPipe': {
+          title: 'FixPipe',
+          body: 'AIC post-processing transport lane.',
+        },
+      },
+    },
   };
 
   function resolvePreset(presetOrKey) {
@@ -390,6 +572,18 @@
     root.querySelectorAll('.is-hardware-active').forEach((el) => el.classList.remove('is-hardware-active'));
     root.querySelectorAll('.is-route-active').forEach((el) => el.classList.remove('is-route-active'));
     root.querySelectorAll('.is-internal-route-active').forEach((el) => el.classList.remove('is-internal-route-active'));
+  }
+
+  function setDetailVisibility(container, visible = true) {
+    const root = rootFor(container);
+    if (!root) return null;
+    const nextVisible = visible !== false;
+    root.classList.toggle('is-detail-hidden', !nextVisible);
+    root.dataset.detailVisibility = nextVisible ? 'full' : 'compact';
+    return {
+      root,
+      visible: nextVisible,
+    };
   }
 
   function applyInternalRouteFocus(root) {
@@ -1065,6 +1259,7 @@
     createRouteOverlay,
     attachHoverInteractions,
     attachPathFocusInteractions,
+    setDetailVisibility,
     setPathFocus,
     clearPathFocus,
     renderBufferGrid,

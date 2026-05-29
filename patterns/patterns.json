@@ -12,6 +12,11 @@
       "preview": "patterns/memory-architecture/pattern.html"
     },
     {
+      "id": "hardware-architecture-viewport",
+      "path": "patterns/hardware-architecture-viewport/pattern.json",
+      "preview": "patterns/hardware-architecture-viewport/pattern.html"
+    },
+    {
       "id": "aic-core-object",
       "path": "patterns/aic-core-object/pattern.json",
       "preview": "patterns/aic-core-object/pattern.html"
