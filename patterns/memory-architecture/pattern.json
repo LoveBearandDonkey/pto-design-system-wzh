@@ -2,7 +2,7 @@
   "id": "memory-architecture-layout",
   "name": "Memory Architecture Layout",
   "type": "hybrid",
-  "description": "Full-stage PTO memory architecture shell for 910B/950 diagrams. It composes the shared AIC/AIV internal renderers, chip-level memory rails, detail rows including the 950 UB bank mini-grid, an SVG overlay for MTE/CV shared routes, shared hardware hover tips, and path-focus hover highlighting.",
+  "description": "Full-stage PTO memory architecture shell for 910B/950 diagrams. It composes the shared AIC/AIV internal renderers, chip-level memory rails, detail rows including the 950 UB bank mini-grid, an SVG overlay for MTE/CV routes, shared hardware hover tips, and path-focus hover highlighting.",
   "source": {
     "visualContract": [
       "patterns/aic-core-object/pattern.js",
