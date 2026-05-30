@@ -205,14 +205,66 @@
         'UB → L2/GM via MTE3',
         '950 direct CV lanes: L0C→UB and UB→L1',
       ],
-      bankDetails: {
-        'buffer:UB': {
-          label: 'UB bank',
-          spec: '8BG × 2B × 16KB',
-          meta: '3510',
-          description: '3510 UB bank layout: 8 bank groups, 2 banks per group, 16KB per bank.',
+      details: [
+        {
+          selector: '[data-aiv-node="buffer:UB"]',
+          rows: [
+            ['bank', '8组 x 2个/组'],
+            ['单bank', '16KB'],
+            ['对齐', '32B'],
+            ['搬运', 'MTE2/MTE3'],
+          ],
+          bankGrid: { groups: 8, banksPerGroup: 2 },
         },
-      },
+        {
+          selector: '[data-aiv-node="exec:SIMT"]',
+          rows: [
+            ['DCache', '128KB'],
+            ['RegFile', '128KB'],
+          ],
+        },
+        {
+          selector: '[data-aiv-node="exec:SIMD"]',
+          rows: [
+            ['RegFile', 'SIMD RF'],
+          ],
+        },
+        {
+          selector: '#mem950-aic [data-aic-node="buffer:L1"]',
+          rows: [
+            ['对齐', '32B'],
+            ['建议布局', 'NZ'],
+          ],
+        },
+        {
+          selector: '#mem950-aic [data-aic-node="buffer:L0A"]',
+          rows: [
+            ['搬运对齐', '512B'],
+            ['推荐布局', 'NZ'],
+          ],
+        },
+        {
+          selector: '#mem950-aic [data-aic-node="buffer:L0B"]',
+          rows: [
+            ['搬运对齐', '512B'],
+            ['推荐布局', 'ZN'],
+          ],
+        },
+        {
+          selector: '#mem950-aic [data-aic-node="buffer:FP"]',
+          rows: [
+            ['流水', 'FixPipe'],
+            ['输出', '量化/激活'],
+          ],
+        },
+        {
+          selector: '#mem950-aic [data-aic-node="buffer:L0C"]',
+          rows: [
+            ['搬运对齐', '64B'],
+            ['推荐布局', 'NZ'],
+          ],
+        },
+      ],
       hoverTips: {
         'rail:GM': {
           title: 'Global Memory',
@@ -419,14 +471,52 @@
         'UB → L2/GM via MTE3',
         'No 950 direct CV lanes; SIMD-only vector exec (no SIMT)',
       ],
-      bankDetails: {
-        'buffer:UB': {
-          label: 'UB bank',
-          spec: '16BG × 3B × 4KB',
-          meta: '2201',
-          description: '2201 UB bank layout: 16 bank groups, 3 banks per group, 4KB per bank.',
+      details: [
+        {
+          selector: '[data-aiv-node="buffer:UB"]',
+          rows: [
+            ['驻留', 'AIV 本地'],
+            ['执行', 'SIMD'],
+            ['对齐', '32B'],
+            ['搬运', 'MTE2/MTE3'],
+          ],
         },
-      },
+        {
+          selector: '[data-aiv-node="exec:SIMD"]',
+          rows: [
+            ['调度', 'Vector Pipe'],
+            ['SIMT', '无'],
+          ],
+        },
+        {
+          selector: '#mem950-aic [data-aic-node="buffer:L1"]',
+          rows: [
+            ['对齐', '32B'],
+            ['角色', 'AIC 输入'],
+          ],
+        },
+        {
+          selector: '#mem950-aic [data-aic-node="buffer:L0A"]',
+          rows: [
+            ['搬运对齐', '512B'],
+            ['推荐布局', 'NZ'],
+          ],
+        },
+        {
+          selector: '#mem950-aic [data-aic-node="buffer:L0B"]',
+          rows: [
+            ['搬运对齐', '512B'],
+            ['推荐布局', 'ZN'],
+          ],
+        },
+        {
+          selector: '#mem950-aic [data-aic-node="buffer:L0C"]',
+          rows: [
+            ['角色', 'Cube 输出'],
+            ['回写', '经 GM/L2'],
+          ],
+        },
+      ],
       hoverTips: {
         'rail:GM': {
           title: 'Global Memory',
@@ -892,23 +982,42 @@
     return helper.render(slotMount, preset);
   }
 
-  function applyBankDetails(stage, preset) {
-    const details = preset?.bankDetails || {};
-    const detailKeys = Object.keys(details);
-    if (!stage || detailKeys.length === 0) return;
+  function appendDetailRows(target, rows) {
+    if (!target || !Array.isArray(rows) || rows.length === 0) return;
+    const list = node('div', 'detail-spec-list');
+    rows.forEach(([label, value]) => {
+      const row = node('div', 'detail-spec-row');
+      row.appendChild(node('span', 'detail-spec-label', label));
+      row.appendChild(node('span', 'detail-spec-value', value));
+      list.appendChild(row);
+    });
+    target.appendChild(list);
+  }
 
-    stage.querySelectorAll('[data-aic-node], [data-aiv-node], [data-mem950-node]').forEach((target) => {
-      const key = target.dataset.aicNode || target.dataset.aivNode || target.dataset.mem950Node || '';
-      const detail = details[key];
-      if (!detail) return;
+  function appendBankMiniGrid(target, bankGrid) {
+    if (!target || !bankGrid) return;
+    const groups = Math.max(1, Number(bankGrid.groups || 1));
+    const banksPerGroup = Math.max(1, Number(bankGrid.banksPerGroup || 1));
+    const grid = node('div', 'bank-mini-grid');
+    grid.style.setProperty('--bank-mini-grid-groups', String(groups));
+    for (let groupIndex = 0; groupIndex < groups; groupIndex += 1) {
+      const group = node('span', 'bank-group');
+      group.style.setProperty('--bank-mini-grid-bank-count', String(banksPerGroup));
+      for (let bankIndex = 0; bankIndex < banksPerGroup; bankIndex += 1) {
+        group.appendChild(node('span'));
+      }
+      grid.appendChild(group);
+    }
+    target.appendChild(grid);
+  }
 
-      const chip = node('div', 'pto-mem950__bank-detail');
-      chip.dataset.bankTarget = key;
-      chip.title = detail.description || `${detail.label || 'bank'} ${detail.spec || ''}`.trim();
-      chip.appendChild(node('span', 'pto-mem950__bank-detail-label', detail.label || 'bank'));
-      chip.appendChild(node('strong', 'pto-mem950__bank-detail-spec', detail.spec || ''));
-      if (detail.meta) chip.appendChild(node('span', 'pto-mem950__bank-detail-meta', detail.meta));
-      target.appendChild(chip);
+  function applyPresetDetails(stage, preset) {
+    if (!stage || !preset) return;
+    (preset.details || []).forEach((detail) => {
+      stage.querySelectorAll(detail.selector).forEach((target) => {
+        appendDetailRows(target, detail.rows);
+        appendBankMiniGrid(target, detail.bankGrid);
+      });
     });
   }
 
@@ -938,7 +1047,7 @@
     layout.appendChild(rails);
     layout.appendChild(stack);
     stage.appendChild(layout);
-    applyBankDetails(stage, preset);
+    applyPresetDetails(stage, preset);
 
     if ((preset.notes || []).length > 0) {
       const notes = node('div', 'pto-mem950__notes');

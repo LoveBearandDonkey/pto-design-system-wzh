@@ -23,12 +23,11 @@
       height: 420px;
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
-      background: var(--surface-2);
+      background: var(--background);
     }
     .demo-stage {
       display: grid;
       place-items: center;
-      background: var(--surface-1);
     }
   </style>
 </head>
@@ -45,10 +44,8 @@
             <button class="btn btn-sm" type="button" data-path-kind="control">控制路径</button>
           </div>
           <div class="pto-hw-viewport__tools">
-            <button class="btn btn-sm btn-ghost pto-hw-viewport__tool" type="button" data-detail aria-pressed="true" title="隐藏 bank 数据">细节开</button>
+            <button class="btn btn-sm btn-ghost pto-hw-viewport__tool" type="button" data-detail aria-pressed="true" title="隐藏细节数据">细节开</button>
             <button class="btn btn-sm btn-ghost pto-hw-viewport__tool" type="button" data-zoom-out>−</button>
-            <button class="btn btn-sm btn-ghost pto-hw-viewport__tool" type="button" data-fit>适配</button>
-            <button class="btn btn-sm btn-ghost pto-hw-viewport__tool" type="button" data-actual>1:1</button>
             <span class="pto-hw-viewport__readout" data-readout>100%</span>
             <button class="btn btn-sm btn-ghost pto-hw-viewport__tool" type="button" data-zoom-in>+</button>
           </div>
@@ -70,8 +67,6 @@
       detailToggle: '[data-detail]',
       zoomOut: '[data-zoom-out]',
       zoomIn: '[data-zoom-in]',
-      fit: '[data-fit]',
-      actual: '[data-actual]',
       readout: '[data-readout]',
       pathButtons: '[data-path-kind]',
       frameSize: { width: 720, height: 260 },

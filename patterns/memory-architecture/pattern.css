@@ -248,43 +248,59 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   z-index: 2;
 }
 
-.pto-mem950__bank-detail {
-  position: absolute;
-  right: 9px;
-  bottom: 8px;
-  z-index: 4;
-  display: inline-flex;
+.detail-spec-list {
+  display: grid;
+  gap: 2px;
+  margin-top: 6px;
+}
+
+.detail-spec-row {
+  display: grid;
+  grid-template-columns: minmax(48px, auto) 1fr;
+  gap: 6px;
   align-items: center;
-  gap: 5px;
-  max-width: calc(100% - 18px);
-  min-height: 18px;
-  padding: 0 6px;
-  border: 1px solid color-mix(in srgb, var(--warning, #ffdf1f) 42%, transparent);
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--surface-4, #343434) 88%, transparent);
-  color: var(--foreground-secondary, rgba(255, 255, 255, 0.68));
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
-  font: 700 9px / 1 var(--font-mono, ui-monospace, monospace);
-  white-space: nowrap;
-  pointer-events: none;
-  transition:
-    opacity var(--duration-fast, 120ms) var(--easing-default, ease),
-    visibility var(--duration-fast, 120ms) var(--easing-default, ease);
+  min-height: 14px;
 }
 
-.pto-mem950__bank-detail strong {
-  color: var(--foreground, rgba(255, 255, 255, 0.9));
-  font-weight: 800;
+.detail-spec-label,
+.detail-spec-value {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
 }
 
-.pto-mem950__bank-detail-meta {
-  color: var(--foreground-muted, rgba(255, 255, 255, 0.44));
-  font-weight: 700;
+.detail-spec-value {
+  text-align: right;
 }
 
-.pto-mem950.is-detail-hidden .pto-mem950__bank-detail {
-  opacity: 0;
-  visibility: hidden;
+.bank-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--bank-mini-grid-groups, 8), minmax(0, 1fr));
+  gap: 3px;
+  margin-top: 5px;
+}
+
+.bank-group {
+  display: grid;
+  grid-template-rows: repeat(var(--bank-mini-grid-bank-count, 2), 4px);
+  gap: 2px;
+  padding: 3px;
+  border-radius: 5px;
+  border: 1px solid rgba(74, 217, 231, 0.52);
+  background: rgba(74, 217, 231, 0.10);
+}
+
+.bank-group span {
+  display: block;
+  border-radius: 2px;
+  background: #4ad9e7;
+  opacity: 0.82;
+}
+
+.pto-mem950.is-detail-hidden .detail-spec-list,
+.pto-mem950.is-detail-hidden .bank-mini-grid {
+  display: none;
 }
 
 .pto-mem950__missing {
