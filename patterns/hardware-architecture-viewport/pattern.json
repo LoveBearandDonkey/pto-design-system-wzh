@@ -2,7 +2,7 @@
   "id": "hardware-architecture-viewport",
   "name": "Hardware Architecture Viewport",
   "type": "hybrid",
-  "description": "Shared PTO shell and controller for architecture-map host controls: architecture selection, path filters, detail visibility, zoom, fit, actual-size, iframe readiness, size sync, and hardware postMessage protocol.",
+  "description": "Shared PTO shell and controller for architecture-map host controls: architecture selection, path filters, bank-detail visibility, zoom, fit, actual-size, iframe readiness, size sync, and hardware postMessage protocol.",
   "source": {
     "patternCss": "patterns/hardware-architecture-viewport/pattern.css",
     "renderScript": "patterns/hardware-architecture-viewport/pattern.js",
@@ -14,7 +14,8 @@
   "useWhen": [
     "embedding memory-architecture-layout in a product page iframe or inline stage",
     "providing consistent architecture-map toolbar controls across PTO modules",
-    "coordinating hardware-details, hardware-focus, hardware-ready, and hardware-size messages"
+    "coordinating hardware-details, hardware-focus, hardware-ready, and hardware-size messages",
+    "treating detail visibility as a bank-data overlay, not as a compact/base-label toggle"
   ],
   "requiredApis": [
     "window.PtoHardwareArchitectureViewport.mount(root, options)",

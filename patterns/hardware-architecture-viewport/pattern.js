@@ -112,6 +112,10 @@
       state.detailsVisible = visible !== false;
       if (elements.detailToggle) {
         elements.detailToggle.textContent = state.detailsVisible ? (options.detailOnText || '细节开') : (options.detailOffText || '细节关');
+        elements.detailToggle.title = state.detailsVisible
+          ? (options.detailOnTitle || '隐藏 bank 数据')
+          : (options.detailOffTitle || '显示 bank 数据');
+        elements.detailToggle.setAttribute('aria-label', elements.detailToggle.title);
         elements.detailToggle.setAttribute('aria-pressed', state.detailsVisible ? 'true' : 'false');
       }
 

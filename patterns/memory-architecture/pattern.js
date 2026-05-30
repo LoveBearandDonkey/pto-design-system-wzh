@@ -205,6 +205,14 @@
         'UB → L2/GM via MTE3',
         '950 direct CV lanes: L0C→UB and UB→L1',
       ],
+      bankDetails: {
+        'buffer:UB': {
+          label: 'UB bank',
+          spec: '8BG × 2B × 16KB',
+          meta: '3510',
+          description: '3510 UB bank layout: 8 bank groups, 2 banks per group, 16KB per bank.',
+        },
+      },
       hoverTips: {
         'rail:GM': {
           title: 'Global Memory',
@@ -411,6 +419,14 @@
         'UB → L2/GM via MTE3',
         'No 950 direct CV lanes; SIMD-only vector exec (no SIMT)',
       ],
+      bankDetails: {
+        'buffer:UB': {
+          label: 'UB bank',
+          spec: '16BG × 3B × 4KB',
+          meta: '2201',
+          description: '2201 UB bank layout: 16 bank groups, 3 banks per group, 4KB per bank.',
+        },
+      },
       hoverTips: {
         'rail:GM': {
           title: 'Global Memory',
@@ -579,7 +595,7 @@
     if (!root) return null;
     const nextVisible = visible !== false;
     root.classList.toggle('is-detail-hidden', !nextVisible);
-    root.dataset.detailVisibility = nextVisible ? 'full' : 'compact';
+    root.dataset.detailVisibility = nextVisible ? 'bank' : 'base';
     return {
       root,
       visible: nextVisible,
@@ -876,6 +892,26 @@
     return helper.render(slotMount, preset);
   }
 
+  function applyBankDetails(stage, preset) {
+    const details = preset?.bankDetails || {};
+    const detailKeys = Object.keys(details);
+    if (!stage || detailKeys.length === 0) return;
+
+    stage.querySelectorAll('[data-aic-node], [data-aiv-node], [data-mem950-node]').forEach((target) => {
+      const key = target.dataset.aicNode || target.dataset.aivNode || target.dataset.mem950Node || '';
+      const detail = details[key];
+      if (!detail) return;
+
+      const chip = node('div', 'pto-mem950__bank-detail');
+      chip.dataset.bankTarget = key;
+      chip.title = detail.description || `${detail.label || 'bank'} ${detail.spec || ''}`.trim();
+      chip.appendChild(node('span', 'pto-mem950__bank-detail-label', detail.label || 'bank'));
+      chip.appendChild(node('strong', 'pto-mem950__bank-detail-spec', detail.spec || ''));
+      if (detail.meta) chip.appendChild(node('span', 'pto-mem950__bank-detail-meta', detail.meta));
+      target.appendChild(chip);
+    });
+  }
+
   function renderArchitecture(container, presetOrKey) {
     const preset = resolvePreset(presetOrKey);
     if (!container || !preset) return null;
@@ -902,6 +938,7 @@
     layout.appendChild(rails);
     layout.appendChild(stack);
     stage.appendChild(layout);
+    applyBankDetails(stage, preset);
 
     if ((preset.notes || []).length > 0) {
       const notes = node('div', 'pto-mem950__notes');

@@ -248,13 +248,41 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   z-index: 2;
 }
 
-.pto-mem950.is-detail-hidden .pto-aic-core__buffer-capacity,
-.pto-mem950.is-detail-hidden .pto-aiv-core__buffer-capacity,
-.pto-mem950.is-detail-hidden .pto-aic-core__cache-label,
-.pto-mem950.is-detail-hidden .pto-aiv-core__cache-label,
-.pto-mem950.is-detail-hidden .pto-aic-core__scheduler-label,
-.pto-mem950.is-detail-hidden .pto-aic-core__queue-label,
-.pto-mem950.is-detail-hidden .pto-mem950__notes {
+.pto-mem950__bank-detail {
+  position: absolute;
+  right: 9px;
+  bottom: 8px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: calc(100% - 18px);
+  min-height: 18px;
+  padding: 0 6px;
+  border: 1px solid color-mix(in srgb, var(--warning, #ffdf1f) 42%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--surface-4, #343434) 88%, transparent);
+  color: var(--foreground-secondary, rgba(255, 255, 255, 0.68));
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+  font: 700 9px / 1 var(--font-mono, ui-monospace, monospace);
+  white-space: nowrap;
+  pointer-events: none;
+  transition:
+    opacity var(--duration-fast, 120ms) var(--easing-default, ease),
+    visibility var(--duration-fast, 120ms) var(--easing-default, ease);
+}
+
+.pto-mem950__bank-detail strong {
+  color: var(--foreground, rgba(255, 255, 255, 0.9));
+  font-weight: 800;
+}
+
+.pto-mem950__bank-detail-meta {
+  color: var(--foreground-muted, rgba(255, 255, 255, 0.44));
+  font-weight: 700;
+}
+
+.pto-mem950.is-detail-hidden .pto-mem950__bank-detail {
   opacity: 0;
   visibility: hidden;
 }
@@ -421,12 +449,12 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   width: max-content;
   max-width: 280px;
   padding: 10px 12px;
-  border: 1px solid var(--border-default, rgba(255, 255, 255, 0.16));
+  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.18));
   border-radius: 10px;
-  background: rgba(22, 22, 22, 0.97);
-  background: color-mix(in srgb, var(--surface-1, #161616) 96%, #000000 4%);
-  color: var(--foreground, rgba(255, 255, 255, 0.9));
-  box-shadow: var(--shadow-md, 0 8px 22px rgba(0, 0, 0, 0.42));
+  background: #242424;
+  background: color-mix(in srgb, var(--surface-3, #262626) 94%, #000000 6%);
+  color: var(--foreground, rgba(255, 255, 255, 0.92));
+  box-shadow: var(--shadow-md, 0 12px 28px rgba(0, 0, 0, 0.55)), 0 0 0 1px rgba(0, 0, 0, 0.45);
   font-family: var(--font-sans, Inter, "Source Han Sans SC", "PingFang SC", "Noto Sans SC", sans-serif);
   pointer-events: none;
   opacity: 0;
