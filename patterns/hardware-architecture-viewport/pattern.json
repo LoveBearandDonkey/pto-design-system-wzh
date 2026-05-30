@@ -2,7 +2,7 @@
   "id": "hardware-architecture-viewport",
   "name": "Hardware Architecture Viewport",
   "type": "hybrid",
-  "description": "Shared PTO shell and controller for architecture-map host controls: architecture selection, path filters, detail visibility, compact zoom readout, iframe readiness, size sync, dotted viewport background, transparent title toolbar, and hardware postMessage protocol.",
+  "description": "Shared PTO shell and controller for architecture-map host controls: architecture selection, path filters, detail visibility, compact zoom readout, iframe readiness, size sync, root-level dotted viewport background, transparent fixed-height borderless title toolbar, and hardware postMessage protocol.",
   "source": {
     "patternCss": "patterns/hardware-architecture-viewport/pattern.css",
     "renderScript": "patterns/hardware-architecture-viewport/pattern.js",
@@ -17,7 +17,8 @@
     "coordinating hardware-details, hardware-focus, hardware-ready, and hardware-size messages",
     "treating detail visibility as a bank-data overlay, not as a compact/base-label toggle",
     "using the compact detail / zoom-out / readout / zoom-in control cluster for architecture maps",
-    "rendering architecture windows on the shared dark dotted viewport background with no filled title-bar background"
+    "rendering architecture windows on the shared dark dotted viewport background with no filled title-bar background",
+    "keeping architecture title toolbars transparent, borderless, over the same dotted surface, and at the shared toolbar height"
   ],
   "requiredApis": [
     "window.PtoHardwareArchitectureViewport.mount(root, options)",
@@ -32,7 +33,8 @@
     "introducing a new architecture toolbar visual grammar instead of using the pto-hw-viewport classes",
     "forking zoom/readout/detail behavior without a page-specific state requirement",
     "using page-local button sizing or toolbar spacing for architecture map controls",
-    "replacing the shared dotted stage background or adding filled title-bar backgrounds to architecture windows",
+    "replacing the shared dotted stage background or adding filled title-bar backgrounds or divider borders to architecture windows",
+    "hard-coding page-specific architecture title/header heights instead of using --pto-hw-viewport-toolbar-height",
     "adding architecture-header metadata chips such as pattern, preset, source, no-iframe, or selected path readouts",
     "sending custom iframe message names for standard hardware-ready, hardware-size, hardware-details, hardware-focus, or hardware-arch-change events"
   ]
