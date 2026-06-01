@@ -1,7 +1,7 @@
 (function attachPtoHardwareArchitectureViewport(global) {
   'use strict';
 
-  const DEFAULT_ZOOM_LEVELS = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2];
+  const DEFAULT_ZOOM_LEVELS = [0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2];
 
   const qs = (selector, root = document) => (
     !selector ? null : selector instanceof Element ? selector : root.querySelector(selector)
@@ -35,7 +35,12 @@
       scale: closestZoomLevel(levels, options.scale || options.defaultScale || 1),
       fitted: options.fitted !== false,
       frameSize: options.frameSize || { width: 1200, height: 820 },
+      pan: {
+        x: Number(options.panX) || 0,
+        y: Number(options.panY) || 0,
+      },
     };
+    let activePan = null;
 
     const elements = {
       viewport: qs(options.viewport, root),
@@ -58,6 +63,14 @@
       if (elements.zoomIn) elements.zoomIn.disabled = index >= levels.length - 1;
     }
 
+    function applyPan() {
+      if (!elements.scale) return;
+      const pan = `translate3d(${Math.round(state.pan.x)}px, ${Math.round(state.pan.y)}px, 0)`;
+      elements.scale.style.transform = elements.frame || options.scaleVariable
+        ? pan
+        : `${pan} scale(${state.scale})`;
+    }
+
     function applyScale(scale, updateFitted = false) {
       state.scale = closestZoomLevel(levels, scale);
       if (!updateFitted) state.fitted = false;
@@ -70,9 +83,8 @@
         elements.frame.style.transform = `scale(${state.scale})`;
         elements.scale.style.width = `${Math.ceil(state.frameSize.width * state.scale)}px`;
         elements.scale.style.height = `${Math.ceil(state.frameSize.height * state.scale)}px`;
-      } else if (elements.scale) {
-        elements.scale.style.transform = `scale(${state.scale})`;
       }
+      applyPan();
 
       syncReadout();
       postToFrame({ type: 'hardware-scale', scale: state.scale });
@@ -101,6 +113,31 @@
       const currentIndex = zoomIndex(levels, state.scale);
       const nextIndex = clamp(currentIndex + direction, 0, levels.length - 1);
       applyScale(levels[nextIndex]);
+    }
+
+    function scaleAtPoint(scale, clientX, clientY) {
+      if (!elements.scale) {
+        applyScale(scale);
+        return;
+      }
+      const currentScale = state.scale;
+      const nextScale = closestZoomLevel(levels, scale);
+      if (nextScale === currentScale) return;
+      const beforeRect = elements.scale.getBoundingClientRect();
+      const anchorX = (clientX - beforeRect.left) / currentScale;
+      const anchorY = (clientY - beforeRect.top) / currentScale;
+      applyScale(nextScale);
+      const afterRect = elements.scale.getBoundingClientRect();
+      state.pan.x += clientX - (afterRect.left + anchorX * nextScale);
+      state.pan.y += clientY - (afterRect.top + anchorY * nextScale);
+      applyPan();
+      options.onPanChange?.({ ...state.pan }, api);
+    }
+
+    function stepZoomAtPoint(direction, clientX, clientY) {
+      const currentIndex = zoomIndex(levels, state.scale);
+      const nextIndex = clamp(currentIndex + direction, 0, levels.length - 1);
+      scaleAtPoint(levels[nextIndex], clientX, clientY);
     }
 
     function postToFrame(message) {
@@ -161,6 +198,53 @@
       options.onReady?.(api);
     }
 
+    function finishPan(event) {
+      if (!activePan || event.pointerId !== activePan.pointerId) return;
+      elements.viewport?.classList.remove('is-panning');
+      try {
+        elements.viewport?.releasePointerCapture?.(event.pointerId);
+      } catch (error) {
+        // Pointer capture may already be released by a cancel/lost event.
+      }
+      activePan = null;
+    }
+
+    function handlePointerDown(event) {
+      if (options.pan === false) return;
+      if (!elements.viewport || event.button !== 0) return;
+      const target = event.target instanceof Element ? event.target : null;
+      if (target?.closest?.('button, input, textarea, select, a')) return;
+      activePan = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        originX: state.pan.x,
+        originY: state.pan.y,
+      };
+      elements.viewport.classList.add('is-panning');
+      elements.viewport.setPointerCapture?.(event.pointerId);
+      event.preventDefault();
+    }
+
+    function handlePointerMove(event) {
+      if (!activePan || event.pointerId !== activePan.pointerId) return;
+      state.pan.x = activePan.originX + event.clientX - activePan.startX;
+      state.pan.y = activePan.originY + event.clientY - activePan.startY;
+      applyPan();
+      options.onPanChange?.({ ...state.pan }, api);
+      event.preventDefault();
+    }
+
+    function handleWheel(event) {
+      if (options.wheelZoom === false || !event.metaKey) return;
+      const target = event.target instanceof Element ? event.target : null;
+      if (target?.closest?.('button, input, textarea, select, a')) return;
+      const dominantDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+      if (!dominantDelta) return;
+      event.preventDefault();
+      stepZoomAtPoint(dominantDelta < 0 ? 1 : -1, event.clientX, event.clientY);
+    }
+
     function handleMessage(event) {
       if (!elements.frame || event.source !== elements.frame.contentWindow) return;
       if (!event.data || (event.data.type !== 'hardware-ready' && event.data.type !== 'hardware-size')) return;
@@ -178,6 +262,12 @@
       button.addEventListener('click', () => setPathKind(button.dataset.pathKind));
     });
     elements.frame?.addEventListener('load', () => requestAnimationFrame(markReady));
+    elements.viewport?.addEventListener('pointerdown', handlePointerDown);
+    elements.viewport?.addEventListener('pointermove', handlePointerMove);
+    elements.viewport?.addEventListener('pointerup', finishPan);
+    elements.viewport?.addEventListener('pointercancel', finishPan);
+    elements.viewport?.addEventListener('lostpointercapture', finishPan);
+    elements.viewport?.addEventListener('wheel', handleWheel, { passive: false });
     global.addEventListener('message', handleMessage);
     global.addEventListener('resize', () => {
       if (state.fitted) fit();
@@ -191,6 +281,9 @@
       fit,
       actual,
       stepZoom,
+      stepZoomAtPoint,
+      scaleAtPoint,
+      applyPan,
       setDetailsVisible,
       setArch,
       setPathKind,
@@ -198,6 +291,12 @@
       markReady,
       postToFrame,
       destroy() {
+        elements.viewport?.removeEventListener('pointerdown', handlePointerDown);
+        elements.viewport?.removeEventListener('pointermove', handlePointerMove);
+        elements.viewport?.removeEventListener('pointerup', finishPan);
+        elements.viewport?.removeEventListener('pointercancel', finishPan);
+        elements.viewport?.removeEventListener('lostpointercapture', finishPan);
+        elements.viewport?.removeEventListener('wheel', handleWheel);
         global.removeEventListener('message', handleMessage);
       },
     };

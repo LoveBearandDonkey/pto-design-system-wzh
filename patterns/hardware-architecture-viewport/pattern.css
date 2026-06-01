@@ -183,10 +183,18 @@
   flex: 1 1 auto;
   overflow: auto;
   position: relative;
+  cursor: grab;
+  overscroll-behavior: contain;
+  touch-action: none;
+  user-select: none;
 }
 
 .pto-hw-viewport .pto-hw-viewport__stage {
   background: transparent !important;
+}
+
+.pto-hw-viewport__stage.is-panning {
+  cursor: grabbing;
 }
 
 .pto-hw-viewport__scale {
@@ -202,4 +210,5 @@
   border: 0;
   background: transparent;
   transform-origin: top left;
+  pointer-events: none;
 }
