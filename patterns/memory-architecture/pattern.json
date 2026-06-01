@@ -38,7 +38,7 @@
   "allowedOverrides": [
     "preset rails, core membership, titles, route list, and route labels",
     "choosing which shared AIC/AIV presets are mounted into each core slot",
-    "hover tip copy through preset hoverTips or attachHoverInteractions options",
+    "hover tip copy and fixed-size viewport scaling through preset hoverTips or attachHoverInteractions options",
     "flow-step focus payloads through setPathFocus selectors and route ids",
     "container framing outside the pattern root"
   ],

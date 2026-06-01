@@ -46,11 +46,15 @@
     <div class="pto-pattern-memory-arch__focus-strip" aria-label="path focus hover examples">
       <button class="pto-pattern-memory-arch__focus-chip" type="button" data-focus-flow="vector">
         <strong>AIV Vector</strong>
-        <span>L2 → UB → Vector → L2</span>
+        <span>GM ↔ UB ↔ Vector RF</span>
       </button>
       <button class="pto-pattern-memory-arch__focus-chip" type="button" data-focus-flow="cube">
         <strong>AIC Cube</strong>
-        <span>L2 → L1 → L0A/B → Cube</span>
+        <span>GM → L0A/B → Cube</span>
+      </button>
+      <button class="pto-pattern-memory-arch__focus-chip" type="button" data-focus-flow="simt">
+        <strong>AIV SIMT</strong>
+        <span>GM → UB → SIMT RF / GM → SIMT RF</span>
       </button>
       <button class="pto-pattern-memory-arch__focus-chip" type="button" data-focus-flow="direct-cv">
         <strong>950 CV lanes</strong>
@@ -98,22 +102,30 @@
       const focusFlows = {
         vector: {
           selectors: [
-            '[data-mem950-node="rail:L2"]',
+            '[data-mem950-node="rail:GM"]',
             '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
+            '#mem950-aiv1 [data-aiv-node="exec:SIMD"]',
             '#mem950-aiv1 [data-aiv-node="vector:Vector"]',
           ],
-          routes: ['l2-to-aiv1', 'aiv1-to-l2'],
+          routes: ['gm-to-aiv1-ub', 'aiv1-ub-to-gm'],
         },
         cube: {
           selectors: [
-            '[data-mem950-node="rail:L2"]',
-            '#mem950-aic [data-aic-node="buffer:L1"]',
+            '[data-mem950-node="rail:GM"]',
             '#mem950-aic [data-aic-node="buffer:L0A"]',
             '#mem950-aic [data-aic-node="buffer:L0B"]',
             '#mem950-aic [data-aic-node="cube:CUBE"]',
             '#mem950-aic [data-aic-node="buffer:L0C"]',
           ],
-          routes: ['l2-to-aic'],
+          routes: ['gm-to-aic-l0a', 'gm-to-aic-l0b'],
+        },
+        simt: {
+          selectors: [
+            '[data-mem950-node="rail:GM"]',
+            '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
+            '#mem950-aiv1 [data-aiv-node="exec:SIMT"]',
+          ],
+          routes: ['gm-to-aiv1-ub', 'gm-to-aiv1-simt'],
         },
         'direct-cv': {
           selectors: [

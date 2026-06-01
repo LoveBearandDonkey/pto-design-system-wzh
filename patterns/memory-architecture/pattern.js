@@ -21,6 +21,18 @@
       stroke: '#5be5c2',
       text: '#ffffff',
     },
+    simt: {
+      line: '#ff9a54',
+      fill: '#ffb06f',
+      stroke: '#ffc18f',
+      text: '#111111',
+    },
+    register: {
+      line: '#7b61ff',
+      fill: '#8f7cff',
+      stroke: '#b1a4ff',
+      text: '#ffffff',
+    },
   };
 
   const PRESETS = {
@@ -111,6 +123,45 @@
           labelDy: 0,
         },
         {
+          id: 'gm-to-aiv1-ub',
+          label: 'GM→UB',
+          tone: 'transport',
+          from: '[data-mem950-node="rail:GM"]',
+          to: '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
+          fromSide: 'right',
+          toSide: 'left',
+          toBias: 0.40,
+          style: 'lane-h-target',
+          labelDy: -12,
+          defaultHidden: true,
+        },
+        {
+          id: 'aiv1-ub-to-gm',
+          label: 'UB→GM',
+          tone: 'directReturn',
+          from: '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
+          to: '[data-mem950-node="rail:GM"]',
+          fromSide: 'left',
+          toSide: 'right',
+          fromBias: 0.82,
+          style: 'lane-h-source',
+          labelDy: 14,
+          defaultHidden: true,
+        },
+        {
+          id: 'gm-to-aiv1-simt',
+          label: 'GM→SIMT RF',
+          tone: 'simt',
+          from: '[data-mem950-node="rail:GM"]',
+          to: '#mem950-aiv1 [data-aiv-node="exec:SIMT"]',
+          fromSide: 'right',
+          toSide: 'left',
+          toBias: 0.42,
+          style: 'lane-h-target',
+          labelDy: -13,
+          defaultHidden: true,
+        },
+        {
           id: 'l2-to-aic',
           label: 'MTE2',
           tone: 'transport',
@@ -133,6 +184,32 @@
           toBias: 0.50,
           style: 'lane-h-target',
           labelDy: 0,
+        },
+        {
+          id: 'gm-to-aic-l0a',
+          label: 'GM→L0A',
+          tone: 'register',
+          from: '[data-mem950-node="rail:GM"]',
+          to: '#mem950-aic [data-aic-node="buffer:L0A"]',
+          fromSide: 'right',
+          toSide: 'left',
+          toBias: 0.46,
+          style: 'lane-h-target',
+          labelDy: -12,
+          defaultHidden: true,
+        },
+        {
+          id: 'gm-to-aic-l0b',
+          label: 'GM→L0B',
+          tone: 'register',
+          from: '[data-mem950-node="rail:GM"]',
+          to: '#mem950-aic [data-aic-node="buffer:L0B"]',
+          fromSide: 'right',
+          toSide: 'left',
+          toBias: 0.54,
+          style: 'lane-h-target',
+          labelDy: 13,
+          defaultHidden: true,
         },
         {
           id: 'aic-to-aiv1',
@@ -160,7 +237,20 @@
           toBias: 0.74,
           style: 'elbow-h',
           corridorRight: 84,
+          labelDx: 42,
           labelDy: 14,
+        },
+        {
+          id: 'aic-aiv2-ssbuffer',
+          label: 'SSBuffer',
+          tone: 'direct',
+          from: '#mem950-aic [data-aic-node="scalar:Scalar"]',
+          to: '#mem950-aiv2 [data-aiv-node="scalar:Scalar"]',
+          fromSide: 'bottom',
+          toSide: 'top',
+          style: 'elbow-v',
+          strokeWidth: '2',
+          defaultHidden: true,
         },
         {
           id: 'l2-to-aiv2',
@@ -173,6 +263,45 @@
           toBias: 0.58,
           style: 'lane-h-target',
           labelDy: 0,
+        },
+        {
+          id: 'gm-to-aiv2-ub',
+          label: 'GM→UB',
+          tone: 'transport',
+          from: '[data-mem950-node="rail:GM"]',
+          to: '#mem950-aiv2 [data-aiv-node="buffer:UB"]',
+          fromSide: 'right',
+          toSide: 'left',
+          toBias: 0.40,
+          style: 'lane-h-target',
+          labelDy: -12,
+          defaultHidden: true,
+        },
+        {
+          id: 'aiv2-ub-to-gm',
+          label: 'UB→GM',
+          tone: 'directReturn',
+          from: '#mem950-aiv2 [data-aiv-node="buffer:UB"]',
+          to: '[data-mem950-node="rail:GM"]',
+          fromSide: 'left',
+          toSide: 'right',
+          fromBias: 0.82,
+          style: 'lane-h-source',
+          labelDy: 14,
+          defaultHidden: true,
+        },
+        {
+          id: 'gm-to-aiv2-simt',
+          label: 'GM→SIMT RF',
+          tone: 'simt',
+          from: '[data-mem950-node="rail:GM"]',
+          to: '#mem950-aiv2 [data-aiv-node="exec:SIMT"]',
+          fromSide: 'right',
+          toSide: 'left',
+          toBias: 0.42,
+          style: 'lane-h-target',
+          labelDy: -13,
+          defaultHidden: true,
         },
         {
           id: 'l2-to-aiv2-dcache',
@@ -203,6 +332,8 @@
         '1 AIC + 2 AIV memory-stage layout',
         'L2/GM → DCache, L1, or UB via MTE2',
         'UB → L2/GM via MTE3',
+        'GM → UB → SIMT RF / GM → SIMT RF',
+        'GM ↔ UB ↔ Vector RF; GM → L0A/L0B',
         '950 direct CV lanes: L0C→UB and UB→L1',
       ],
       details: [
@@ -211,23 +342,19 @@
           rows: [
             ['bank', '8组 x 2个/组'],
             ['单bank', '16KB'],
+            ['cache', 'SIMT DCache'],
             ['对齐', '32B'],
             ['搬运', 'MTE2/MTE3'],
           ],
           bankGrid: { groups: 8, banksPerGroup: 2 },
         },
         {
-          selector: '[data-aiv-node="exec:SIMT"]',
-          rows: [
-            ['DCache', '128KB'],
-            ['RegFile', '128KB'],
-          ],
+          selector: '#mem950-aiv1 .pto-aiv-core__instruction-slot, #mem950-aiv2 .pto-aiv-core__instruction-slot',
+          instructionItems: ['MTE2 指令序列', 'MTE3 指令序列', 'SIMD VF 指令序列', 'SIMT VF 指令序列'],
         },
         {
-          selector: '[data-aiv-node="exec:SIMD"]',
-          rows: [
-            ['RegFile', 'SIMD RF'],
-          ],
+          selector: '#mem950-aic .pto-aic-core__bottom-row',
+          instructionItems: ['Cube 指令序列', 'FixPipe 指令序列', 'MTE1 指令序列', 'MTE2 指令序列'],
         },
         {
           selector: '#mem950-aic [data-aic-node="buffer:L1"]',
@@ -267,108 +394,108 @@
       ],
       hoverTips: {
         'rail:GM': {
-          title: 'Global Memory',
-          body: 'Chip-level memory source and sink for the full-stage architecture.',
+          title: '全局内存（GM）',
+          body: '芯片级主存，是 950 显式数据通路的源端和回写端；Vector、SIMT 与 Cube 场景都要关注从 GM 到片上缓存或寄存器的搬运成本。',
         },
         'rail:L2': {
-          title: 'L2 Cache',
-          body: 'Shared cache rail feeding AIV DCache or UB and AIC DCache or L1 through MTE2 paths.',
+          title: '二级缓存（L2）',
+          body: '共享缓存层，连接 AIV 的 DCache/UB 与 AIC 的 DCache/L1，MTE2 等数据搬运通路会经过这里。',
         },
         'core:AIV1': {
           title: 'AIV 1',
-          body: 'Vector-side core object with DCache, ICache, Scalar, UB, SIMT, SIMD, and Vector lanes.',
+          body: '向量侧计算核心，包含 DCache、ICache、Scalar、UB、SIMT、SIMD 和 Vector Reg File，用于规则向量计算与离散 SIMT 场景。',
         },
         'core:AIC': {
           title: 'AIC',
-          body: 'Cube-side compute object with L1, L0 buffers, CUBE, Scalar, dispatch, and execution queues.',
+          body: '矩阵计算侧核心，包含 L1、L0A/L0B/L0C、BT/FP、CUBE、Scalar、Dispatch 和指令队列。',
         },
         'core:AIV2': {
           title: 'AIV 2',
-          body: 'Second vector-side core object used by the 950B split memory-stage layout.',
+          body: '第二个向量侧计算核心；在折叠视图中用于表达 AIV ×2 的合并结构。',
         },
         'buffer:UB': {
-          title: 'UB',
-          body: 'Unified Buffer for AIV vector-side data staging and MTE3 return paths.',
+          title: '统一缓冲区（UB）',
+          body: 'AIV 本地数据暂存区。950 场景中，UB 可承接 GM 搬入的数据，并与 SIMT Reg File 或 Vector Reg File 形成关键通路。',
         },
         'buffer:L1': {
-          title: 'L1',
-          body: 'AIC local memory feeding L0A, L0B, BT, and FP lanes.',
+          title: '一级片上缓存（L1）',
+          body: 'AIC 本地输入缓存，向 L0A、L0B、BT 和 FP 等下一级缓冲区供数。',
         },
         'buffer:L0A': {
-          title: 'L0A',
-          body: 'AIC matrix operand buffer for CUBE input staging.',
+          title: 'L0A 输入缓存',
+          body: 'Cube 计算的矩阵 A 操作数缓存；950 差异解读中重点关注 GM 到 L0A 的主数据通路。',
         },
         'buffer:L0B': {
-          title: 'L0B',
-          body: 'AIC matrix operand buffer for CUBE input staging.',
+          title: 'L0B 输入缓存',
+          body: 'Cube 计算的矩阵 B 操作数缓存；950 差异解读中重点关注 GM 到 L0B 的主数据通路。',
         },
         'buffer:L0C': {
-          title: 'L0C',
-          body: 'AIC CUBE output buffer; 950 direct CV lanes can forward data toward AIV UB.',
+          title: 'L0C 输出缓存',
+          body: 'Cube 计算结果缓存。950 的 C-V 直连可将 L0C 结果转发到 AIV 的 UB，减少经 GM 中转的开销。',
         },
         'buffer:BT': {
-          title: 'BT',
-          body: 'AIC bias or transform-side buffer lane connected through MTE1.',
+          title: 'BT 缓冲区',
+          body: 'AIC 侧偏置或变换相关的本地缓冲区，通常通过 MTE1 与其他本地缓存连接。',
         },
         'buffer:FP': {
-          title: 'FP',
-          body: 'AIC FixPipe buffer lane for post-CUBE data movement.',
+          title: 'FixPipe 缓冲区',
+          body: 'Cube 后处理相关的本地缓冲区，用于量化、激活或格式整理等 FixPipe 数据流。',
         },
         'cache:DCache': {
-          title: 'DCache',
-          body: 'Data cache endpoint for memory transport and scalar-side access.',
+          title: '数据缓存（DCache）',
+          body: '数据访问缓存端点，承接访存搬运和标量控制路径中的数据访问。',
         },
         'cache:ICache': {
-          title: 'ICache',
-          body: 'Instruction cache feeding the scalar or scheduler-side control path.',
+          title: '指令缓存（ICache）',
+          body: '指令访问缓存，为 Scalar 或调度侧控制路径提供指令流。',
         },
         'scalar:Scalar': {
-          title: 'Scalar',
-          body: 'Scalar control block coordinating local compute and memory movement.',
+          title: '标量控制单元',
+          body: '负责协调本地计算、数据搬运和队列派发，是 AIC/AIV 内部控制路径的核心节点。',
         },
         'exec:SIMT': {
-          title: 'SIMT',
-          body: 'AIV SIMT execution lane connected to scalar control and vector output.',
+          title: 'SIMT 寄存器文件',
+          body: '面向离散数据和多线程执行的寄存器路径，可表达 GM→UB→SIMT Reg File 或 GM→SIMT Reg File 的访问方式。',
         },
         'exec:SIMD': {
-          title: 'SIMD',
-          body: 'AIV SIMD execution lane connected to UB data and vector output.',
+          title: 'SIMD 寄存器文件',
+          body: '面向连续、规则数据的向量寄存器路径，适合规则向量计算和 RegBase 风格的数据组织。',
         },
         'vector:Vector': {
-          title: 'Vector',
-          body: 'AIV vector execution endpoint receiving SIMT and SIMD results.',
+          title: 'Vector 寄存器文件',
+          body: 'AIV 向量计算寄存器文件，与 UB 之间存在双向数据通路，用于向量侧暂存、计算和回写。',
         },
         'cube:CUBE': {
-          title: 'CUBE',
-          body: 'AIC matrix compute block fed by L0A, L0B, and BT buffers.',
+          title: 'Cube 计算单元',
+          body: 'AIC 矩阵计算单元，主要从 L0A、L0B 和 BT 等缓存获取操作数。',
         },
         'scheduler:Dispatch': {
-          title: 'Dispatch',
-          body: 'AIC dispatch block issuing work into cube, FixPipe, and MTE queues.',
+          title: '派发单元',
+          body: 'AIC 内部派发节点，负责把工作分发到 Cube、FixPipe 和 MTE 等指令队列。',
         },
         'queue:Cube Queue': {
-          title: 'Cube Queue',
-          body: 'Dispatch queue for CUBE-side compute operations.',
+          title: 'Cube 指令队列',
+          body: '承接 Cube 矩阵计算相关指令的队列。',
         },
         'queue:FixPipe Queue': {
-          title: 'FixPipe Queue',
-          body: 'Dispatch queue for FixPipe operations.',
+          title: 'FixPipe 指令队列',
+          body: '承接 Cube 后处理、格式整理、量化或激活相关指令的队列。',
         },
         'queue:MTE1 Queue': {
-          title: 'MTE1 Queue',
-          body: 'Dispatch queue for local memory transfer engine work.',
+          title: 'MTE1 指令队列',
+          body: '承接 AIC 本地缓存层级之间数据搬运工作的队列。',
         },
         'queue:MTE2 Queue': {
-          title: 'MTE2 Queue',
-          body: 'Dispatch queue for L2-to-local memory transfer work.',
+          title: 'MTE2 指令队列',
+          body: '承接 L2 与本地缓存之间数据搬运工作的队列。',
         },
         'transport:MTE1': {
-          title: 'MTE1',
-          body: 'Local AIC transport lane between L1 and L0 or FixPipe buffers.',
+          title: 'MTE1 搬运通路',
+          body: 'AIC 本地搬运通路，连接 L1、L0 缓冲区和 FixPipe 相关缓冲区。',
         },
         'transport:FixPipe': {
-          title: 'FixPipe',
-          body: 'AIC post-processing transport lane.',
+          title: 'FixPipe 通路',
+          body: 'AIC 后处理通路，用于 Cube 结果后的格式、量化或激活处理。',
         },
       },
     },
@@ -519,84 +646,100 @@
       ],
       hoverTips: {
         'rail:GM': {
-          title: 'Global Memory',
-          body: 'Chip-level memory source and sink for the 910B architecture.',
+          title: '全局内存（GM）',
+          body: '910B 架构中的芯片级主存，是算子输入、输出和中间数据回写的主要位置。',
         },
         'rail:L2': {
-          title: 'L2 Cache',
-          body: 'Shared cache rail feeding AIV DCache or UB and AIC DCache or L1 through MTE2 paths.',
+          title: '二级缓存（L2）',
+          body: '共享缓存层，通过 MTE2 等通路向 AIV 的 DCache/UB 或 AIC 的 DCache/L1 供数。',
         },
         'core:AIV': {
           title: 'AIV',
-          body: 'Vector-side core object with DCache, ICache, Scalar, UB, SIMD, and Vector lanes (no SIMT on 910B).',
+          body: '910B 的向量侧计算核心，包含 DCache、ICache、Scalar、UB、SIMD 和 Vector 通路，不包含 950 的 SIMT 结构。',
         },
         'core:AIC': {
           title: 'AIC',
-          body: 'Cube-side compute object with L1, L0 buffers, CUBE, Scalar, dispatch, and execution queues.',
+          body: '矩阵计算侧核心，包含 L1、L0A/L0B/L0C、CUBE、Scalar、Dispatch 和执行队列。',
         },
         'buffer:UB': {
-          title: 'UB',
-          body: 'Unified Buffer for AIV vector-side data staging and MTE3 return paths.',
+          title: '统一缓冲区（UB）',
+          body: 'AIV 向量侧本地数据暂存区，服务于向量计算和 MTE3 回写路径。',
         },
         'buffer:L1': {
-          title: 'L1',
-          body: 'AIC local memory feeding L0A, L0B, BT, and FP lanes.',
+          title: '一级片上缓存（L1）',
+          body: 'AIC 本地输入缓存，向 L0A、L0B、BT 和 FP 等下一级缓冲区供数。',
         },
         'buffer:L0A': {
-          title: 'L0A',
-          body: 'AIC matrix operand buffer for CUBE input staging.',
+          title: 'L0A 输入缓存',
+          body: 'Cube 计算的矩阵 A 操作数缓存。',
         },
         'buffer:L0B': {
-          title: 'L0B',
-          body: 'AIC matrix operand buffer for CUBE input staging.',
+          title: 'L0B 输入缓存',
+          body: 'Cube 计算的矩阵 B 操作数缓存。',
         },
         'buffer:L0C': {
-          title: 'L0C',
-          body: 'AIC CUBE output buffer.',
+          title: 'L0C 输出缓存',
+          body: 'Cube 计算结果缓存，通常用于后续回写或后处理。',
         },
         'buffer:BT': {
-          title: 'BT',
-          body: 'AIC bias or transform-side buffer lane connected through MTE1.',
+          title: 'BT 缓冲区',
+          body: 'AIC 侧偏置或变换相关的本地缓冲区，通常通过 MTE1 与其他本地缓存连接。',
         },
         'buffer:FP': {
-          title: 'FP',
-          body: 'AIC FixPipe buffer lane for post-CUBE data movement.',
+          title: 'FixPipe 缓冲区',
+          body: 'Cube 后处理相关的本地缓冲区，用于格式整理、量化或激活等数据流。',
         },
         'cache:DCache': {
-          title: 'DCache',
-          body: 'Data cache endpoint for memory transport and scalar-side access.',
+          title: '数据缓存（DCache）',
+          body: '数据访问缓存端点，承接访存搬运和标量控制路径中的数据访问。',
         },
         'cache:ICache': {
-          title: 'ICache',
-          body: 'Instruction cache feeding the scalar or scheduler-side control path.',
+          title: '指令缓存（ICache）',
+          body: '指令访问缓存，为 Scalar 或调度侧控制路径提供指令流。',
         },
         'scalar:Scalar': {
-          title: 'Scalar',
-          body: 'Scalar control block coordinating local compute and memory movement.',
+          title: '标量控制单元',
+          body: '负责协调本地计算、数据搬运和队列派发，是 AIC/AIV 内部控制路径的核心节点。',
         },
         'exec:SIMD': {
-          title: 'SIMD',
-          body: 'AIV SIMD execution lane connected to UB data and vector output.',
+          title: 'SIMD 执行通路',
+          body: 'AIV 规则向量计算通路，连接 UB 数据暂存和向量计算输出。',
         },
         'vector:Vector': {
-          title: 'Vector',
-          body: 'AIV vector execution endpoint receiving SIMD results.',
+          title: 'Vector 计算端点',
+          body: 'AIV 向量计算端点，接收 SIMD 通路的计算结果。',
         },
         'cube:CUBE': {
-          title: 'CUBE',
-          body: 'AIC matrix compute block fed by L0A, L0B, and BT buffers.',
+          title: 'Cube 计算单元',
+          body: 'AIC 矩阵计算单元，主要从 L0A、L0B 和 BT 等缓存获取操作数。',
         },
         'scheduler:Dispatch': {
-          title: 'Dispatch',
-          body: 'AIC dispatch block issuing work into cube, FixPipe, and MTE queues.',
+          title: '派发单元',
+          body: 'AIC 内部派发节点，负责把工作分发到 Cube、FixPipe 和 MTE 等执行队列。',
+        },
+        'queue:Cube Queue': {
+          title: 'Cube 指令队列',
+          body: '承接 Cube 矩阵计算相关指令的队列。',
+        },
+        'queue:FixPipe Queue': {
+          title: 'FixPipe 指令队列',
+          body: '承接 Cube 后处理、格式整理、量化或激活相关指令的队列。',
+        },
+        'queue:MTE1 Queue': {
+          title: 'MTE1 指令队列',
+          body: '承接 AIC 本地缓存层级之间数据搬运工作的队列。',
+        },
+        'queue:MTE2 Queue': {
+          title: 'MTE2 指令队列',
+          body: '承接 L2 与本地缓存之间数据搬运工作的队列。',
         },
         'transport:MTE1': {
-          title: 'MTE1',
-          body: 'Local AIC transport lane between L1 and L0 or FixPipe buffers.',
+          title: 'MTE1 搬运通路',
+          body: 'AIC 本地搬运通路，连接 L1、L0 缓冲区和 FixPipe 相关缓冲区。',
         },
         'transport:FixPipe': {
-          title: 'FixPipe',
-          body: 'AIC post-processing transport lane.',
+          title: 'FixPipe 通路',
+          body: 'AIC 后处理通路，用于 Cube 结果后的格式、量化或激活处理。',
         },
       },
     },
@@ -623,13 +766,6 @@
     return label || String(key || '');
   }
 
-  function nodeKindLabel(target) {
-    if (target.dataset.mem950Node) return 'memory architecture';
-    if (target.dataset.aicNode) return 'AIC object';
-    if (target.dataset.aivNode) return 'AIV object';
-    return 'hardware object';
-  }
-
   function tipForTarget(target, preset, options = {}) {
     const key = target.dataset.mem950Node || target.dataset.aicNode || target.dataset.aivNode || '';
     const custom = options.getTip?.(key, target, preset);
@@ -638,20 +774,17 @@
       return {
         title: readableNodeKey(key),
         body: tip,
-        meta: nodeKindLabel(target),
       };
     }
     if (tip) {
       return {
         title: tip.title || readableNodeKey(key),
         body: tip.body || tip.description || '',
-        meta: tip.meta || nodeKindLabel(target),
       };
     }
     return {
       title: readableNodeKey(key),
-      body: `${readableNodeKey(key)} in the ${preset?.name || 'memory architecture'} pattern.`,
-      meta: nodeKindLabel(target),
+      body: `该节点属于 ${preset?.name || '当前硬件架构图'}，用于表达对应的片上存储、计算或调度位置。`,
     };
   }
 
@@ -692,6 +825,18 @@
     };
   }
 
+  function setAivFolded(container, folded = false) {
+    const root = rootFor(container);
+    if (!root) return null;
+    const nextFolded = folded === true;
+    root.classList.toggle('is-aiv-folded', nextFolded);
+    root.dataset.aivFolded = nextFolded ? 'true' : 'false';
+    return {
+      root,
+      folded: nextFolded,
+    };
+  }
+
   function applyInternalRouteFocus(root) {
     root.querySelectorAll('.pto-aic-core__route[data-aic-route-from][data-aic-route-to]').forEach((routeEl) => {
       const core = routeEl.closest('.pto-aic-core');
@@ -706,6 +851,17 @@
         core?.querySelectorAll(`[data-aic-transport-to="${attrValue(routeEl.dataset.aicRouteTo)}"]`)
           .forEach((pill) => pill.classList.add('is-internal-route-active'));
       }
+    });
+
+    root.querySelectorAll('.pto-aiv-core__route[data-aiv-route-from][data-aiv-route-to]').forEach((routeEl) => {
+      const core = routeEl.closest('.pto-aiv-core');
+      const fromEl = core?.querySelector(`[data-aiv-node="${attrValue(routeEl.dataset.aivRouteFrom)}"]`);
+      const toEl = core?.querySelector(`[data-aiv-node="${attrValue(routeEl.dataset.aivRouteTo)}"]`);
+      const isActive = Boolean(
+        fromEl?.classList.contains('is-hardware-active') &&
+        toEl?.classList.contains('is-hardware-active')
+      );
+      routeEl.classList.toggle('is-internal-route-active', isActive);
     });
   }
 
@@ -751,35 +907,48 @@
     return '';
   }
 
-  function routeIdsForCore(coreId, suffix) {
-    if (coreId === 'mem950-aiv2') return [`l2-to-aiv2${suffix}`, 'aiv2-to-l2'];
-    return [`l2-to-aiv1${suffix}`, 'aiv1-to-l2'];
+  function routeIdsForCore(coreId) {
+    if (coreId === 'mem950-aiv2') return ['gm-to-aiv2-ub', 'aiv2-ub-to-gm'];
+    return ['gm-to-aiv1-ub', 'aiv1-ub-to-gm'];
   }
 
   function vectorFocusForCore(coreId) {
     const prefix = coreId === 'mem950-aiv2' ? '#mem950-aiv2' : '#mem950-aiv1';
-    const [inRoute, outRoute] = routeIdsForCore(coreId, '');
+    const [inRoute, outRoute] = routeIdsForCore(coreId);
     return {
       selectors: [
-        '[data-mem950-node="rail:L2"]',
+        '[data-mem950-node="rail:GM"]',
         `${prefix} [data-aiv-node="buffer:UB"]`,
+        `${prefix} [data-aiv-node="exec:SIMD"]`,
         `${prefix} [data-aiv-node="vector:Vector"]`,
       ],
       routes: [inRoute, outRoute],
     };
   }
 
+  function simtFocusForCore(coreId) {
+    const prefix = coreId === 'mem950-aiv2' ? '#mem950-aiv2' : '#mem950-aiv1';
+    const routePrefix = coreId === 'mem950-aiv2' ? 'aiv2' : 'aiv1';
+    return {
+      selectors: [
+        '[data-mem950-node="rail:GM"]',
+        `${prefix} [data-aiv-node="buffer:UB"]`,
+        `${prefix} [data-aiv-node="exec:SIMT"]`,
+      ],
+      routes: [`gm-to-${routePrefix}-ub`, `gm-to-${routePrefix}-simt`],
+    };
+  }
+
   function cubeFocus() {
     return {
       selectors: [
-        '[data-mem950-node="rail:L2"]',
-        '#mem950-aic [data-aic-node="buffer:L1"]',
+        '[data-mem950-node="rail:GM"]',
         '#mem950-aic [data-aic-node="buffer:L0A"]',
         '#mem950-aic [data-aic-node="buffer:L0B"]',
         '#mem950-aic [data-aic-node="cube:CUBE"]',
         '#mem950-aic [data-aic-node="buffer:L0C"]',
       ],
-      routes: ['l2-to-aic'],
+      routes: ['gm-to-aic-l0a', 'gm-to-aic-l0b'],
     };
   }
 
@@ -807,6 +976,15 @@
       };
     }
 
+    if (key === 'rail:GM') {
+      return {
+        selectors: ['[data-mem950-node="rail:GM"]'],
+        routes: (preset?.routes || [])
+          .filter((route) => String(route.id).startsWith('gm-to-') || String(route.id).endsWith('-to-gm'))
+          .map((route) => route.id),
+      };
+    }
+
     if (key === 'buffer:UB') {
       const focus = vectorFocusForCore(coreId);
       if (coreId === 'mem950-aiv1') focus.routes.push('aic-to-aiv1');
@@ -814,7 +992,11 @@
       return focus;
     }
 
-    if (key === 'vector:Vector' || key === 'exec:SIMD' || key === 'exec:SIMT') {
+    if (key === 'exec:SIMT') {
+      return simtFocusForCore(coreId);
+    }
+
+    if (key === 'vector:Vector' || key === 'exec:SIMD') {
       return vectorFocusForCore(coreId);
     }
 
@@ -1011,12 +1193,20 @@
     target.appendChild(grid);
   }
 
+  function appendInstructionItems(target, items) {
+    if (!target || !Array.isArray(items) || items.length === 0) return;
+    const list = node('div', 'instruction-sequence-list');
+    items.forEach((item) => list.appendChild(node('span', 'instruction-sequence-chip', item)));
+    target.appendChild(list);
+  }
+
   function applyPresetDetails(stage, preset) {
     if (!stage || !preset) return;
     (preset.details || []).forEach((detail) => {
       stage.querySelectorAll(detail.selector).forEach((target) => {
         appendDetailRows(target, detail.rows);
         appendBankMiniGrid(target, detail.bankGrid);
+        appendInstructionItems(target, detail.instructionItems);
       });
     });
   }
@@ -1113,7 +1303,7 @@
       return {
         points: [start, end],
         labelPoint: {
-          x: (start.x + end.x) / 2,
+          x: (start.x + end.x) / 2 + (route.labelDx || 0),
           y: start.y + (route.labelDy || 0),
         },
       };
@@ -1125,7 +1315,7 @@
       return {
         points: [start, end],
         labelPoint: {
-          x: (start.x + end.x) / 2,
+          x: (start.x + end.x) / 2 + (route.labelDx || 0),
           y: start.y + (route.labelDy || 0),
         },
       };
@@ -1142,7 +1332,7 @@
       return {
         points,
         labelPoint: {
-          x: (points[1].x + points[2].x) / 2,
+          x: (points[1].x + points[2].x) / 2 + (route.labelDx || 0),
           y: points[1].y + (route.labelDy || 0),
         },
       };
@@ -1158,7 +1348,7 @@
     return {
       points,
       labelPoint: {
-        x: (fromPoint.x + laneX) / 2,
+        x: (fromPoint.x + laneX) / 2 + (route.labelDx || 0),
         y: fromPoint.y + (route.labelDy || 0),
       },
     };
@@ -1198,7 +1388,10 @@
     });
 
     const routeEls = (preset.routes || []).map((route) => {
-      const group = svgNode('g', { 'data-route-id': route.id });
+      const groupAttrs = { 'data-route-id': route.id };
+      if (route.defaultHidden) groupAttrs['data-route-default-hidden'] = 'true';
+      if (route.group) groupAttrs['data-route-group'] = route.group;
+      const group = svgNode('g', groupAttrs);
       const path = svgNode('path', {
         fill: 'none',
         'stroke-linecap': 'round',
@@ -1310,23 +1503,33 @@
     root.appendChild(tooltip);
 
     let activeTarget = null;
+    let viewportScale = 1;
+
+    const setViewportScale = (scale = 1) => {
+      const numericScale = Number(scale);
+      viewportScale = Number.isFinite(numericScale) && numericScale > 0 ? numericScale : 1;
+      tooltip.style.setProperty('--pto-mem950-hover-tip-scale', String(1 / viewportScale));
+      if (activeTarget) positionTooltip(null, null, activeTarget);
+    };
 
     const positionTooltip = (clientX, clientY, fallbackTarget = activeTarget) => {
       const rootRect = root.getBoundingClientRect();
       const tipRect = tooltip.getBoundingClientRect();
-      let x = Number.isFinite(clientX) ? clientX - rootRect.left + 14 : 0;
-      let y = Number.isFinite(clientY) ? clientY - rootRect.top + 14 : 0;
+      const screenMargin = 8 / viewportScale;
+      const pointerGap = 14 / viewportScale;
+      let x = Number.isFinite(clientX) ? clientX - rootRect.left + pointerGap : 0;
+      let y = Number.isFinite(clientY) ? clientY - rootRect.top + pointerGap : 0;
 
       if (!Number.isFinite(clientX) && fallbackTarget) {
         const targetRect = fallbackTarget.getBoundingClientRect();
-        x = targetRect.left - rootRect.left + targetRect.width / 2 + 12;
+        x = targetRect.left - rootRect.left + targetRect.width / 2 + (12 / viewportScale);
         y = targetRect.top - rootRect.top + Math.min(targetRect.height, 28);
       }
 
-      const maxX = Math.max(8, rootRect.width - tipRect.width - 8);
-      const maxY = Math.max(8, rootRect.height - tipRect.height - 8);
-      tooltip.style.left = `${Math.max(8, Math.min(maxX, x))}px`;
-      tooltip.style.top = `${Math.max(8, Math.min(maxY, y))}px`;
+      const maxX = Math.max(screenMargin, rootRect.width - tipRect.width - screenMargin);
+      const maxY = Math.max(screenMargin, rootRect.height - tipRect.height - screenMargin);
+      tooltip.style.left = `${Math.max(screenMargin, Math.min(maxX, x))}px`;
+      tooltip.style.top = `${Math.max(screenMargin, Math.min(maxY, y))}px`;
     };
 
     const renderTooltip = (target) => {
@@ -1334,7 +1537,6 @@
       clearChildren(tooltip);
       tooltip.appendChild(node('div', 'pto-mem950__hover-tip-title', tip.title));
       if (tip.body) tooltip.appendChild(node('div', 'pto-mem950__hover-tip-body', tip.body));
-      if (tip.meta) tooltip.appendChild(node('div', 'pto-mem950__hover-tip-meta', tip.meta));
     };
 
     const show = (target, event = null) => {
@@ -1379,9 +1581,11 @@
     root.addEventListener('pointerout', onPointerOut);
     root.addEventListener('focusin', onFocusIn);
     root.addEventListener('focusout', onFocusOut);
+    setViewportScale(options.viewportScale || options.scale || 1);
 
     return {
       tooltip,
+      setViewportScale,
       destroy() {
         root.removeEventListener('pointerover', onPointerOver);
         root.removeEventListener('pointermove', onPointerMove);
@@ -1406,6 +1610,7 @@
     attachHoverInteractions,
     attachPathFocusInteractions,
     setDetailVisibility,
+    setAivFolded,
     setPathFocus,
     clearPathFocus,
     renderBufferGrid,

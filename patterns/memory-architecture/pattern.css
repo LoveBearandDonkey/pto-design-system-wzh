@@ -97,7 +97,7 @@
 
 .pto-pattern-memory-arch__stage {
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
   padding-bottom: 8px;
 }
 
@@ -124,18 +124,22 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__focus-strip {
 
 html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   box-sizing: border-box;
-  padding: 8px 8px 14px;
+  padding: 22px 24px 30px;
+  overflow: visible;
 }
 
 [data-pto-mem-arch="true"] {
   width: max-content;
   min-width: 100%;
+  box-sizing: border-box;
 }
 
 .pto-mem950 {
   position: relative;
   width: max-content;
   min-width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
 }
 
 .pto-mem950__layout {
@@ -264,7 +268,7 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
 
 .detail-spec-label,
 .detail-spec-value {
-  color: rgba(255, 255, 255, 0.58);
+  color: var(--foreground-muted, rgba(255, 255, 255, 0.58));
   font-size: 11px;
   font-weight: 500;
   line-height: 1.2;
@@ -298,8 +302,44 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   opacity: 0.82;
 }
 
+.instruction-sequence-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 112px;
+}
+
+.instruction-sequence-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 8px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--warning) 42%, var(--border-default));
+  background: color-mix(in srgb, var(--warning) 10%, var(--surface-1));
+  color: var(--foreground-secondary);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.pto-aiv-core__instruction-slot .instruction-sequence-list {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 5px 6px;
+  min-width: 0;
+  align-content: center;
+}
+
 .pto-mem950.is-detail-hidden .detail-spec-list,
-.pto-mem950.is-detail-hidden .bank-mini-grid {
+.pto-mem950.is-detail-hidden .bank-mini-grid,
+.pto-mem950.is-detail-hidden .instruction-sequence-list {
+  display: none;
+}
+
+.pto-mem950.is-detail-hidden .pto-aiv-core__instruction-slot {
   display: none;
 }
 
@@ -424,9 +464,32 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
     filter var(--duration-fast) var(--easing-default);
 }
 
+.pto-mem950__overlay [data-route-default-hidden="true"] {
+  opacity: 0;
+}
+
+.pto-mem950.is-path-focused .pto-mem950__overlay [data-route-default-hidden="true"] {
+  opacity: 0.08;
+}
+
 .pto-mem950.is-path-focused .pto-mem950__overlay [data-route-id].is-route-active {
   opacity: 1;
   filter: drop-shadow(0 0 7px color-mix(in srgb, var(--warning) 66%, transparent));
+}
+
+.pto-mem950.is-path-focused .pto-aiv-core__route {
+  opacity: 0.18;
+  filter: saturate(0.65);
+  transition:
+    opacity var(--duration-fast) var(--easing-default),
+    filter var(--duration-fast) var(--easing-default),
+    stroke-width var(--duration-fast) var(--easing-default);
+}
+
+.pto-mem950.is-path-focused .pto-aiv-core__route.is-internal-route-active {
+  opacity: 0.96;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--warning) 58%, transparent));
+  stroke-width: 2.6;
 }
 
 .pto-mem950.is-path-focused .pto-aic-core__route {
@@ -458,6 +521,7 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
 }
 
 .pto-mem950__hover-tip {
+  --pto-mem950-hover-tip-scale: 1;
   position: absolute;
   left: 0;
   top: 0;
@@ -465,24 +529,63 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   width: max-content;
   max-width: 280px;
   padding: 10px 12px;
-  border: 1px solid var(--border-strong, rgba(255, 255, 255, 0.18));
+  border: 0;
   border-radius: 10px;
-  background: #242424;
-  background: color-mix(in srgb, var(--surface-3, #262626) 94%, #000000 6%);
+  background: var(--surface-2, #f1f3f5);
+  background: color-mix(in srgb, var(--surface-2, #f1f3f5) 92%, var(--surface-1, #ffffff));
   color: var(--foreground, rgba(255, 255, 255, 0.92));
-  box-shadow: var(--shadow-md, 0 12px 28px rgba(0, 0, 0, 0.55)), 0 0 0 1px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-md, 0 12px 28px rgba(0, 0, 0, 0.18));
   font-family: var(--font-sans, Inter, "Source Han Sans SC", "PingFang SC", "Noto Sans SC", sans-serif);
   pointer-events: none;
   opacity: 0;
-  transform: translate3d(-9999px, -9999px, 0);
+  transform: translate3d(-9999px, -9999px, 0) scale(var(--pto-mem950-hover-tip-scale));
+  transform-origin: top left;
   transition: opacity 120ms ease;
   backdrop-filter: var(--surface-backdrop-filter-soft, none);
   -webkit-backdrop-filter: var(--surface-backdrop-filter-soft, none);
 }
 
+.pto-mem950.is-aiv-folded #mem950-aiv1 {
+  display: none;
+}
+
+.pto-mem950.is-aiv-folded .pto-mem950__overlay [data-route-id*="aiv1"] {
+  display: none;
+}
+
+.pto-mem950.is-aiv-folded #mem950-aiv2::after {
+  content: 'AIV ×2';
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  z-index: 10;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--foreground-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.12));
+}
+
+.pto-mem950.is-aiv-folded:not(.is-detail-hidden) .pto-mem950__overlay [data-route-id="aic-aiv2-ssbuffer"] {
+  opacity: 1;
+}
+
+.pto-mem950.is-aiv-folded:not(.is-detail-hidden) #mem950-aic .instruction-sequence-list::before {
+  content: '';
+  position: absolute;
+  left: -28px;
+  top: 50%;
+  width: 22px;
+  border-top: 1.5px dashed color-mix(in srgb, var(--warning) 72%, transparent);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
 .pto-mem950__hover-tip.is-visible {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0) scale(var(--pto-mem950-hover-tip-scale));
 }
 
 .pto-mem950__hover-tip-title {
@@ -497,13 +600,6 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   color: var(--foreground-secondary, rgba(255, 255, 255, 0.62));
   font-size: 11px;
   line-height: 1.45;
-}
-
-.pto-mem950__hover-tip-meta {
-  margin-top: 8px;
-  color: var(--foreground-muted, rgba(255, 255, 255, 0.42));
-  font: 10px/1.2 var(--text-mono, ui-monospace, monospace);
-  text-transform: uppercase;
 }
 
 .pto-mem950__notes {

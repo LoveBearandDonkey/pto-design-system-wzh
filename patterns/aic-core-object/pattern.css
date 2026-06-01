@@ -280,6 +280,16 @@
   box-shadow: inset 0 0 0 1px rgba(192, 232, 255, 0.72);
 }
 
+:root[data-theme='light'] .pto-aic-core__cell {
+  background: color-mix(in srgb, var(--primary) 28%, var(--surface-1));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 22%, var(--surface-1));
+}
+
+:root[data-theme='light'] .pto-aic-core__cell.is-band {
+  background: color-mix(in srgb, var(--primary) 28%, var(--surface-1));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 22%, var(--surface-1));
+}
+
 .pto-aic-core__cube {
   box-sizing: border-box;
   border-radius: 18px;
@@ -325,8 +335,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 16px;
-  background: rgba(41, 199, 166, 0.94);
+  border-radius: 12px;
+  background: rgba(48, 139, 48, 0.95);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   position: relative;
   z-index: 2;

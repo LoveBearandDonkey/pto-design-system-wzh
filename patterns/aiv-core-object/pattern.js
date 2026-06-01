@@ -20,10 +20,9 @@
         { from: 'cache:ICache', to: 'exec:SIMD', color: 'cache', style: 'elbow-h', fromSide: 'right', toSide: 'top', fromBias: 0.62, toBias: 0.14, dashArray: '4 3', offset: -12 },
         { from: 'scalar:Scalar', to: 'exec:SIMT', color: 'control', style: 'elbow-h', fromSide: 'right', toSide: 'top', fromBias: 0.5, toBias: 0.26 },
         { from: 'scalar:Scalar', to: 'exec:SIMD', color: 'control', style: 'elbow-h', fromSide: 'right', toSide: 'top', fromBias: 0.5, toBias: 0.72 },
-        { from: 'buffer:UB', to: 'exec:SIMD', color: 'memory', style: 'elbow-h', fromSide: 'right', toSide: 'left', fromBias: 0.64, toBias: 0.78, offset: 6 },
         { from: 'buffer:UB', to: 'exec:SIMT', color: 'memory', style: 'elbow-h', fromSide: 'right', toSide: 'left', fromBias: 0.42, toBias: 0.82, dashArray: '6 4', offset: 14 },
-        { from: 'exec:SIMT', to: 'vector:Vector', color: 'compute', style: 'horizontal', fromSide: 'right', toSide: 'left', fromBias: 0.5 },
-        { from: 'exec:SIMD', to: 'vector:Vector', color: 'compute', style: 'horizontal', fromSide: 'right', toSide: 'left', fromBias: 0.5 }
+        { from: 'buffer:UB', to: 'vector:Vector', color: 'memory', style: 'horizontal', fromSide: 'right', toSide: 'left', fromBias: 0.56, toBias: 0.5, strokeWidth: '2' },
+        { from: 'vector:Vector', to: 'buffer:UB', color: 'compute', style: 'horizontal', fromSide: 'left', toSide: 'right', fromBias: 0.62, toBias: 0.64, strokeWidth: '2', dashArray: '5 3' }
       ],
       layout: {
         kind: 'group',
@@ -50,15 +49,25 @@
             className: 'pto-aiv-core__center-stack',
             children: [
               {
-                kind: 'scalar',
-                label: 'Scalar',
-                frame: { width: 286, height: 72 }
+                kind: 'group',
+                className: 'pto-aiv-core__scalar-row',
+                children: [
+                  {
+                    kind: 'scalar',
+                    label: 'Scalar',
+                    frame: { width: 286, height: 72 }
+                  },
+                  {
+                    kind: 'instruction-slot'
+                  }
+                ]
               },
               {
                 kind: 'buffer',
                 key: 'UB',
                 label: 'UB',
                 capacity: '64kb',
+                simtCacheLabel: 'SIMT DCache',
                 grid: { rows: 8, cols: 19, cellSize: 12, gap: 1, band: { from: 8, to: 9 } }
               }
             ]
@@ -69,24 +78,24 @@
             children: [
               {
                 kind: 'exec',
+                key: 'SIMT',
                 label: 'SIMT',
                 chipLabel: 'Warp Scheduler',
                 chipTone: 'control',
-                grid: { rows: 3, cols: 13, cellSize: 12, gap: 1, band: { from: 5, to: 6 } }
+                registerLabel: 'SIMT Register File',
+                frame: { width: 196, height: 100 }
               },
               {
                 kind: 'exec',
+                key: 'SIMD',
                 label: 'SIMD',
                 chipLabel: 'Aux Scalar',
                 chipTone: 'compute',
-                grid: { rows: 3, cols: 13, cellSize: 12, gap: 1, band: { from: 5, to: 6 } }
+                registerLabel: 'Vector Register File',
+                registerNode: 'vector:Vector',
+                frame: { width: 196, height: 118 }
               }
             ]
-          },
-          {
-            kind: 'vector',
-            label: 'Vector',
-            frame: { width: 114, height: 232 }
           }
         ]
       }
@@ -229,6 +238,9 @@
     card.style.width = `${width}px`;
     applyFrameStyle(card, bufferConfig.frame);
     card.appendChild(header);
+    if (bufferConfig.simtCacheLabel) {
+      card.appendChild(node('span', 'pto-aiv-core__simt-cache', bufferConfig.simtCacheLabel));
+    }
     card.appendChild(buildGrid(bufferConfig.grid, 'memory'));
 
     return card;
@@ -236,7 +248,8 @@
 
   function buildExecCard(execConfig) {
     const card = node('section', 'pto-aiv-core__exec');
-    card.dataset.aivNode = `exec:${execConfig.label || 'Exec'}`;
+    card.dataset.aivNode = `exec:${execConfig.key || execConfig.label || 'Exec'}`;
+    card.classList.add(`is-${String(execConfig.key || execConfig.label || 'exec').toLowerCase()}`);
 
     const header = node('header', 'pto-aiv-core__exec-header');
     header.appendChild(node('span', 'pto-aiv-core__exec-label', execConfig.label || 'Exec'));
@@ -247,16 +260,28 @@
     card.style.width = `${width}px`;
     applyFrameStyle(card, execConfig.frame);
     card.appendChild(header);
-    card.appendChild(buildGrid(execConfig.grid, 'memory'));
+    if (execConfig.registerLabel) {
+      const regFile = node('span', 'pto-aiv-core__reg-file', execConfig.registerLabel);
+      if (execConfig.registerNode) regFile.dataset.aivNode = execConfig.registerNode;
+      card.appendChild(regFile);
+    } else {
+      card.appendChild(buildGrid(execConfig.grid, 'memory'));
+    }
     return card;
   }
 
   function buildVector(vectorConfig) {
     const card = node('section', 'pto-aiv-core__vector');
-    card.dataset.aivNode = `vector:${vectorConfig.label || 'Vector'}`;
+    card.dataset.aivNode = `vector:${vectorConfig.key || vectorConfig.label || 'Vector'}`;
     applyFrameStyle(card, vectorConfig.frame);
     card.appendChild(node('span', 'pto-aiv-core__vector-label', vectorConfig.label || 'Vector'));
     return card;
+  }
+
+  function buildInstructionSlot() {
+    const slot = node('div', 'pto-aiv-core__instruction-slot');
+    slot.setAttribute('aria-hidden', 'true');
+    return slot;
   }
 
   const COLUMN_SELECTOR = '.pto-aiv-core__cache-stack, .pto-aiv-core__center-stack, .pto-aiv-core__exec-stack';
@@ -356,6 +381,8 @@
         'stroke-width': route.strokeWidth || '1.5',
         'stroke-linecap': 'round',
         'stroke-linejoin': 'round',
+        'data-aiv-route-from': route.from,
+        'data-aiv-route-to': route.to,
       });
       svg.appendChild(path);
       return { route, path };
@@ -429,6 +456,7 @@
     if (columnConfig.kind === 'buffer') return buildBuffer(columnConfig);
     if (columnConfig.kind === 'exec') return buildExecCard(columnConfig);
     if (columnConfig.kind === 'vector') return buildVector(columnConfig);
+    if (columnConfig.kind === 'instruction-slot') return buildInstructionSlot(columnConfig);
     if (columnConfig.kind === 'group') return buildGroup(columnConfig);
     return node('div', '', '');
   }

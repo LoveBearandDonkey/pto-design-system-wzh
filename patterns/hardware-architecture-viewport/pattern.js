@@ -75,6 +75,7 @@
       }
 
       syncReadout();
+      postToFrame({ type: 'hardware-scale', scale: state.scale });
       options.onScaleChange?.(state.scale, api);
     }
 
@@ -154,6 +155,7 @@
 
     function markReady() {
       state.frameReady = true;
+      postToFrame({ type: 'hardware-scale', scale: state.scale });
       setDetailsVisible(state.detailsVisible);
       if (elements.archSelect) setArch(elements.archSelect.value);
       options.onReady?.(api);
