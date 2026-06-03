@@ -243,8 +243,8 @@
           toBias: 0.74,
           style: 'elbow-h',
           corridorRight: 84,
-          sourceLaneBelowSelector: '#mem950-aiv2 .pto-aiv-core__exec-stack',
-          sourceLaneOffset: 18,
+          sourceLaneBelowSelector: '#mem950-aiv2 [data-aiv-node="exec:SIMD"]',
+          sourceLaneOffset: 12,
           labelDy: 0,
         },
         {
