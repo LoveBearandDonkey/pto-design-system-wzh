@@ -230,6 +230,7 @@
           style: 'elbow-h',
           corridorRight: 40,
           labelDy: -12,
+          defaultHidden: true,
         },
         {
           id: 'aiv2-to-aic',
@@ -248,6 +249,7 @@
           sourceLaneAboveSelector: '.pto-mem950__notes',
           sourceLaneAboveOffset: 18,
           labelDy: 0,
+          defaultHidden: true,
         },
         {
           id: 'aic-aiv2-ssbuffer',
