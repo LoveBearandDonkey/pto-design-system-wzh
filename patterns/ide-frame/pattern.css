@@ -589,6 +589,12 @@
   padding: 10px 0;
 }
 
+.pto-ide-frame__activity-rail[hidden],
+.pto-ide-frame[data-activity-rail="hidden"] .pto-ide-frame__activity-rail,
+.pto-ide-frame[data-hide-activity-rail="true"] .pto-ide-frame__activity-rail {
+  display: none !important;
+}
+
 .pto-ide-frame__rail-button {
   min-width: 30px;
   width: 30px;

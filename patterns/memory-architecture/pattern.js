@@ -34,6 +34,12 @@
       text: '#ffffff',
     },
   };
+  const ZOOM_DEFAULTS = {
+    min: 0.4,
+    max: 1.2,
+    step: 0.1,
+    defaultZoom: 0.6,
+  };
 
   const PRESETS = {
     ascend950b: {
@@ -237,8 +243,9 @@
           toBias: 0.74,
           style: 'elbow-h',
           corridorRight: 84,
-          labelDx: 42,
-          labelDy: 14,
+          sourceLaneBelowSelector: '#mem950-aiv2 .pto-aiv-core__exec-stack',
+          sourceLaneOffset: 18,
+          labelDy: 0,
         },
         {
           id: 'aic-aiv2-ssbuffer',
@@ -743,6 +750,188 @@
         },
       },
     },
+    ascend910b: {
+      id: 'ascend910b',
+      name: 'Ascend 910B Memory Architecture',
+      rails: [
+        {
+          key: 'GM',
+          label: 'Global Memory',
+          tone: 'memory-shell',
+          grid: { rows: 82, cols: 8, cellSize: 12, gap: 4, shape: 'hex' },
+        },
+        {
+          key: 'L2',
+          label: 'L2 Cache',
+          tone: 'memory-rail',
+          grid: { rows: 82, cols: 4, cellSize: 12, gap: 4, shape: 'dot' },
+        },
+      ],
+      cores: [
+        {
+          id: 'mem950-aiv1',
+          kind: 'aiv',
+          title: 'AIV',
+          presetKey: 'aivLegacyV1',
+        },
+        {
+          id: 'mem950-aic',
+          kind: 'aic',
+          title: 'AIC',
+          presetKey: 'aicDraftV1',
+        },
+      ],
+      routes: [
+        {
+          id: 'l2-to-aiv1-dcache',
+          label: 'MTE2',
+          tone: 'transport',
+          from: '[data-mem950-node="rail:L2"]',
+          to: '#mem950-aiv1 [data-aiv-node="cache:DCache"]',
+          fromSide: 'right',
+          toSide: 'left',
+          toBias: 0.50,
+          style: 'lane-h-target',
+          labelDy: 0,
+        },
+        {
+          id: 'l2-to-aiv1',
+          label: 'MTE2',
+          tone: 'transport',
+          from: '[data-mem950-node="rail:L2"]',
+          to: '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
+          fromSide: 'right',
+          toSide: 'left',
+          toBias: 0.58,
+          style: 'lane-h-target',
+          labelDy: 0,
+        },
+        {
+          id: 'aiv1-to-l2',
+          label: 'MTE3',
+          tone: 'transport',
+          from: '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
+          to: '[data-mem950-node="rail:L2"]',
+          fromSide: 'left',
+          toSide: 'right',
+          fromBias: 0.82,
+          style: 'lane-h-source',
+          labelDy: 0,
+        },
+        {
+          id: 'l2-to-aic',
+          label: 'MTE2',
+          tone: 'transport',
+          from: '[data-mem950-node="rail:L2"]',
+          to: '#mem950-aic [data-aic-node="buffer:L1"]',
+          fromSide: 'right',
+          toSide: 'left',
+          toBias: 0.58,
+          style: 'lane-h-target',
+          labelDy: 0,
+        },
+        {
+          id: 'l2-to-aic-dcache',
+          label: 'MTE2',
+          tone: 'transport',
+          from: '[data-mem950-node="rail:L2"]',
+          to: '#mem950-aic [data-aic-node="cache:DCache"]',
+          fromSide: 'right',
+          toSide: 'left',
+          toBias: 0.50,
+          style: 'lane-h-target',
+          labelDy: 0,
+        },
+      ],
+      notes: [
+        '1 AIC + 1 AIV memory-stage layout (910B)',
+        'L2/GM → DCache, L1, or UB via MTE2',
+        'UB → L2/GM via MTE3',
+        'No 950 direct CV lanes; SIMD-only vector exec (no SIMT)',
+      ],
+      hoverTips: {
+        'rail:GM': {
+          title: 'Global Memory',
+          body: 'Chip-level memory source and sink for the 910B architecture.',
+        },
+        'rail:L2': {
+          title: 'L2 Cache',
+          body: 'Shared cache rail feeding AIV DCache or UB and AIC DCache or L1 through MTE2 paths.',
+        },
+        'core:AIV': {
+          title: 'AIV',
+          body: 'Vector-side core object with DCache, ICache, Scalar, UB, SIMD, and Vector lanes (no SIMT on 910B).',
+        },
+        'core:AIC': {
+          title: 'AIC',
+          body: 'Cube-side compute object with L1, L0 buffers, CUBE, Scalar, dispatch, and execution queues.',
+        },
+        'buffer:UB': {
+          title: 'UB',
+          body: 'Unified Buffer for AIV vector-side data staging and MTE3 return paths.',
+        },
+        'buffer:L1': {
+          title: 'L1',
+          body: 'AIC local memory feeding L0A, L0B, BT, and FP lanes.',
+        },
+        'buffer:L0A': {
+          title: 'L0A',
+          body: 'AIC matrix operand buffer for CUBE input staging.',
+        },
+        'buffer:L0B': {
+          title: 'L0B',
+          body: 'AIC matrix operand buffer for CUBE input staging.',
+        },
+        'buffer:L0C': {
+          title: 'L0C',
+          body: 'AIC CUBE output buffer.',
+        },
+        'buffer:BT': {
+          title: 'BT',
+          body: 'AIC bias or transform-side buffer lane connected through MTE1.',
+        },
+        'buffer:FP': {
+          title: 'FP',
+          body: 'AIC FixPipe buffer lane for post-CUBE data movement.',
+        },
+        'cache:DCache': {
+          title: 'DCache',
+          body: 'Data cache endpoint for memory transport and scalar-side access.',
+        },
+        'cache:ICache': {
+          title: 'ICache',
+          body: 'Instruction cache feeding the scalar or scheduler-side control path.',
+        },
+        'scalar:Scalar': {
+          title: 'Scalar',
+          body: 'Scalar control block coordinating local compute and memory movement.',
+        },
+        'exec:SIMD': {
+          title: 'SIMD',
+          body: 'AIV SIMD execution lane connected to UB data and vector output.',
+        },
+        'vector:Vector': {
+          title: 'Vector',
+          body: 'AIV vector execution endpoint receiving SIMD results.',
+        },
+        'cube:CUBE': {
+          title: 'CUBE',
+          body: 'AIC matrix compute block fed by L0A, L0B, and BT buffers.',
+        },
+        'scheduler:Dispatch': {
+          title: 'Dispatch',
+          body: 'AIC dispatch block issuing work into cube, FixPipe, and MTE queues.',
+        },
+        'transport:MTE1': {
+          title: 'MTE1',
+          body: 'Local AIC transport lane between L1 and L0 or FixPipe buffers.',
+        },
+        'transport:FixPipe': {
+          title: 'FixPipe',
+          body: 'AIC post-processing transport lane.',
+        },
+      },
+    },
   };
 
   function resolvePreset(presetOrKey) {
@@ -796,6 +985,120 @@
     return container?.querySelector?.('.pto-mem950') || container || null;
   }
 
+  function finiteNumber(value, fallback) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : fallback;
+  }
+
+  function clamp(number, min, max) {
+    return Math.max(min, Math.min(max, number));
+  }
+
+  function resolveElement(value, root = document) {
+    if (!value) return null;
+    if (typeof value === 'string') return root.querySelector(value);
+    return value;
+  }
+
+  function createZoomController(options = {}) {
+    const root = options.root || document;
+    const viewport = resolveElement(options.viewport || '[data-pto-mem-arch-viewport]', root);
+    const sizer = resolveElement(options.sizer || '[data-pto-mem-arch-sizer]', root);
+    const canvas = resolveElement(options.canvas || '[data-pto-mem-arch-canvas]', root);
+    if (!canvas) return null;
+
+    const readout = resolveElement(options.readout || '[data-pto-mem-zoom-readout]', root);
+    const outButton = resolveElement(options.outButton || '[data-pto-mem-zoom="out"]', root);
+    const inButton = resolveElement(options.inButton || '[data-pto-mem-zoom="in"]', root);
+    const resetButton = resolveElement(options.resetButton || '[data-pto-mem-zoom="reset"]', root);
+    const min = finiteNumber(options.min, ZOOM_DEFAULTS.min);
+    const max = finiteNumber(options.max, ZOOM_DEFAULTS.max);
+    const step = finiteNumber(options.step, ZOOM_DEFAULTS.step);
+    const defaultZoom = clamp(finiteNumber(
+      options.defaultZoom ?? viewport?.dataset.defaultZoom ?? canvas.dataset.defaultZoom,
+      ZOOM_DEFAULTS.defaultZoom,
+    ), min, max);
+    let zoom = clamp(finiteNumber(options.zoom, defaultZoom), min, max);
+    let frame = 0;
+
+    const naturalSize = () => {
+      const content = canvas.firstElementChild || canvas;
+      return {
+        width: Math.max(canvas.scrollWidth, content.scrollWidth, 1),
+        height: Math.max(canvas.scrollHeight, content.scrollHeight, 1),
+      };
+    };
+
+    const apply = () => {
+      const nextZoom = Number(zoom.toFixed(3));
+      canvas.style.setProperty('--pto-memory-architecture-zoom', String(nextZoom));
+      canvas.dataset.ptoMemoryArchitectureZoom = String(nextZoom);
+      if (viewport) viewport.dataset.ptoMemoryArchitectureZoom = String(nextZoom);
+
+      const size = naturalSize();
+      const scaledWidth = Math.max(1, Math.ceil(size.width * nextZoom));
+      const scaledHeight = Math.max(1, Math.ceil(size.height * nextZoom));
+      if (sizer) {
+        sizer.style.width = `${scaledWidth}px`;
+        sizer.style.height = `${scaledHeight}px`;
+      }
+
+      if (readout) readout.textContent = `${Math.round(nextZoom * 100)}%`;
+      if (outButton) outButton.disabled = nextZoom <= min + 0.001;
+      if (inButton) inButton.disabled = nextZoom >= max - 0.001;
+      options.onZoom?.({
+        zoom: nextZoom,
+        width: scaledWidth,
+        height: scaledHeight,
+      });
+    };
+
+    const schedule = () => {
+      if (frame) global.cancelAnimationFrame?.(frame);
+      frame = global.requestAnimationFrame?.(() => {
+        frame = 0;
+        apply();
+      }) || 0;
+    };
+
+    const setZoom = (next) => {
+      zoom = clamp(finiteNumber(next, zoom), min, max);
+      apply();
+    };
+    const increment = (direction) => setZoom(zoom + step * direction);
+    const reset = () => setZoom(defaultZoom);
+
+    const onOut = () => increment(-1);
+    const onIn = () => increment(1);
+    const onReset = () => reset();
+    outButton?.addEventListener('click', onOut);
+    inButton?.addEventListener('click', onIn);
+    resetButton?.addEventListener('click', onReset);
+
+    const resizeObserver = typeof ResizeObserver === 'function'
+      ? new ResizeObserver(schedule)
+      : null;
+    resizeObserver?.observe(canvas);
+    if (canvas.firstElementChild) resizeObserver?.observe(canvas.firstElementChild);
+
+    apply();
+
+    return {
+      getZoom: () => zoom,
+      setZoom,
+      increment,
+      reset,
+      render: apply,
+      destroy() {
+        outButton?.removeEventListener('click', onOut);
+        inButton?.removeEventListener('click', onIn);
+        resetButton?.removeEventListener('click', onReset);
+        resizeObserver?.disconnect();
+        if (frame) global.cancelAnimationFrame?.(frame);
+      },
+    };
+  }
+
   function activeRouteEndpoints(routeIds, preset) {
     const ids = new Set(routeIds || []);
     return (preset?.routes || [])
@@ -809,6 +1112,7 @@
     if (!root) return;
     root.classList.remove('is-path-focused');
     root.querySelectorAll('.is-hardware-active').forEach((el) => el.classList.remove('is-hardware-active'));
+    root.querySelectorAll('.is-diagnostic-error-target').forEach((el) => el.classList.remove('is-diagnostic-error-target'));
     root.querySelectorAll('.is-route-active').forEach((el) => el.classList.remove('is-route-active'));
     root.querySelectorAll('.is-internal-route-active').forEach((el) => el.classList.remove('is-internal-route-active'));
   }
@@ -875,12 +1179,20 @@
       ...activeRouteEndpoints(focus.routes || focus.routeIds || [], preset),
     ].filter(Boolean)));
     const routeIds = Array.from(new Set((focus.routes || focus.routeIds || []).filter(Boolean)));
+    const errorSelectors = Array.from(new Set((focus.errorSelectors || []).filter(Boolean)));
 
     clearPathFocus(root);
-    root.classList.toggle('is-path-focused', selectors.length > 0 || routeIds.length > 0);
+    root.classList.toggle('is-path-focused', selectors.length > 0 || routeIds.length > 0 || errorSelectors.length > 0);
 
     selectors.forEach((selector) => {
       root.querySelectorAll(selector).forEach((el) => el.classList.add('is-hardware-active'));
+    });
+
+    errorSelectors.forEach((selector) => {
+      root.querySelectorAll(selector).forEach((el) => {
+        el.classList.add('is-hardware-active');
+        el.classList.add('is-diagnostic-error-target');
+      });
     });
 
     routeIds.forEach((routeId) => {
@@ -892,6 +1204,7 @@
     return {
       root,
       selectors,
+      errorSelectors,
       routes: routeIds,
     };
   }
@@ -1152,6 +1465,35 @@
     return { slot, mount };
   }
 
+  function buildEnginePanel(engineConfig) {
+    const panel = node('section', `pto-mem950__engine${engineConfig.region ? ` is-${engineConfig.region}` : ''}`);
+    panel.dataset.mem950Node = `engine:${engineConfig.key || engineConfig.title || 'engine'}`;
+
+    const head = node('div', 'pto-mem950__engine-head');
+    if (engineConfig.kicker) {
+      head.appendChild(node('div', 'pto-mem950__engine-kicker', engineConfig.kicker));
+    }
+    head.appendChild(node('div', 'pto-mem950__engine-title', engineConfig.title || engineConfig.key || 'Engine'));
+    if (engineConfig.subtitle) {
+      head.appendChild(node('div', 'pto-mem950__engine-subtitle', engineConfig.subtitle));
+    }
+    panel.appendChild(head);
+
+    if (engineConfig.description) {
+      panel.appendChild(node('p', 'pto-mem950__engine-description', engineConfig.description));
+    }
+
+    return panel;
+  }
+
+  function buildEngineStack(engines) {
+    const list = Array.isArray(engines) ? engines : [];
+    if (list.length === 0) return null;
+    const stack = node('aside', 'pto-mem950__engine-stack');
+    list.forEach((engineConfig) => stack.appendChild(buildEnginePanel(engineConfig)));
+    return stack;
+  }
+
   function renderCoreIntoSlot(slotMount, coreConfig) {
     const helper = coreConfig.kind === 'aiv'
       ? global.PtoAivCorePattern
@@ -1235,6 +1577,8 @@
     });
 
     layout.appendChild(rails);
+    const engines = buildEngineStack(preset.engines);
+    if (engines) layout.appendChild(engines);
     layout.appendChild(stack);
     stage.appendChild(layout);
     applyPresetDetails(stage, preset);
@@ -1254,20 +1598,63 @@
     };
   }
 
-  function edgePoint(root, nodeEl, side, bias) {
-    const rootRect = root.getBoundingClientRect();
-    const rect = nodeEl.getBoundingClientRect();
-    const biasRatio = Math.max(0, Math.min(1, Number.isFinite(bias) ? bias : 0.5));
-    const xAtBias = rect.left - rootRect.left + rect.width * biasRatio;
-    const yAtBias = rect.top - rootRect.top + rect.height * biasRatio;
+  function elementLayoutSize(element, axis, fallback) {
+    const offsetKey = axis === 'x' ? 'offsetWidth' : 'offsetHeight';
+    const scrollKey = axis === 'x' ? 'scrollWidth' : 'scrollHeight';
+    const clientKey = axis === 'x' ? 'clientWidth' : 'clientHeight';
+    return Math.max(
+      1,
+      Number(element?.[offsetKey]) || 0,
+      Number(element?.[scrollKey]) || 0,
+      Number(element?.[clientKey]) || 0,
+      Number(fallback) || 0,
+    );
+  }
 
-    if (side === 'left') return { x: rect.left - rootRect.left, y: yAtBias };
-    if (side === 'right') return { x: rect.right - rootRect.left, y: yAtBias };
-    if (side === 'top') return { x: xAtBias, y: rect.top - rootRect.top };
-    if (side === 'bottom') return { x: xAtBias, y: rect.bottom - rootRect.top };
+  function overlayMetrics(root) {
+    const rootRect = root.getBoundingClientRect();
+    const width = elementLayoutSize(root, 'x', rootRect.width);
+    const height = elementLayoutSize(root, 'y', rootRect.height);
+    const scaleX = rootRect.width > 0 ? rootRect.width / width : 1;
+    const scaleY = rootRect.height > 0 ? rootRect.height / height : 1;
     return {
-      x: rect.left - rootRect.left + rect.width / 2,
-      y: rect.top - rootRect.top + rect.height / 2,
+      rootRect,
+      width,
+      height,
+      scaleX: Number.isFinite(scaleX) && scaleX > 0 ? scaleX : 1,
+      scaleY: Number.isFinite(scaleY) && scaleY > 0 ? scaleY : 1,
+    };
+  }
+
+  function rectInRootSpace(root, element, metrics = overlayMetrics(root)) {
+    const rect = element.getBoundingClientRect();
+    const left = (rect.left - metrics.rootRect.left) / metrics.scaleX;
+    const top = (rect.top - metrics.rootRect.top) / metrics.scaleY;
+    const width = rect.width / metrics.scaleX;
+    const height = rect.height / metrics.scaleY;
+    return {
+      left,
+      top,
+      width,
+      height,
+      right: left + width,
+      bottom: top + height,
+    };
+  }
+
+  function edgePoint(root, nodeEl, side, bias, metrics = overlayMetrics(root)) {
+    const rect = rectInRootSpace(root, nodeEl, metrics);
+    const biasRatio = Math.max(0, Math.min(1, Number.isFinite(bias) ? bias : 0.5));
+    const xAtBias = rect.left + rect.width * biasRatio;
+    const yAtBias = rect.top + rect.height * biasRatio;
+
+    if (side === 'left') return { x: rect.left, y: yAtBias };
+    if (side === 'right') return { x: rect.right, y: yAtBias };
+    if (side === 'top') return { x: xAtBias, y: rect.top };
+    if (side === 'bottom') return { x: xAtBias, y: rect.bottom };
+    return {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
     };
   }
 
@@ -1275,28 +1662,39 @@
     return points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`).join(' ');
   }
 
-  function resolveLaneX(root, route, fromPoint, toPoint) {
-    const rootRect = root.getBoundingClientRect();
+  function resolveLaneX(root, route, fromPoint, toPoint, metrics = overlayMetrics(root)) {
     if (Number.isFinite(route.corridorRight)) {
       const stackEl = root.querySelector('.pto-mem950__stack');
       if (stackEl) {
-        const stackRect = stackEl.getBoundingClientRect();
-        return Math.max(0, stackRect.right - rootRect.left - route.corridorRight);
+        const stackRect = rectInRootSpace(root, stackEl, metrics);
+        return Math.max(0, stackRect.right - route.corridorRight);
       }
-      return Math.max(0, rootRect.width - route.corridorRight);
+      return Math.max(0, metrics.width - route.corridorRight);
     }
     if (Number.isFinite(route.corridorLeft)) return route.corridorLeft;
     return fromPoint.x + (toPoint.x - fromPoint.x) / 2;
   }
 
-  function resolveLaneY(root, route, fromPoint, toPoint) {
-    const height = root.getBoundingClientRect().height;
+  function resolveLaneY(root, route, fromPoint, toPoint, metrics = overlayMetrics(root)) {
+    const height = metrics.height;
     if (Number.isFinite(route.corridorTop)) return route.corridorTop;
     if (Number.isFinite(route.corridorBottom)) return Math.max(0, height - route.corridorBottom);
     return fromPoint.y + (toPoint.y - fromPoint.y) / 2;
   }
 
-  function routeGeometry(root, route, fromPoint, toPoint) {
+  function resolveSourceLaneY(root, route, fromPoint, metrics = overlayMetrics(root)) {
+    if (route.sourceLaneBelowSelector) {
+      const laneAnchor = root.querySelector(route.sourceLaneBelowSelector);
+      if (laneAnchor) {
+        const anchorRect = rectInRootSpace(root, laneAnchor, metrics);
+        const offset = Number.isFinite(route.sourceLaneOffset) ? route.sourceLaneOffset : 0;
+        return Math.max(0, Math.min(metrics.height, anchorRect.bottom + offset));
+      }
+    }
+    return fromPoint.y;
+  }
+
+  function routeGeometry(root, route, fromPoint, toPoint, metrics = overlayMetrics(root)) {
     if (route.style === 'lane-h-target') {
       const start = { x: fromPoint.x, y: toPoint.y };
       const end = { x: toPoint.x, y: toPoint.y };
@@ -1322,7 +1720,7 @@
     }
 
     if (route.style === 'elbow-v') {
-      const laneY = resolveLaneY(root, route, fromPoint, toPoint);
+      const laneY = resolveLaneY(root, route, fromPoint, toPoint, metrics);
       const points = [
         fromPoint,
         { x: fromPoint.x, y: laneY },
@@ -1338,18 +1736,24 @@
       };
     }
 
-    const laneX = resolveLaneX(root, route, fromPoint, toPoint);
+    const laneX = resolveLaneX(root, route, fromPoint, toPoint, metrics);
+    const sourceLaneY = resolveSourceLaneY(root, route, fromPoint, metrics);
     const points = [
       fromPoint,
-      { x: laneX, y: fromPoint.y },
+    ];
+    if (Math.abs(sourceLaneY - fromPoint.y) > 0.5) {
+      points.push({ x: fromPoint.x, y: sourceLaneY });
+    }
+    points.push(
+      { x: laneX, y: sourceLaneY },
       { x: laneX, y: toPoint.y },
       toPoint,
-    ];
+    );
     return {
       points,
       labelPoint: {
         x: (fromPoint.x + laneX) / 2 + (route.labelDx || 0),
-        y: fromPoint.y + (route.labelDy || 0),
+        y: sourceLaneY + (route.labelDy || 0),
       },
     };
   }
@@ -1370,17 +1774,18 @@
     Object.entries(ROUTE_TONES).forEach(([key, tone]) => {
       const marker = svgNode('marker', {
         id: `pto-mem950-arrow-${key}`,
-        markerWidth: '8',
-        markerHeight: '8',
-        refX: '7',
-        refY: '4',
+        markerUnits: 'userSpaceOnUse',
+        markerWidth: '5.5',
+        markerHeight: '5.5',
+        refX: '5',
+        refY: '2.75',
         orient: 'auto',
       });
       marker.appendChild(svgNode('path', {
-        d: 'M1,1 L7,4 L1,7',
+        d: 'M1,1 L5,2.75 L1,4.5',
         fill: 'none',
         stroke: tone.line,
-        'stroke-width': '1.5',
+        'stroke-width': '1.1',
         'stroke-linecap': 'round',
         'stroke-linejoin': 'round',
       }));
@@ -1396,7 +1801,7 @@
         fill: 'none',
         'stroke-linecap': 'round',
         'stroke-linejoin': 'round',
-        'stroke-width': route.strokeWidth || '2',
+        'stroke-width': route.strokeWidth || '1.5',
       });
       const labelGroup = svgNode('g');
       const labelBg = svgNode('rect', { rx: '11', ry: '11' });
@@ -1419,8 +1824,8 @@
     root.appendChild(svg);
 
     function update() {
-      const rect = root.getBoundingClientRect();
-      svg.setAttribute('viewBox', `0 0 ${Math.max(1, rect.width)} ${Math.max(1, rect.height)}`);
+      const metrics = overlayMetrics(root);
+      svg.setAttribute('viewBox', `0 0 ${metrics.width} ${metrics.height}`);
 
       routeEls.forEach((entry) => {
         const fromEl = root.querySelector(entry.route.from);
@@ -1431,9 +1836,9 @@
           return;
         }
 
-        const fromPoint = edgePoint(root, fromEl, entry.route.fromSide || 'right', entry.route.fromBias);
-        const toPoint = edgePoint(root, toEl, entry.route.toSide || 'left', entry.route.toBias);
-        const geometry = routeGeometry(root, entry.route, fromPoint, toPoint);
+        const fromPoint = edgePoint(root, fromEl, entry.route.fromSide || 'right', entry.route.fromBias, metrics);
+        const toPoint = edgePoint(root, toEl, entry.route.toSide || 'left', entry.route.toBias, metrics);
+        const geometry = routeGeometry(root, entry.route, fromPoint, toPoint, metrics);
         const tone = ROUTE_TONES[entry.route.tone] || ROUTE_TONES.transport;
 
         entry.path.style.display = '';
@@ -1456,12 +1861,12 @@
         entry.labelText.setAttribute('y', String(geometry.labelPoint.y));
         entry.labelText.setAttribute('fill', tone.text);
         const textBox = entry.labelText.getBBox();
-        const paddingX = 8;
-        const paddingY = 4;
-        entry.labelBg.setAttribute('x', String(geometry.labelPoint.x - textBox.width / 2 - paddingX));
-        entry.labelBg.setAttribute('y', String(geometry.labelPoint.y - textBox.height / 2 - paddingY));
-        entry.labelBg.setAttribute('width', String(textBox.width + paddingX * 2));
-        entry.labelBg.setAttribute('height', String(textBox.height + paddingY * 2));
+        const labelWidth = Math.max(64, textBox.width + 16);
+        const labelHeight = 22;
+        entry.labelBg.setAttribute('x', String(geometry.labelPoint.x - labelWidth / 2));
+        entry.labelBg.setAttribute('y', String(geometry.labelPoint.y - labelHeight / 2));
+        entry.labelBg.setAttribute('width', String(labelWidth));
+        entry.labelBg.setAttribute('height', String(labelHeight));
         entry.labelBg.setAttribute('fill', tone.fill);
         entry.labelBg.setAttribute('stroke', tone.stroke);
         entry.labelBg.setAttribute('stroke-width', '1');
@@ -1512,24 +1917,38 @@
       if (activeTarget) positionTooltip(null, null, activeTarget);
     };
 
-    const positionTooltip = (clientX, clientY, fallbackTarget = activeTarget) => {
+    const measureRootScale = () => {
       const rootRect = root.getBoundingClientRect();
+      const scaleX = root.offsetWidth ? rootRect.width / root.offsetWidth : viewportScale;
+      const scaleY = root.offsetHeight ? rootRect.height / root.offsetHeight : viewportScale;
+      return {
+        rootRect,
+        scaleX: Number.isFinite(scaleX) && scaleX > 0 ? scaleX : viewportScale,
+        scaleY: Number.isFinite(scaleY) && scaleY > 0 ? scaleY : viewportScale,
+      };
+    };
+
+    const positionTooltip = (clientX, clientY, fallbackTarget = activeTarget) => {
+      const { rootRect, scaleX, scaleY } = measureRootScale();
       const tipRect = tooltip.getBoundingClientRect();
-      const screenMargin = 8 / viewportScale;
-      const pointerGap = 14 / viewportScale;
-      let x = Number.isFinite(clientX) ? clientX - rootRect.left + pointerGap : 0;
-      let y = Number.isFinite(clientY) ? clientY - rootRect.top + pointerGap : 0;
+      tooltip.style.setProperty('--pto-mem950-hover-tip-scale', String(1 / scaleX));
+      const marginX = 8 / scaleX;
+      const marginY = 8 / scaleY;
+      const pointerGapX = 14 / scaleX;
+      const pointerGapY = 14 / scaleY;
+      let x = Number.isFinite(clientX) ? (clientX - rootRect.left) / scaleX + pointerGapX : 0;
+      let y = Number.isFinite(clientY) ? (clientY - rootRect.top) / scaleY + pointerGapY : 0;
 
       if (!Number.isFinite(clientX) && fallbackTarget) {
         const targetRect = fallbackTarget.getBoundingClientRect();
-        x = targetRect.left - rootRect.left + targetRect.width / 2 + (12 / viewportScale);
-        y = targetRect.top - rootRect.top + Math.min(targetRect.height, 28);
+        x = (targetRect.left - rootRect.left) / scaleX + targetRect.width / scaleX / 2 + (12 / scaleX);
+        y = (targetRect.top - rootRect.top) / scaleY + Math.min(targetRect.height / scaleY, 28);
       }
 
-      const maxX = Math.max(screenMargin, rootRect.width - tipRect.width - screenMargin);
-      const maxY = Math.max(screenMargin, rootRect.height - tipRect.height - screenMargin);
-      tooltip.style.left = `${Math.max(screenMargin, Math.min(maxX, x))}px`;
-      tooltip.style.top = `${Math.max(screenMargin, Math.min(maxY, y))}px`;
+      const maxX = Math.max(marginX, root.offsetWidth - tipRect.width / scaleX - marginX);
+      const maxY = Math.max(marginY, root.offsetHeight - tipRect.height / scaleY - marginY);
+      tooltip.style.left = `${Math.max(marginX, Math.min(maxX, x))}px`;
+      tooltip.style.top = `${Math.max(marginY, Math.min(maxY, y))}px`;
     };
 
     const renderTooltip = (target) => {
@@ -1653,6 +2072,7 @@
     clearPathFocus,
     setBufferBlocks,
     clearBufferBlocks,
+    createZoomController,
     renderBufferGrid,
   };
 })(window);

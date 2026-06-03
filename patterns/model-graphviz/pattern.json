@@ -7,6 +7,7 @@
     "visualContract": [
       "graphviz/deepseek_v32_source_graph.html",
       "graphviz/deepseek_v32_report_overlay_demo.html",
+      "graphviz/deepseek_v32_report_overlay_demo_v2.html",
       "patterns/model-graphviz/assets/deepseek_v32_modelviz.html",
       "patterns/model-graphviz/assets/deepseek_v32_model_architecture.json",
       "patterns/model-graphviz/assets/qwen7b_model_architecture.json",
@@ -66,6 +67,12 @@
       "sourcePage": "graphviz/deepseek_v32_report_overlay_demo.html",
       "defaultCollapseDepth": 2,
       "notes": "Infinite-canvas report overlay page using the source Graphviz iframe, transparent top header, right panel-shell inspector, Mapped Nodes graph focusing, red/orange/yellow priority fills, centered container title pills, and invisible-only enlarged border hit targets."
+    },
+    {
+      "id": "deepseek-v32-report-overlay-v2",
+      "sourcePage": "graphviz/deepseek_v32_report_overlay_demo_v2.html",
+      "defaultCollapseDepth": 2,
+      "notes": "IDE-frame three-pane report overlay page using inline source graph, profiling JSON, operator source annotations, clearable selection state, and selected-edge dimming."
     },
     {
       "id": "qwen7b-source-schema",

@@ -337,17 +337,18 @@
     Object.entries(ROUTE_COLORS).forEach(([key, color]) => {
       const marker = svgNode('marker', {
         id: `pto-aic-arrow-${key}`,
-        markerWidth: '8',
-        markerHeight: '8',
-        refX: '7',
-        refY: '4',
+        markerUnits: 'userSpaceOnUse',
+        markerWidth: '5.5',
+        markerHeight: '5.5',
+        refX: '5',
+        refY: '2.75',
         orient: 'auto',
       });
       marker.appendChild(svgNode('path', {
-        d: 'M1,1 L7,4 L1,7',
+        d: 'M1,1 L5,2.75 L1,4.5',
         fill: 'none',
         stroke: color,
-        'stroke-width': '1.5',
+        'stroke-width': '1.1',
         'stroke-linecap': 'round',
         'stroke-linejoin': 'round',
       }));
@@ -359,7 +360,7 @@
       const path = svgNode('path', {
         class: 'pto-aic-core__route',
         fill: 'none',
-        'stroke-width': route.strokeWidth || '1.5',
+        'stroke-width': route.strokeWidth || '1.15',
         'stroke-linecap': 'round',
         'stroke-linejoin': 'round',
         'data-aic-route-from': route.from,

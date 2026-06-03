@@ -55,7 +55,7 @@ design-system-share/
 | `workbench-shell` | 任意需要拖拽调整大小的分屏 | `patterns/workbench-shell/pattern.js` |
 | `floating-playback-control` | step、播放、暂停、scrubber、回放控制 | `patterns/floating-playback-control/pattern.js` |
 | `model-graphviz` | TorchVista / 模型 Graphviz / 报告 overlay | `patterns/model-graphviz/pattern.html` |
-| `memory-architecture` | 910B / 950 内存层级、MTE route、AIC/AIV 组合图 | `patterns/memory-architecture/pattern.js` |
+| `memory-architecture` | 910B / 950 内存层级、MTE route、AIC/AIV 组合图、iframe 60% 默认缩放控件 | `patterns/memory-architecture/pattern.js` |
 | `aic-core-object` / `aiv-core-object` | 单独渲染 AIC / AIV 内部结构 | `patterns/aic-core-object/pattern.js` / `patterns/aiv-core-object/pattern.js` |
 | `pass-ir-graph-node` | Pass-IR 节点卡、group node、compact node | `patterns/pass-ir-graph-node/pattern.js` |
 | `swimlane-task` | 执行 trace / timeline 的泳道任务条 | `patterns/swimlane-task/pattern.js` |
@@ -156,12 +156,12 @@ AI 应该先问清楚：
 
 | 需求 | 应命中 |
 |---|---|
-| PTO IDE / 工作台页面 | `patterns/ide-frame` |
+| PTO IDE / 工作台页面 | `patterns/ide-frame`，可用 `hidden` 或 `data-activity-rail="hidden"` 隐藏左侧 activity rail |
 | 可拖拽分屏 | `patterns/workbench-shell` |
 | 执行 trace / 时间线任务条 | `patterns/swimlane-task` |
 | Pass-IR graph 节点卡 | `patterns/pass-ir-graph-node` |
 | TorchVista / 模型 Graphviz / 报告 overlay | `patterns/model-graphviz` |
-| AIC / AIV / 950B 内存架构图 | `patterns/memory-architecture`、`patterns/aic-core-object`、`patterns/aiv-core-object` |
+| AIC / AIV / 950B 内存架构图 | `patterns/memory-architecture`、`patterns/aic-core-object`、`patterns/aiv-core-object`；iframe/inspector 嵌入默认用 `createZoomController` 的 60% zoom 控件 |
 | 底部播放和 step 控制 | `patterns/floating-playback-control` |
 
 如果一个 pattern 已经有完整运行环境，比如 Graphviz overlay 原页面仍然负责 DOT 生成、D3 zoom、popup、展开折叠，那么 pattern 预览可以用 iframe 保持一致；如果是在新页面里消费同一套视觉和渲染逻辑，则直接加载对应 `pattern.css` / `pattern.js` 并调用 `window.Pto*Pattern` 或 `window.Pto*` API。

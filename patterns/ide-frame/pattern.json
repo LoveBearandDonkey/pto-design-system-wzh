@@ -2,7 +2,7 @@
   "id": "ide-frame",
   "name": "PTO IDE Frame",
   "type": "hybrid",
-  "description": "Upper-level PTO IDE framework shell for standalone pages and VS Code webviews. It owns IDE chrome, a 4:3 host window ratio, a page background one gray step lighter than the window, darker pane/content wells, dense pane typography, utility window controls, activity rail, pane-local preview tabs, domain toolbars, status strips, preview surfaces, renderer slots, inspector docks, optional floating playback mounting, and split initialization. Standalone explorer defaults to a 300px initial width when the host width is known. Top chrome is transparent over the IDE window, does not draw divider borders, and does not include macOS traffic-light controls. Product pages provide all domain content. It delegates resize behavior to workbench-shell and playback chrome to floating-playback-control.",
+  "description": "Upper-level PTO IDE framework shell for standalone pages and VS Code webviews. It owns IDE chrome, a 4:3 host window ratio, a page background one gray step lighter than the window, darker pane/content wells, dense pane typography, utility window controls, optional activity rail, pane-local preview tabs, domain toolbars, status strips, preview surfaces, renderer slots, inspector docks, optional floating playback mounting, and split initialization. Standalone explorer defaults to a 300px initial width when the host width is known. Top chrome is transparent over the IDE window, does not draw divider borders, and does not include macOS traffic-light controls. Product pages provide all domain content. It delegates resize behavior to workbench-shell and playback chrome to floating-playback-control.",
   "source": {
     "visualContract": [
       "patterns/ide-frame/pattern.css owns .pto-ide-frame* visual classes",
@@ -31,7 +31,7 @@
   "hosts": [
     {
       "value": "standalone",
-      "contract": "May render PTO-owned topbar, window controls, activity rail, explorer, pane-local preview tabs, playback, and local status strip. Tabs belong inside the preview/editor pane, not as a separate top-level chrome band."
+      "contract": "May render PTO-owned topbar, window controls, optional activity rail, explorer, pane-local preview tabs, playback, and local status strip. Tabs belong inside the preview/editor pane, not as a separate top-level chrome band."
     },
     {
       "value": "vscode-webview",
@@ -44,6 +44,7 @@
   ],
   "allowedOverrides": [
     "host mode through data-host=\"standalone\" or data-host=\"vscode-webview\"",
+    "hiding the standalone activity rail through hidden, data-activity-rail=\"hidden\", or data-hide-activity-rail=\"true\"",
     "host window width while preserving the default 4:3 frame ratio",
     "initial pane pixel sizing through data-pixel-sizes, with the standalone explorer defaulting to 300px",
     "IDE semantic tokens such as --ide-frame-page-bg, --ide-frame-bg, --ide-frame-chrome-bg, --ide-frame-pane-bg, --ide-frame-pane-border, --ide-frame-header-height, --ide-frame-title-font, and --ide-frame-meta-font",

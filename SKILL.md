@@ -111,6 +111,7 @@ For IDE blocks:
 
 - the block should show a PTO typical page, not a copied shadcn demo
 - `ide-frame` owns the activity rail, pane headers, preview/editor slots, inspector docks, and split initialization
+- In multi-pane IDE/workbench pages, every pane title/meta/control row must live in the same `pto-ide-frame__pane-header` layer. Do not place one pane title inside an embedded pattern toolbar or inside `pto-ide-frame__pane-body`; body padding and pattern toolbar defaults will create header-height and baseline drift. If an embedded pattern such as `hardware-architecture-viewport` needs a mount root for its controls, make the pane itself the pattern root or adapt the mount root while keeping the title row in the `ide-frame` pane header.
 - explorer collapse must remove the pane and its gutter together; remaining panes must fill the available space
 - the whole preview page should remain scrollable; an embedded iframe must not trap normal page scroll
 - icons should use Lucide-style SVGs; use opaque stroke colors and whole-SVG opacity to avoid transparent stroke overlap at path intersections
