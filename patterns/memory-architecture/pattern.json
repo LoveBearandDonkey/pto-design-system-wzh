@@ -29,7 +29,7 @@
   ],
   "requiredApis": [
     "window.PtoMemoryArchitecturePattern.renderArchitecture(container, presetOrKey)",
-    "window.PtoMemoryArchitecturePattern.createRouteOverlay(container, presetOrKey)",
+    "window.PtoMemoryArchitecturePattern.createRouteOverlay(container, presetOrKey) returning { render, update, schedule, destroy }",
     "window.PtoMemoryArchitecturePattern.attachHoverInteractions(container, presetOrKey, options)",
     "window.PtoMemoryArchitecturePattern.attachPathFocusInteractions(container, presetOrKey, options)",
     "window.PtoMemoryArchitecturePattern.setDetailVisibility(container, visible)",

@@ -1823,7 +1823,12 @@
 
     root.appendChild(svg);
 
+    let animationFrame = 0;
+    let destroyed = false;
+    const delayedUpdates = new Map();
+
     function update() {
+      if (destroyed) return;
       const metrics = overlayMetrics(root);
       svg.setAttribute('viewBox', `0 0 ${metrics.width} ${metrics.height}`);
 
@@ -1873,23 +1878,55 @@
       });
     }
 
+    function scheduleUpdate() {
+      if (destroyed) return;
+      if (animationFrame) global.cancelAnimationFrame?.(animationFrame);
+      animationFrame = global.requestAnimationFrame?.(() => {
+        animationFrame = 0;
+        update();
+      }) || 0;
+      if (!animationFrame) update();
+    }
+
+    function scheduleDelayedUpdate(delay) {
+      if (destroyed) return;
+      const previous = delayedUpdates.get(delay);
+      if (previous) global.clearTimeout?.(previous);
+      const timeout = global.setTimeout?.(() => {
+        delayedUpdates.delete(delay);
+        scheduleUpdate();
+      }, delay);
+      if (timeout) delayedUpdates.set(delay, timeout);
+    }
+
+    function scheduleSettledUpdate() {
+      scheduleUpdate();
+      [48, 120, 260].forEach(scheduleDelayedUpdate);
+    }
+
     const resizeObserver = typeof ResizeObserver === 'function'
-      ? new ResizeObserver(update)
+      ? new ResizeObserver(scheduleUpdate)
       : null;
     resizeObserver?.observe(root);
     root.querySelectorAll('[data-mem950-node], [data-aiv-node], [data-aic-node]').forEach((el) => resizeObserver?.observe(el));
-    requestAnimationFrame(() => requestAnimationFrame(update));
+    scheduleSettledUpdate();
     if (document.fonts && typeof document.fonts.ready?.then === 'function') {
-      document.fonts.ready.then(update);
+      document.fonts.ready.then(scheduleSettledUpdate);
     }
 
     return {
       svg,
       update,
+      schedule: scheduleSettledUpdate,
       render() {
         update();
+        scheduleSettledUpdate();
       },
       destroy() {
+        destroyed = true;
+        if (animationFrame) global.cancelAnimationFrame?.(animationFrame);
+        delayedUpdates.forEach((timeout) => global.clearTimeout?.(timeout));
+        delayedUpdates.clear();
         resizeObserver?.disconnect();
         svg.remove();
       },
