@@ -245,6 +245,8 @@
           corridorRight: 84,
           sourceLaneBelowSelector: '#mem950-aiv2 [data-aiv-node="exec:SIMD"]',
           sourceLaneOffset: 12,
+          sourceLaneAboveSelector: '.pto-mem950__notes',
+          sourceLaneAboveOffset: 18,
           labelDy: 0,
         },
         {
@@ -1682,15 +1684,24 @@
   }
 
   function resolveSourceLaneY(root, route, fromPoint, metrics = overlayMetrics(root)) {
+    let laneY = fromPoint.y;
     if (route.sourceLaneBelowSelector) {
       const laneAnchor = root.querySelector(route.sourceLaneBelowSelector);
       if (laneAnchor) {
         const anchorRect = rectInRootSpace(root, laneAnchor, metrics);
         const offset = Number.isFinite(route.sourceLaneOffset) ? route.sourceLaneOffset : 0;
-        return Math.max(0, Math.min(metrics.height, anchorRect.bottom + offset));
+        laneY = anchorRect.bottom + offset;
       }
     }
-    return fromPoint.y;
+    if (route.sourceLaneAboveSelector) {
+      const laneAnchor = root.querySelector(route.sourceLaneAboveSelector);
+      if (laneAnchor) {
+        const anchorRect = rectInRootSpace(root, laneAnchor, metrics);
+        const offset = Number.isFinite(route.sourceLaneAboveOffset) ? route.sourceLaneAboveOffset : 0;
+        laneY = Math.min(laneY, anchorRect.top - offset);
+      }
+    }
+    return Math.max(0, Math.min(metrics.height, laneY));
   }
 
   function routeGeometry(root, route, fromPoint, toPoint, metrics = overlayMetrics(root)) {
