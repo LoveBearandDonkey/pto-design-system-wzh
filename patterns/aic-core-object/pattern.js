@@ -179,6 +179,10 @@
       .replace(/^-+|-+$/g, '');
   }
 
+  function attrValue(value) {
+    return String(value || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  }
+
   function applyFrameStyle(el, frame) {
     if (!frame) return;
     if (frame.width != null) el.style.width = `${frame.width}px`;
@@ -202,6 +206,7 @@
     for (let rowIndex = 0; rowIndex < rows; rowIndex += 1) {
       for (let colIndex = 0; colIndex < cols; colIndex += 1) {
         const cell = node('span', 'pto-aic-core__cell');
+        cell.dataset.bufferCellIndex = String(rowIndex * cols + colIndex);
         if (band && colIndex >= band.from && colIndex <= band.to) {
           cell.classList.add('is-band');
         }
@@ -427,6 +432,87 @@
     return node('div', '', '');
   }
 
+  function rootFor(container) {
+    return container?.querySelector?.('.pto-aic-core') || container || null;
+  }
+
+  function clearBufferBlocks(container) {
+    const root = container || null;
+    if (!root) return null;
+    const scopes = root.matches?.('.pto-aic-core')
+      ? [root]
+      : Array.from(root.querySelectorAll?.('.pto-aic-core') || []);
+    const targets = scopes.length ? scopes : [root];
+    targets.forEach((scope) => scope.querySelectorAll('.pto-aic-core__cell[data-buffer-block-label]').forEach((cell) => {
+      Array.from(cell.classList)
+        .filter((className) => className === 'is-buffer-block' || className.startsWith('is-buffer-block-'))
+        .forEach((className) => cell.classList.remove(className));
+      delete cell.dataset.bufferBlockLabel;
+      delete cell.dataset.bufferBlockState;
+      delete cell.dataset.bufferBlockTone;
+      delete cell.dataset.bufferBlockSourceTile;
+      cell.removeAttribute('title');
+    }));
+    return { root, clearedScopes: targets.length };
+  }
+
+  function cellIndexesForBlock(block, cellCount) {
+    if (Array.isArray(block.cells)) {
+      return block.cells.map(Number).filter((index) => Number.isInteger(index) && index >= 0 && index < cellCount);
+    }
+    if (Array.isArray(block.cellRange)) {
+      const start = Math.max(0, Number(block.cellRange[0] || 0));
+      const end = Math.min(cellCount - 1, Number(block.cellRange[1] ?? start));
+      const indexes = [];
+      for (let index = start; index <= end; index += 1) indexes.push(index);
+      return indexes;
+    }
+    const start = Math.max(0, Number(block.startCell || 0));
+    const count = Math.max(1, Number(block.cellCount || 1));
+    return Array.from({ length: count }, (_, offset) => start + offset).filter((index) => index < cellCount);
+  }
+
+  function blockTitle(block) {
+    return [
+      block.label,
+      block.sourceTile,
+      block.gmRange,
+      block.queue,
+      block.operation,
+      block.state,
+    ].filter(Boolean).join(' · ');
+  }
+
+  function applyBufferBlock(root, block) {
+    const bufferKey = block.buffer || block.bufferKey;
+    const scope = block.core ? root.querySelector(`[id="${attrValue(block.core)}"]`) || root : root;
+    const buffer = scope.querySelector(`[data-buffer-key="${attrValue(bufferKey)}"], [data-aic-node="buffer:${attrValue(bufferKey)}"]`);
+    if (!buffer) return false;
+    const cells = Array.from(buffer.querySelectorAll('.pto-aic-core__cell'));
+    const state = String(block.state || 'loaded').toLowerCase();
+    const tone = String(block.tone || 'input').toLowerCase();
+    cellIndexesForBlock(block, cells.length).forEach((index) => {
+      const cell = cells[index];
+      cell.classList.add('is-buffer-block', `is-buffer-block-state-${state}`, `is-buffer-block-tone-${tone}`);
+      cell.dataset.bufferBlockLabel = block.label || '';
+      cell.dataset.bufferBlockState = state;
+      cell.dataset.bufferBlockTone = tone;
+      if (block.sourceTile) cell.dataset.bufferBlockSourceTile = block.sourceTile;
+      const title = blockTitle(block);
+      if (title) cell.setAttribute('title', title);
+    });
+    return true;
+  }
+
+  function setBufferBlocks(container, blocks = []) {
+    const root = rootFor(container);
+    if (!root) return null;
+    clearBufferBlocks(root);
+    const list = Array.isArray(blocks) ? blocks : [];
+    const applied = list.filter((block) => block && applyBufferBlock(root, block)).length;
+    return { root, blocks: list, applied };
+  }
+
   function render(container, presetOrKey) {
     const preset = resolvePreset(presetOrKey);
     if (!container || !preset) return null;
@@ -447,5 +533,7 @@
     presets: PRESETS,
     resolvePreset,
     render,
+    setBufferBlocks,
+    clearBufferBlocks,
   };
 })(window);

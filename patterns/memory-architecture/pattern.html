@@ -97,6 +97,10 @@
       const overlay = helper.createRouteOverlay(stage, 'ascend950b');
       helper.attachHoverInteractions?.(stage, 'ascend950b');
       helper.attachPathFocusInteractions?.(stage, 'ascend950b');
+      helper.setBufferBlocks?.(stage, [
+        { core: 'mem950-aiv1', buffer: 'UB', label: 'xLocal', state: 'enqueued', tone: 'input', cellRange: [0, 15], sourceTile: 'x[block0,progress0,:]' },
+        { core: 'mem950-aic', buffer: 'L0C', label: 'C partial', state: 'accumulating', tone: 'accumulator', cellRange: [20, 35], sourceTile: 'C[m0,n0]' },
+      ]);
       overlay?.render();
 
       const focusFlows = {

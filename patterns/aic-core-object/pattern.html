@@ -83,6 +83,10 @@
       };
 
       helper.render(mountNode, 'aicDraftV1');
+      helper.setBufferBlocks?.(mountNode, [
+        { buffer: 'L0A', label: 'A tile', state: 'loaded', tone: 'input', cellRange: [0, 9], sourceTile: 'A[m0,k0]' },
+        { buffer: 'L0C', label: 'C partial', state: 'accumulating', tone: 'accumulator', cellRange: [20, 35], sourceTile: 'C[m0,n0]' },
+      ]);
 
       if (isEmbedPreview && 'ResizeObserver' in window) {
         const resizeObserver = new ResizeObserver(() => syncFrameHeight());

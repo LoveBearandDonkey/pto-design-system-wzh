@@ -280,6 +280,35 @@
   box-shadow: inset 0 0 0 1px rgba(192, 232, 255, 0.72);
 }
 
+.pto-aic-core__cell.is-buffer-block {
+  background: color-mix(in srgb, var(--primary, #4d97ff) 76%, #2d75df);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--foreground, #ffffff) 82%, transparent),
+    0 0 8px color-mix(in srgb, var(--primary, #4d97ff) 42%, transparent);
+}
+
+.pto-aic-core__cell.is-buffer-block-tone-output,
+.pto-aic-core__cell.is-buffer-block-state-committed {
+  background: color-mix(in srgb, var(--success, #29c7a6) 78%, #2d75df);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--foreground, #ffffff) 82%, transparent),
+    0 0 8px color-mix(in srgb, var(--success, #29c7a6) 44%, transparent);
+}
+
+.pto-aic-core__cell.is-buffer-block-tone-accumulator,
+.pto-aic-core__cell.is-buffer-block-state-accumulating {
+  background: color-mix(in srgb, var(--warning, #ffcf59) 82%, #2d75df);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--background, #111111) 60%, transparent),
+    0 0 8px color-mix(in srgb, var(--warning, #ffcf59) 48%, transparent);
+}
+
+.pto-aic-core__cell.is-buffer-block-state-avoided {
+  background: color-mix(in srgb, var(--foreground-muted, #a4b0bd) 56%, #2d75df);
+  opacity: 0.48;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--foreground-muted, #a4b0bd) 58%, transparent);
+}
+
 :root[data-theme='light'] .pto-aic-core__cell {
   background: color-mix(in srgb, var(--primary) 28%, var(--surface-1));
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 22%, var(--surface-1));
@@ -288,6 +317,13 @@
 :root[data-theme='light'] .pto-aic-core__cell.is-band {
   background: color-mix(in srgb, var(--primary) 28%, var(--surface-1));
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 22%, var(--surface-1));
+}
+
+:root[data-theme='light'] .pto-aic-core__cell.is-buffer-block {
+  background: color-mix(in srgb, var(--primary) 64%, var(--surface-1));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--primary) 28%, white),
+    0 0 8px color-mix(in srgb, var(--primary) 24%, transparent);
 }
 
 .pto-aic-core__cube {

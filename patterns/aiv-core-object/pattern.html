@@ -77,6 +77,10 @@
       };
 
       helper.render(mountNode, 'aivOfficialV1');
+      helper.setBufferBlocks?.(mountNode, [
+        { buffer: 'UB', label: 'xLocal', state: 'enqueued', tone: 'input', cellRange: [0, 15], sourceTile: 'x[block0,progress0,:]' },
+        { buffer: 'UB', label: 'zLocal', state: 'committed', tone: 'output', cellRange: [38, 53], sourceTile: 'z[block0,progress0,:]' },
+      ]);
 
       if (isEmbedPreview && 'ResizeObserver' in window) {
         const resizeObserver = new ResizeObserver(() => syncFrameHeight());

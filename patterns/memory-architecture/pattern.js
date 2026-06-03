@@ -1598,6 +1598,44 @@
     };
   }
 
+  function clearBufferBlocks(container) {
+    const root = rootFor(container);
+    if (!root) return null;
+    global.PtoAicCorePattern?.clearBufferBlocks?.(root);
+    global.PtoAivCorePattern?.clearBufferBlocks?.(root);
+    return { root };
+  }
+
+  function coreSlotForBlock(root, block) {
+    if (!block?.core) return root;
+    return root.querySelector(`[id="${attrValue(block.core)}"]`) || root;
+  }
+
+  function setBufferBlocks(container, blocks = []) {
+    const root = rootFor(container);
+    if (!root) return null;
+    const list = Array.isArray(blocks) ? blocks : [];
+    clearBufferBlocks(root);
+    let applied = 0;
+    const groups = new Map();
+    list.forEach((block) => {
+      if (!block) return;
+      const slot = coreSlotForBlock(root, block);
+      const helper = slot.classList?.contains('is-aiv') || slot.querySelector?.('.pto-aiv-core')
+        ? global.PtoAivCorePattern
+        : global.PtoAicCorePattern;
+      if (!helper?.setBufferBlocks) return;
+      const key = `${slot.id || 'root'}:${helper === global.PtoAivCorePattern ? 'aiv' : 'aic'}`;
+      if (!groups.has(key)) groups.set(key, { slot, helper, blocks: [] });
+      groups.get(key).blocks.push(block);
+    });
+    groups.forEach((group) => {
+      const result = group.helper.setBufferBlocks(group.slot, group.blocks);
+      applied += Number(result?.applied || 0);
+    });
+    return { root, blocks: list, applied };
+  }
+
   function renderBufferGrid() {
     return null;
   }
@@ -1613,6 +1651,8 @@
     setAivFolded,
     setPathFocus,
     clearPathFocus,
+    setBufferBlocks,
+    clearBufferBlocks,
     renderBufferGrid,
   };
 })(window);

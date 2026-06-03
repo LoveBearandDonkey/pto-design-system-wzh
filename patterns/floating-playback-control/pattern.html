@@ -44,6 +44,10 @@
     <section class="pto-floating-playback-pattern-stage" aria-label="Floating playback preview">
       <div id="preview-control-mount"></div>
     </section>
+
+    <section class="pto-floating-playback-pattern-stage" aria-label="Playback controls without built-in scrubber">
+      <div id="preview-compact-control-mount"></div>
+    </section>
   </main>
 
   <script src="./pattern.js"></script>
@@ -51,6 +55,7 @@
     (function renderFloatingPlaybackPattern() {
       const helper = window.PtoFloatingPlaybackControl;
       const mount = document.getElementById('preview-control-mount');
+      const compactMount = document.getElementById('preview-compact-control-mount');
       const isEmbedPreview = document.documentElement.dataset.embedPreview === 'true';
       if (!helper || !mount) return;
 
@@ -69,6 +74,17 @@
         className: 'pto-floating-playback--preview',
       });
       mount.appendChild(control);
+      if (compactMount) {
+        const compactControl = helper.createControl({
+          className: 'pto-floating-playback--preview',
+          showTimeline: false,
+        });
+        compactMount.appendChild(compactControl);
+        helper.init({
+          root: compactControl,
+          isPlaying: () => playing,
+        });
+      }
 
       const playBtn = control.querySelector('#play-btn');
       const backBtn = control.querySelector('#step-back-btn');

@@ -69,6 +69,21 @@
 
   function createControl(options = {}) {
     const ids = { ...DEFAULT_IDS, ...(options.ids || {}) };
+    const showTimeline = options.showTimeline !== false;
+    const timelineMarkup = showTimeline ? `
+          <div class="pto-floating-playback__sep" aria-hidden="true"></div>
+          <div class="pto-floating-playback__group pto-floating-playback__group--timeline">
+            <div class="pto-floating-playback__meta">
+              <label class="pto-floating-playback__label" for="${escapeHtml(ids.scrubber)}">Timeline</label>
+              <label id="${escapeHtml(ids.scrubberLabel)}" class="pto-floating-playback__counter" for="${escapeHtml(ids.scrubber)}">0 / 127</label>
+              <span id="${escapeHtml(ids.scrubberOpname)}" class="pto-floating-playback__opname">-</span>
+            </div>
+            <div class="pto-floating-playback__scrubber-wrap">
+              <input class="pto-floating-playback__scrubber" type="range" id="${escapeHtml(ids.scrubber)}" min="0" max="127" value="0" step="1">
+              <div id="${escapeHtml(ids.scrubberHover)}" class="pto-floating-playback__hover" aria-hidden="true"></div>
+            </div>
+          </div>
+    ` : '';
     const root = document.createElement('div');
     root.className = ['pto-floating-playback', options.className].filter(Boolean).join(' ');
     if (options.id) root.id = options.id;
@@ -87,18 +102,7 @@
             ${createButton({ id: ids.stepForward, label: iconLabel('skipForward'), title: 'Next step' })}
             ${createButton({ id: ids.replay, label: iconLabel('replay', 'Replay'), title: 'Replay from step 0' })}
           </div>
-          <div class="pto-floating-playback__sep" aria-hidden="true"></div>
-          <div class="pto-floating-playback__group pto-floating-playback__group--timeline">
-            <div class="pto-floating-playback__meta">
-              <label class="pto-floating-playback__label" for="${escapeHtml(ids.scrubber)}">Timeline</label>
-              <label id="${escapeHtml(ids.scrubberLabel)}" class="pto-floating-playback__counter" for="${escapeHtml(ids.scrubber)}">0 / 127</label>
-              <span id="${escapeHtml(ids.scrubberOpname)}" class="pto-floating-playback__opname">-</span>
-            </div>
-            <div class="pto-floating-playback__scrubber-wrap">
-              <input class="pto-floating-playback__scrubber" type="range" id="${escapeHtml(ids.scrubber)}" min="0" max="127" value="0" step="1">
-              <div id="${escapeHtml(ids.scrubberHover)}" class="pto-floating-playback__hover" aria-hidden="true"></div>
-            </div>
-          </div>
+          ${timelineMarkup}
         </div>
       </div>
     `;

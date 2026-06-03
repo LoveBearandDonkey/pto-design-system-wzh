@@ -22,18 +22,22 @@
     "reusing AIV shell layout and routes without hand-copying static HTML"
   ],
   "requiredApis": [
-    "window.PtoAivCorePattern.render(container, presetOrKey)"
+    "window.PtoAivCorePattern.render(container, presetOrKey)",
+    "window.PtoAivCorePattern.setBufferBlocks(root, blocks)",
+    "window.PtoAivCorePattern.clearBufferBlocks(root)"
   ],
   "allowedOverrides": [
     "title, labels, capacities, and card membership",
     "per-card frame width and height",
     "grid rows, cols, cell size, gap, and highlighted band columns",
+    "runtime local buffer-block state through setBufferBlocks payloads",
     "route list, route color family, and route anchor bias"
   ],
   "forbiddenOverrides": [
     "rewriting the shell layout in page-local CSS",
     "replacing official topology-derived routes with ad hoc demo lines",
-    "hard-coding a one-off copy of generated DOM instead of using the shared renderer"
+    "hard-coding a one-off copy of generated DOM instead of using the shared renderer",
+    "mutating generated grid cells from product pages instead of calling setBufferBlocks"
   ],
   "agentReuseRule": "Read this JSON first. For a new page, load pattern.js and call window.PtoAivCorePattern.render with a preset or config object. Extend the preset data for future chip variants instead of cloning the generated DOM."
 }

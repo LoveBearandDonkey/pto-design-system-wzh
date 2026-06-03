@@ -34,6 +34,7 @@
   ],
   "allowedOverrides": [
     "button labels and ids through createControl options",
+    "hiding the built-in scrubber through createControl({ showTimeline: false }) when a shared timeline pattern owns step selection",
     "playback state through init({ isPlaying })",
     "scrubber hover label through initScrubberHover({ getLabelForStep })",
     "surface, radius, sizing, and button colors through documented CSS variables"
