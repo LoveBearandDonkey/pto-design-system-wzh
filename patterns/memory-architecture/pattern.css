@@ -572,14 +572,16 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
 
 .pto-mem950__overlay [data-route-default-hidden="true"] {
   opacity: 0;
+  pointer-events: none;
 }
 
-.pto-mem950.is-path-focused .pto-mem950__overlay [data-route-default-hidden="true"] {
-  opacity: 0.08;
+.pto-mem950.is-path-focused .pto-mem950__overlay [data-route-default-hidden="true"]:not(.is-route-active) {
+  opacity: 0;
 }
 
 .pto-mem950.is-path-focused .pto-mem950__overlay [data-route-id].is-route-active {
   opacity: 0.9;
+  pointer-events: auto;
   filter: drop-shadow(0 0 4px color-mix(in srgb, var(--warning) 42%, transparent));
 }
 
