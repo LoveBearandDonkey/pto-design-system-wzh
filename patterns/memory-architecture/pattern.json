@@ -55,7 +55,8 @@
     "hand-tuning route geometry in page-local CSS",
     "using local product CSS or DOM traversal to recolor AIC/AIV buffer cells",
     "changing chip-level rail widths, route label treatment, or AIC/AIV internal chrome outside the shared patterns",
-    "anchoring direct CV detour lanes to broad stack containers when a concrete AIC/AIV node can define the lane"
+    "anchoring direct CV detour lanes to broad stack containers when a concrete AIC/AIV node can define the lane",
+    "using stroke-width changes for hover or playback focus; use opacity and glow so route thickness remains stable"
   ],
   "agentReuseRule": "Read this JSON first. For a new 950-class architecture page, load aic-core-object and aiv-core-object first, then call memory-architecture/pattern.js to mount the full-stage shell. Use attachPathFocusInteractions or setPathFocus/clearPathFocus for flow-step hover like ascend-hardware-map-v3 instead of reimplementing is-path-focused, is-hardware-active, or route glow locally. For iframe or inspector embeds, wrap the stage with the documented zoom viewport/sizer/canvas classes, call createZoomController with defaultZoom 0.6, and expose zoom out/in/reset controls using the shared zoom-control and btn classes. Extend presets, route data, and preset engines in pattern.js instead of cloning the rendered DOM. Anchor detour lanes to concrete rendered nodes, not whole core stacks, so route labels stay tied to the visible hardware unit."
 }

@@ -256,7 +256,6 @@
           fromSide: 'bottom',
           toSide: 'top',
           style: 'elbow-v',
-          strokeWidth: '2',
           defaultHidden: true,
         },
         {

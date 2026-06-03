@@ -21,8 +21,8 @@
         { from: 'scalar:Scalar', to: 'exec:SIMT', color: 'control', style: 'elbow-h', fromSide: 'right', toSide: 'top', fromBias: 0.5, toBias: 0.26 },
         { from: 'scalar:Scalar', to: 'exec:SIMD', color: 'control', style: 'elbow-h', fromSide: 'right', toSide: 'top', fromBias: 0.5, toBias: 0.72 },
         { from: 'buffer:UB', to: 'exec:SIMT', color: 'memory', style: 'elbow-h', fromSide: 'right', toSide: 'left', fromBias: 0.42, toBias: 0.82, dashArray: '6 4', offset: 14 },
-        { from: 'buffer:UB', to: 'vector:Vector', color: 'memory', style: 'horizontal', fromSide: 'right', toSide: 'left', fromBias: 0.56, toBias: 0.5, strokeWidth: '2' },
-        { from: 'vector:Vector', to: 'buffer:UB', color: 'compute', style: 'horizontal', fromSide: 'left', toSide: 'right', fromBias: 0.62, toBias: 0.64, strokeWidth: '2', dashArray: '5 3' }
+        { from: 'buffer:UB', to: 'vector:Vector', color: 'memory', style: 'horizontal', fromSide: 'right', toSide: 'left', fromBias: 0.56, toBias: 0.5 },
+        { from: 'vector:Vector', to: 'buffer:UB', color: 'compute', style: 'horizontal', fromSide: 'left', toSide: 'right', fromBias: 0.62, toBias: 0.64, dashArray: '5 3' }
       ],
       layout: {
         kind: 'group',
@@ -409,17 +409,17 @@
       const marker = svgNode('marker', {
         id: `pto-aiv-arrow-${key}`,
         markerUnits: 'userSpaceOnUse',
-        markerWidth: '8',
-        markerHeight: '8',
-        refX: '7',
-        refY: '4',
+        markerWidth: '5.5',
+        markerHeight: '5.5',
+        refX: '5',
+        refY: '2.75',
         orient: 'auto',
       });
       marker.appendChild(svgNode('path', {
-        d: 'M1,1 L7,4 L1,7',
+        d: 'M1,1 L5,2.75 L1,4.5',
         fill: 'none',
         stroke: color,
-        'stroke-width': '1.5',
+        'stroke-width': '1.1',
         'stroke-linecap': 'round',
         'stroke-linejoin': 'round',
       }));

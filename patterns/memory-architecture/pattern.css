@@ -588,14 +588,12 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   filter: saturate(0.65);
   transition:
     opacity var(--duration-fast) var(--easing-default),
-    filter var(--duration-fast) var(--easing-default),
-    stroke-width var(--duration-fast) var(--easing-default);
+    filter var(--duration-fast) var(--easing-default);
 }
 
 .pto-mem950.is-path-focused .pto-aiv-core__route.is-internal-route-active {
   opacity: 0.96;
   filter: drop-shadow(0 0 6px color-mix(in srgb, var(--warning) 58%, transparent));
-  stroke-width: 2.6;
 }
 
 .pto-mem950.is-path-focused .pto-aic-core__route {
