@@ -95,6 +95,17 @@ Before changing or reusing a pattern preview, run this capability contract check
 
 If any of these four points disagree, fix the shared pattern contract or preview before consuming it in a product page. Do not leave a preview card promising behavior that is not exported and exercised by the pattern.
 
+#### Memory architecture publication rules
+
+When changing or consuming `memory-architecture-layout`, run these checks before finishing:
+
+1. Route geometry belongs in `patterns/memory-architecture/pattern.js` preset data and overlay helpers. Do not repair route positions from a product page with local CSS or local DOM traversal.
+2. Direct CV detour routes must anchor to concrete rendered hardware nodes, such as `data-aiv-node="exec:SIMD"`, rather than broad stack containers like an entire AIV exec column.
+3. Hover, path focus, playback, or step focus must not change route `stroke-width`. Use opacity, color, and glow so route thickness stays visually stable during playback.
+4. If a shared pattern file changes, update `patterns/memory-architecture/pattern.html` and `design-system-preview.html` cache keys so the design-system preview loads the new CSS/JS.
+5. If a `/Users/yin/pto` page consumes the pattern through `vendor/pto-design-system`, update the vendor checkout pointer and bump the product page resource query strings in the same release. Pushing `pto-design-system` alone does not update `compute-graph-viewer` GitHub Pages.
+6. Verify the published HTML references the new resource query and the published pattern JS contains the expected route selector before telling the user the Pages view is updated.
+
 ### 3. Choose iframe or direct embedding
 
 Use an iframe when preserving a complete source page is more important than local composition. This is the right choice for parity previews and for pages where the original source owns heavy runtime behavior, such as Graphviz DOT generation, D3 zoom, popup behavior, graph reloads, or report-overlay focus state.
