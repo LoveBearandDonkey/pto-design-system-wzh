@@ -271,6 +271,7 @@
           toBias: 0.50,
           style: 'lane-h-target',
           labelDy: 0,
+          defaultHidden: true,
         },
         {
           id: 'gm-to-aiv2-ub',
@@ -322,6 +323,7 @@
           toBias: 0.50,
           style: 'lane-h-target',
           labelDy: 0,
+          defaultHidden: true,
         },
         {
           id: 'aiv2-to-l2',
@@ -334,6 +336,7 @@
           fromBias: 0.82,
           style: 'lane-h-source',
           labelDy: 0,
+          defaultHidden: true,
         },
       ],
       notes: [
