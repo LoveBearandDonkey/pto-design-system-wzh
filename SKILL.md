@@ -114,6 +114,8 @@ Use direct embedding when the new PTO page owns the data and should compose the 
 
 For model Graphviz report overlays, follow the existing practice: iframe the real Graphviz source page for parity previews; directly call `PtoModelGraphvizPattern.render` only for lightweight rendered examples or new pages that own graph data.
 
+When building a new model architecture page (not the DeepSeek parity iframe), follow the current conventions captured by the `qwen7b_modelviz.html` reference and `patterns/model-graphviz/pattern.json`: derive each cluster box from the bounding box of its visible children so collapsing a module reflows and shrinks the parent; lay the decoder chain out as a single top-to-bottom column (Gate/Up are the only parallel pair); put cluster fold controls at the top-right corner with `--radius-xl` (16px) cluster corners; fill every expanded cluster, including repeated layer templates, with 10% white; vertically center the node label+type stack; use transform-based (`translate`+`scale`) cursor-anchored pan/zoom instead of scroll; show a single white selection stroke with the browser focus ring removed; and place the repeat-count badge at the cluster top-left under the title.
+
 ### 4. Compose without extra chrome
 
 Pattern wrappers may provide spacing and sizing, but must not redefine internal pattern classes or add stacked borders, shadows, rounded frames, or extra card shells around the same surface.

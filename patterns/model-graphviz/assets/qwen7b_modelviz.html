@@ -28,7 +28,7 @@
       --qwen-muted: var(--foreground-secondary);
       --qwen-dim: var(--foreground-muted);
       --qwen-accent: var(--highlight-copy-blue-300);
-      --qwen-selected: var(--warning);
+      --qwen-selected: #FFFFFF;
       --qwen-radius: var(--radius-lg);
       --model-graphviz-bg: var(--qwen-shell-bg);
       --model-graphviz-surface: var(--qwen-panel-bg);
@@ -105,14 +105,6 @@
       letter-spacing: 0;
     }
 
-    .qwen-summary {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-      margin-top: var(--space-2);
-    }
-
-    .qwen-chip,
     .qwen-link,
     .qwen-file-button {
       display: inline-flex;
@@ -153,8 +145,6 @@
     }
 
     .qwen-main {
-      display: grid;
-      grid-template-columns: minmax(720px, 1fr) minmax(320px, 390px);
       min-height: 0;
     }
 
@@ -169,8 +159,8 @@
       width: 100%;
       height: 100%;
       min-height: 0;
-      overflow: auto;
-      padding: var(--space-5);
+      overflow: hidden;
+      position: relative;
       cursor: grab;
       user-select: none;
       touch-action: none;
@@ -182,16 +172,18 @@
 
     .qwen-graph-stage svg {
       display: block;
-      width: var(--qwen-svg-width, min(100%, 1220px));
-      min-width: 0;
-      max-width: none;
-      height: auto;
-      margin: 0 auto;
+      transform-origin: 0 0;
+      will-change: transform;
     }
 
     .qwen-graph-stage .pto-model-graphviz-node,
     .qwen-graph-stage .pto-model-graphviz-cluster {
       cursor: pointer;
+    }
+
+    .qwen-graph-stage [tabindex]:focus,
+    .qwen-graph-stage [tabindex]:focus-visible {
+      outline: none;
     }
 
     .qwen-graph-stage .pto-model-graphviz-node.is-selected rect {
@@ -204,7 +196,8 @@
       stroke-width: 2.4px;
     }
 
-    .qwen-graph-stage .pto-model-graphviz-toggle {
+    .qwen-graph-stage .pto-model-graphviz-toggle,
+    .qwen-graph-stage .pto-model-graphviz-toggle-icon {
       display: none;
     }
 
@@ -240,189 +233,11 @@
     }
 
     .qwen-graph-stage .pto-model-graphviz-node-type {
-      font-size: 11px;
+      font-size: 9.5px;
     }
 
     .qwen-graph-stage .pto-model-graphviz-edge {
       stroke-opacity: 0.86;
-    }
-
-    .qwen-side {
-      min-height: 0;
-      border-left: 1px solid var(--qwen-border);
-      background: var(--qwen-panel-bg);
-      display: grid;
-      grid-template-rows: auto 1fr;
-    }
-
-    .qwen-side-head {
-      padding: var(--space-4);
-      border-bottom: 1px solid var(--qwen-border);
-    }
-
-    .qwen-side-title {
-      margin: 0 0 var(--space-1);
-      font-size: var(--font-size-title-sm);
-      line-height: var(--line-height-title);
-      font-weight: var(--font-weight-semibold);
-    }
-
-    .qwen-side-note {
-      margin: 0;
-      color: var(--qwen-muted);
-      font-size: var(--font-size-body-sm);
-      line-height: var(--line-height-body);
-    }
-
-    .qwen-side-body {
-      min-height: 0;
-      overflow: auto;
-      padding: var(--space-4);
-    }
-
-    .qwen-section + .qwen-section {
-      margin-top: var(--space-5);
-    }
-
-    .qwen-section-title {
-      margin: 0 0 var(--space-2);
-      color: var(--qwen-muted);
-      font-size: var(--font-size-label-sm);
-      line-height: var(--line-height-label);
-      font-weight: var(--font-weight-semibold);
-      text-transform: uppercase;
-      letter-spacing: 0;
-    }
-
-    .qwen-fact-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-2);
-    }
-
-    .qwen-fact {
-      min-height: 62px;
-      padding: var(--space-2);
-      border: 1px solid var(--qwen-border);
-      border-radius: var(--radius-sm);
-      background: var(--qwen-panel-soft);
-    }
-
-    .qwen-fact span {
-      display: block;
-      color: var(--qwen-dim);
-      font-size: var(--font-size-label-xs);
-      line-height: var(--line-height-label);
-    }
-
-    .qwen-fact strong {
-      display: block;
-      margin-top: 4px;
-      color: var(--qwen-text);
-      font-size: var(--font-size-title-sm);
-      line-height: var(--line-height-title);
-      font-weight: var(--font-weight-semibold);
-    }
-
-    .qwen-detail {
-      border: 1px solid var(--qwen-border);
-      border-radius: var(--qwen-radius);
-      background: color-mix(in srgb, var(--qwen-panel-soft) 90%, transparent);
-      overflow: hidden;
-    }
-
-    .qwen-detail-head {
-      padding: var(--space-3);
-      border-bottom: 1px solid var(--qwen-border);
-    }
-
-    .qwen-detail-name {
-      margin: 0;
-      font-size: var(--font-size-title-sm);
-      line-height: var(--line-height-title);
-      font-weight: var(--font-weight-semibold);
-    }
-
-    .qwen-detail-kind {
-      display: block;
-      margin-top: 4px;
-      color: var(--qwen-muted);
-      font-size: var(--font-size-label-sm);
-      line-height: var(--line-height-label);
-    }
-
-    .qwen-detail-body {
-      padding: var(--space-3);
-    }
-
-    .qwen-kv {
-      display: grid;
-      grid-template-columns: 92px 1fr;
-      gap: var(--space-2);
-      padding: 7px 0;
-      border-bottom: 1px solid color-mix(in srgb, var(--qwen-border) 68%, transparent);
-      font-size: var(--font-size-body-sm);
-      line-height: var(--line-height-body);
-    }
-
-    .qwen-kv:last-child {
-      border-bottom: 0;
-    }
-
-    .qwen-kv dt {
-      margin: 0;
-      color: var(--qwen-dim);
-    }
-
-    .qwen-kv dd {
-      margin: 0;
-      color: var(--qwen-text);
-      min-width: 0;
-      word-break: break-word;
-    }
-
-    .qwen-list {
-      display: grid;
-      gap: var(--space-2);
-    }
-
-    .qwen-node-button,
-    .qwen-edge-card {
-      width: 100%;
-      text-align: left;
-      border: 1px solid var(--qwen-border);
-      border-radius: var(--radius-sm);
-      background: var(--qwen-panel-soft);
-      color: var(--qwen-text);
-      padding: var(--space-2);
-      font: inherit;
-    }
-
-    .qwen-node-button {
-      cursor: pointer;
-    }
-
-    .qwen-node-button:hover,
-    .qwen-node-button.is-selected {
-      border-color: var(--qwen-border-strong);
-      background: var(--state-hover);
-    }
-
-    .qwen-node-button strong,
-    .qwen-edge-card strong {
-      display: block;
-      font-size: var(--font-size-body-sm);
-      line-height: var(--line-height-body);
-      font-weight: var(--font-weight-semibold);
-    }
-
-    .qwen-node-button span,
-    .qwen-edge-card span {
-      display: block;
-      margin-top: 3px;
-      color: var(--qwen-muted);
-      font-size: var(--font-size-label-sm);
-      line-height: var(--line-height-label);
     }
 
     .qwen-status {
@@ -473,7 +288,6 @@
       <div class="qwen-title-block">
         <span class="qwen-kicker">Qwen-7B source-checked architecture schema</span>
         <h1 class="qwen-title">QWen LM Head Model</h1>
-        <div class="qwen-summary" id="summaryChips" aria-label="Qwen architecture summary"></div>
       </div>
       <div class="qwen-actions">
         <a class="qwen-link" href="./qwen7b_model_architecture.json">Schema JSON</a>
@@ -491,30 +305,6 @@
         <div class="qwen-graph-stage" id="graphStage" aria-label="Qwen-7B architecture graph"></div>
         <div class="qwen-status" id="statusText">Default Qwen-7B schema loaded.</div>
       </div>
-      <aside class="qwen-side">
-        <header class="qwen-side-head">
-          <h2 class="qwen-side-title">Architecture Facts</h2>
-          <p class="qwen-side-note">Shapes and constraints stay in edge/detail metadata. Node labels remain clean Module, Op, State, Input, and Output names.</p>
-        </header>
-        <div class="qwen-side-body">
-          <section class="qwen-section">
-            <h3 class="qwen-section-title">Config</h3>
-            <div class="qwen-fact-grid" id="factGrid"></div>
-          </section>
-          <section class="qwen-section">
-            <h3 class="qwen-section-title">Selection</h3>
-            <div class="qwen-detail" id="detailPanel"></div>
-          </section>
-          <section class="qwen-section">
-            <h3 class="qwen-section-title">Nodes</h3>
-            <div class="qwen-list" id="nodeList"></div>
-          </section>
-          <section class="qwen-section">
-            <h3 class="qwen-section-title">Tensor Edges</h3>
-            <div class="qwen-list" id="edgeList"></div>
-          </section>
-        </div>
-      </aside>
     </section>
   </main>
 
@@ -606,43 +396,64 @@
       ],
     };
 
-    const FIXED_LAYOUT = {
-      input_tokens: { x: 640, y: 72, width: 170, height: 48, colorKey: 'io:input' },
-      transformer: { x: 640, y: 190, width: 280, height: 58, colorKey: 'module:transformer' },
-      token_embedding: { x: 640, y: 220, width: 240, height: 56, colorKey: 'sem:embedding', parent: 'transformer-core' },
-      rope_cache: { x: 132, y: 690, width: 188, height: 52, colorKey: 'io:state' },
-      kv_cache: { x: 132, y: 790, width: 176, height: 52, colorKey: 'io:state' },
-      decoder_layer: { x: 640, y: 404, width: 288, height: 58, colorKey: 'module:decoder-layer', parent: 'transformer-core' },
-      attn_norm: { x: 366, y: 410, width: 230, height: 56, colorKey: 'sem:norm', parent: 'decoder-stack' },
-      attention: { x: 366, y: 510, width: 220, height: 58, colorKey: 'module:attention', parent: 'decoder-stack' },
-      qkv_linear: { x: 366, y: 595, width: 186, height: 54, colorKey: 'sem:linear', parent: 'attention-block' },
-      rotary_apply: { x: 366, y: 680, width: 184, height: 54, colorKey: 'sem:rope', parent: 'attention-block' },
-      scaled_attention: { x: 366, y: 765, width: 212, height: 54, colorKey: 'sem:attention', parent: 'attention-block' },
-      attn_output_linear: { x: 366, y: 850, width: 256, height: 54, colorKey: 'sem:linear', parent: 'attention-block' },
-      mlp_norm: { x: 850, y: 410, width: 198, height: 56, colorKey: 'sem:norm', parent: 'decoder-stack' },
-      mlp: { x: 850, y: 510, width: 190, height: 58, colorKey: 'module:mlp', parent: 'decoder-stack' },
-      mlp_gate_linear: { x: 730, y: 610, width: 176, height: 54, colorKey: 'sem:linear', parent: 'mlp-block' },
-      mlp_up_linear: { x: 970, y: 610, width: 158, height: 54, colorKey: 'sem:linear', parent: 'mlp-block' },
-      silu_multiply: { x: 850, y: 710, width: 196, height: 54, colorKey: 'sem:activation', parent: 'mlp-block' },
-      mlp_down_linear: { x: 850, y: 810, width: 224, height: 54, colorKey: 'sem:linear', parent: 'mlp-block' },
-      final_norm: { x: 640, y: 960, width: 196, height: 56, colorKey: 'sem:norm', parent: 'transformer-core' },
-      lm_head: { x: 640, y: 1068, width: 210, height: 56, colorKey: 'sem:linear' },
-      output_logits: { x: 640, y: 1168, width: 166, height: 48, colorKey: 'io:output' },
-    };
-
-    const COMPACT_TRANSFORMER_LAYOUT = {
-      input_tokens: { ...FIXED_LAYOUT.input_tokens },
-      transformer: { x: 640, y: 190, width: 280, height: 58, colorKey: 'module:transformer' },
-      lm_head: { x: 640, y: 320, width: 210, height: 56, colorKey: 'sem:linear' },
-      output_logits: { x: 640, y: 430, width: 166, height: 48, colorKey: 'io:output' },
+    // Single vertical column at x=640 — a decoder layer is a linear chain, so the
+    // flow reads top→bottom; Gate/Up are the only parallel pair (SwiGLU).
+    // Only sizing/lane is static here; y is reflowed per collapse state (see
+    // computeQwenLayout) so collapsing a module compacts the column instead of
+    // leaving a tall empty parent box.
+    const COL_X = 640;
+    const NODE_SPEC = {
+      input_tokens:       { w: 170, h: 48, colorKey: 'io:input' },
+      transformer:        { w: 280, h: 58, colorKey: 'module:transformer' },
+      token_embedding:    { w: 240, h: 56, colorKey: 'sem:embedding', parent: 'transformer-core' },
+      rope_cache:         { w: 188, h: 52, colorKey: 'io:state', lane: 250 },
+      kv_cache:           { w: 176, h: 52, colorKey: 'io:state', lane: 250 },
+      decoder_layer:      { w: 288, h: 58, colorKey: 'module:decoder-layer', parent: 'transformer-core' },
+      attn_norm:          { w: 230, h: 56, colorKey: 'sem:norm', parent: 'decoder-stack' },
+      attention:          { w: 220, h: 58, colorKey: 'module:attention', parent: 'decoder-stack' },
+      qkv_linear:         { w: 186, h: 54, colorKey: 'sem:linear', parent: 'attention-block' },
+      rotary_apply:       { w: 184, h: 54, colorKey: 'sem:rope', parent: 'attention-block' },
+      scaled_attention:   { w: 212, h: 54, colorKey: 'sem:attention', parent: 'attention-block' },
+      attn_output_linear: { w: 256, h: 54, colorKey: 'sem:linear', parent: 'attention-block' },
+      mlp_norm:           { w: 198, h: 56, colorKey: 'sem:norm', parent: 'decoder-stack' },
+      mlp:                { w: 190, h: 58, colorKey: 'module:mlp', parent: 'decoder-stack' },
+      mlp_gate_linear:    { w: 176, h: 54, colorKey: 'sem:linear', parent: 'mlp-block', lane: 540 },
+      mlp_up_linear:      { w: 158, h: 54, colorKey: 'sem:linear', parent: 'mlp-block', lane: 748 },
+      silu_multiply:      { w: 196, h: 54, colorKey: 'sem:activation', parent: 'mlp-block' },
+      mlp_down_linear:    { w: 224, h: 54, colorKey: 'sem:linear', parent: 'mlp-block' },
+      final_norm:         { w: 196, h: 56, colorKey: 'sem:norm', parent: 'transformer-core' },
+      lm_head:            { w: 210, h: 56, colorKey: 'sem:linear' },
+      output_logits:      { w: 166, h: 48, colorKey: 'io:output' },
     };
 
     const QWEN_CLUSTERS = [
-      { id: 'transformer-core', label: 'QWen Transformer', x: 218, y: 150, width: 964, height: 860, colorKey: 'module:transformer' },
-      { id: 'decoder-stack', label: 'Decoder Layer Template', x: 252, y: 310, width: 896, height: 600, colorKey: 'module:decoder-layer', repeat: true },
-      { id: 'attention-block', label: 'Self Attention', x: 286, y: 470, width: 398, height: 420, colorKey: 'module:attention' },
-      { id: 'mlp-block', label: 'SwiGLU MLP', x: 668, y: 470, width: 444, height: 365, colorKey: 'module:mlp' },
+      { id: 'transformer-core', label: 'QWen Transformer', colorKey: 'module:transformer', parentCluster: null },
+      { id: 'decoder-stack', label: 'Decoder Layer Template', colorKey: 'module:decoder-layer', repeat: true, parentCluster: 'transformer-core' },
+      { id: 'attention-block', label: 'Self Attention', colorKey: 'module:attention', parentCluster: 'decoder-stack' },
+      { id: 'mlp-block', label: 'SwiGLU MLP', colorKey: 'module:mlp', parentCluster: 'decoder-stack' },
     ];
+
+    // Cluster boxes are derived from the bounding box of their visible children,
+    // not hand-placed — node x/y are centers (see pattern.js nodeAnchor) while
+    // cluster rects use top-left, so fixed rectangles never lined up.
+    const CLUSTER_MARGIN = 34;
+    const CLUSTER_TOP_PAD = 46;
+    const CLUSTER_DEPTH = { 'transformer-core': 1, 'decoder-stack': 2, 'attention-block': 3, 'mlp-block': 3 };
+    const ROW_GAP = 46; // same-depth breathing room; boundaries add cluster margin/top-pad
+    const CLUSTER_CHILD_NODES = {};
+    Object.entries(NODE_SPEC).forEach(([id, spec]) => {
+      if (!spec.parent) return;
+      (CLUSTER_CHILD_NODES[spec.parent] ||= []).push(id);
+    });
+    const CLUSTER_CHILD_CLUSTERS = {};
+    QWEN_CLUSTERS.forEach((cluster) => {
+      if (!cluster.parentCluster) return;
+      (CLUSTER_CHILD_CLUSTERS[cluster.parentCluster] ||= []).push(cluster.id);
+    });
+    function nodeDepth(id) {
+      const parent = NODE_SPEC[id]?.parent;
+      return parent ? CLUSTER_DEPTH[parent] : 0;
+    }
 
     const CLUSTERS_BY_ID = new Map(QWEN_CLUSTERS.map((cluster) => [cluster.id, cluster]));
     const MODULE_BY_CLUSTER = {
@@ -702,7 +513,7 @@
     };
     const MODEL_TITLE_NODE_IDS = new Set(['lm_head_model']);
     const MODULE_NODE_IDS = new Set(Object.keys(COLLAPSIBLE_MODULES));
-    const ZOOM_MIN = 0.36;
+    const ZOOM_MIN = 0.2;
     const ZOOM_MAX = 2.6;
 
     const state = {
@@ -711,8 +522,11 @@
       selectedNodeId: 'token_embedding',
       collapsedModules: new Set(),
       zoom: 1,
+      tx: 0,
+      ty: 0,
       svg: null,
       pan: null,
+      suppressClick: false,
     };
 
     function nodeVisualKind(kind) {
@@ -774,21 +588,140 @@
       return !isHiddenByCollapsedAncestor(nodeId);
     }
 
-    function qwenLayoutForNode(id) {
-      if (state.collapsedModules.has('transformer') && COMPACT_TRANSFORMER_LAYOUT[id]) {
-        return COMPACT_TRANSFORMER_LAYOUT[id];
+    // Ordered rows of the visible column; a row holds one node, except the
+    // SwiGLU Gate/Up pair which share a row.
+    function qwenRows() {
+      const collapsed = state.collapsedModules;
+      const rows = [['input_tokens']];
+      if (collapsed.has('transformer')) {
+        rows.push(['transformer'], ['lm_head'], ['output_logits']);
+        return rows;
       }
-      return FIXED_LAYOUT[id];
+      rows.push(['token_embedding']);
+      if (collapsed.has('decoder_layer')) {
+        rows.push(['decoder_layer']);
+      } else {
+        rows.push(['attn_norm']);
+        if (collapsed.has('attention')) {
+          rows.push(['attention']);
+        } else {
+          rows.push(['qkv_linear'], ['rotary_apply'], ['scaled_attention'], ['attn_output_linear']);
+        }
+        rows.push(['mlp_norm']);
+        if (collapsed.has('mlp')) {
+          rows.push(['mlp']);
+        } else {
+          rows.push(['mlp_gate_linear', 'mlp_up_linear'], ['silu_multiply'], ['mlp_down_linear']);
+        }
+      }
+      rows.push(['final_norm'], ['lm_head'], ['output_logits']);
+      return rows;
+    }
+
+    function rowGap(prevDepth, depth) {
+      if (depth > prevDepth) return (depth - prevDepth) * CLUSTER_TOP_PAD + 8;
+      if (depth < prevDepth) return (prevDepth - depth) * CLUSTER_MARGIN + 16;
+      return ROW_GAP;
+    }
+
+    function computeQwenLayout() {
+      const rows = qwenRows().filter((row) => row.every((id) => isGraphNodeVisible(id)));
+      const positions = {};
+      let cursor = 46;
+      let prevDepth = 0;
+      rows.forEach((row, index) => {
+        const depth = nodeDepth(row[0]);
+        if (index > 0) cursor += rowGap(prevDepth, depth);
+        const rowHeight = Math.max(...row.map((id) => NODE_SPEC[id].h));
+        const cy = cursor + rowHeight / 2;
+        row.forEach((id) => {
+          positions[id] = { x: NODE_SPEC[id].lane ?? COL_X, y: cy };
+        });
+        cursor += rowHeight;
+        prevDepth = depth;
+      });
+      // Side caches sit on the left lane, aligned to whichever node consumes them.
+      const ropeTarget = ['rotary_apply', 'attention', 'decoder_layer'].find((id) => positions[id]);
+      const kvTarget = ['scaled_attention', 'attention', 'decoder_layer'].find((id) => positions[id]);
+      if (isGraphNodeVisible('rope_cache') && ropeTarget) {
+        const sameTarget = ropeTarget === kvTarget;
+        positions.rope_cache = { x: NODE_SPEC.rope_cache.lane, y: positions[ropeTarget].y - (sameTarget ? 30 : 0) };
+      }
+      if (isGraphNodeVisible('kv_cache') && kvTarget) {
+        const sameTarget = ropeTarget === kvTarget;
+        positions.kv_cache = { x: NODE_SPEC.kv_cache.lane, y: positions[kvTarget].y + (sameTarget ? 30 : 0) };
+      }
+      const bottom = Math.max(...Object.entries(positions).map(([id, p]) => p.y + NODE_SPEC[id].h / 2));
+      return { positions, height: Math.round(bottom + 46) };
+    }
+
+    function qwenLayoutForNode(id) {
+      const spec = NODE_SPEC[id];
+      const pos = state.qwenLayout?.positions[id];
+      if (!spec || !pos) return null;
+      return { x: pos.x, y: pos.y, width: spec.w, height: spec.h, colorKey: spec.colorKey, parent: spec.parent };
+    }
+
+    function isClusterActive(clusterId) {
+      const moduleId = MODULE_BY_CLUSTER[clusterId];
+      if (!moduleId) return true;
+      return !state.collapsedModules.has(moduleId) && !isHiddenByCollapsedAncestor(moduleId);
+    }
+
+    function nodeRect(id) {
+      const layout = qwenLayoutForNode(id);
+      if (!layout) return null;
+      return {
+        left: layout.x - layout.width / 2,
+        right: layout.x + layout.width / 2,
+        top: layout.y - layout.height / 2,
+        bottom: layout.y + layout.height / 2,
+      };
+    }
+
+    function computeClusterBox(clusterId) {
+      let minX = Infinity;
+      let minY = Infinity;
+      let maxX = -Infinity;
+      let maxY = -Infinity;
+      (CLUSTER_CHILD_NODES[clusterId] || []).forEach((nodeId) => {
+        if (!isGraphNodeVisible(nodeId)) return;
+        const rect = nodeRect(nodeId);
+        if (!rect) return;
+        minX = Math.min(minX, rect.left);
+        maxX = Math.max(maxX, rect.right);
+        minY = Math.min(minY, rect.top);
+        maxY = Math.max(maxY, rect.bottom);
+      });
+      (CLUSTER_CHILD_CLUSTERS[clusterId] || []).forEach((childId) => {
+        if (!isClusterActive(childId)) return;
+        const box = computeClusterBox(childId);
+        if (!box) return;
+        minX = Math.min(minX, box.x);
+        maxX = Math.max(maxX, box.x + box.width);
+        minY = Math.min(minY, box.y);
+        maxY = Math.max(maxY, box.y + box.height);
+      });
+      if (minX === Infinity) return null;
+      const x = minX - CLUSTER_MARGIN;
+      const y = minY - CLUSTER_TOP_PAD;
+      return {
+        x,
+        y,
+        width: (maxX + CLUSTER_MARGIN) - x,
+        height: (maxY + CLUSTER_MARGIN) - y,
+      };
     }
 
     function activeQwenClusters() {
       if (state.collapsedModules.has('transformer')) return [];
-      return QWEN_CLUSTERS.filter((cluster) => {
-        const moduleId = MODULE_BY_CLUSTER[cluster.id];
-        if (!moduleId) return true;
-        if (state.collapsedModules.has(moduleId)) return false;
-        return !isHiddenByCollapsedAncestor(moduleId);
-      });
+      return QWEN_CLUSTERS
+        .filter((cluster) => isClusterActive(cluster.id))
+        .map((cluster) => {
+          const box = computeClusterBox(cluster.id);
+          return box ? { ...cluster, ...box } : null;
+        })
+        .filter(Boolean);
     }
 
     function addDisplayEdge(edges, visibleIds, source, target, options = {}) {
@@ -856,6 +789,7 @@
       const nodes = Array.isArray(schema.nodes) ? schema.nodes : [];
       const edges = Array.isArray(schema.edges) ? schema.edges : [];
       const useQwenLayout = String(schema.model?.name || '').toLowerCase().includes('qwen');
+      state.qwenLayout = useQwenLayout ? computeQwenLayout() : null;
       const graphNodes = nodes.filter((node) => !useQwenLayout || isGraphNodeVisible(node.id)).map((node, index) => {
         const layout = (useQwenLayout && qwenLayoutForNode(node.id)) || fallbackLayout(index);
         return {
@@ -875,7 +809,7 @@
       const visibleIds = new Set(graphNodes.map((node) => node.id));
       return {
         width: 1280,
-        height: useQwenLayout && state.collapsedModules.has('transformer') ? 500 : useQwenLayout ? 1220 : Math.max(680, Math.ceil(nodes.length / 4) * 110 + 120),
+        height: useQwenLayout ? state.qwenLayout.height : Math.max(680, Math.ceil(nodes.length / 4) * 110 + 120),
         clusters: useQwenLayout ? activeQwenClusters() : [],
         nodes: graphNodes,
         edges: useQwenLayout ? buildQwenDisplayEdges(visibleIds) : edges.map((edge) => ({
@@ -914,111 +848,6 @@
         '"': '&quot;',
         "'": '&#39;',
       })[char]);
-    }
-
-    function renderSummary() {
-      const model = state.schema.model || {};
-      const scope = state.schema.extraction_scope || {};
-      const symbols = state.schema.symbol_table || {};
-      const summary = [
-        model.framework || 'pytorch',
-        `${scope.full_main_layers || symbols.L || 0} decoder layers`,
-        `hidden ${symbols.H || '?'}`,
-        `${symbols.N_h || '?'} attention heads`,
-        `vocab ${symbols.V || '?'}`,
-      ];
-      document.getElementById('summaryChips').innerHTML = summary
-        .map((item) => `<span class="qwen-chip">${escapeHtml(item)}</span>`)
-        .join('');
-    }
-
-    function renderFacts() {
-      const symbols = state.schema.symbol_table || {};
-      const facts = [
-        ['Decoder layers', symbols.L],
-        ['Hidden size', symbols.H],
-        ['Attention heads', symbols.N_h],
-        ['Head dim', symbols.D],
-        ['Vocabulary', symbols.V],
-        ['MLP intermediate', symbols.I],
-      ];
-      document.getElementById('factGrid').innerHTML = facts.map(([label, value]) => `
-        <div class="qwen-fact">
-          <span>${escapeHtml(label)}</span>
-          <strong>${escapeHtml(value ?? '?')}</strong>
-        </div>
-      `).join('');
-    }
-
-    function renderDetail() {
-      ensureVisibleSelection();
-      const node = getNode(state.selectedNodeId) || state.schema.nodes?.[0];
-      if (!node) return;
-      state.selectedNodeId = node.id;
-      const repeat = (state.schema.repeats || []).find((entry) => entry.template_node === node.id);
-      const edges = getNodeEdges(node.id);
-      const attrs = node.attrs ? JSON.stringify(node.attrs) : '';
-      const rows = [
-        ['Kind', nodeTypeLabel(node.kind)],
-        ['Role', node.role || node.module_type || node.op_type || node.state_type || ''],
-        ['Repeat', repeat ? `${repeat.count} layers, range ${repeat.range}` : ''],
-        ['Attributes', attrs],
-        ['Edges', edges.map(tensorSummary).join('; ')],
-      ].filter(([, value]) => value);
-      document.getElementById('detailPanel').innerHTML = `
-        <div class="qwen-detail-head">
-          <h4 class="qwen-detail-name">${escapeHtml(node.label || node.id)}</h4>
-          <span class="qwen-detail-kind">${escapeHtml(node.id)}</span>
-        </div>
-        <dl class="qwen-detail-body">
-          ${rows.map(([key, value]) => `
-            <div class="qwen-kv">
-              <dt>${escapeHtml(key)}</dt>
-              <dd>${escapeHtml(value)}</dd>
-            </div>
-          `).join('')}
-        </dl>
-      `;
-    }
-
-    function visibleArchitectureNodeIds() {
-      const ids = new Set((state.graph?.nodes || []).map((node) => node.id));
-      (state.graph?.clusters || []).forEach((cluster) => {
-        const moduleId = MODULE_BY_CLUSTER[cluster.id];
-        if (moduleId) ids.add(moduleId);
-      });
-      MODEL_TITLE_NODE_IDS.forEach((id) => ids.delete(id));
-      return ids;
-    }
-
-    function ensureVisibleSelection() {
-      const visibleIds = visibleArchitectureNodeIds();
-      if (visibleIds.has(state.selectedNodeId)) return;
-      state.selectedNodeId = Array.from(visibleIds)[0] || (state.schema.nodes || [])[0]?.id || '';
-    }
-
-    function renderNodeList() {
-      const visibleIds = visibleArchitectureNodeIds();
-      const nodes = (state.schema.nodes || []).filter((node) => visibleIds.has(node.id));
-      document.getElementById('nodeList').innerHTML = nodes.map((node) => `
-        <button class="qwen-node-button${node.id === state.selectedNodeId ? ' is-selected' : ''}" type="button" data-node-id="${escapeHtml(node.id)}">
-          <strong>${escapeHtml(node.label || node.id)}</strong>
-          <span>${escapeHtml(nodeTypeLabel(node.kind))}</span>
-        </button>
-      `).join('');
-      document.querySelectorAll('.qwen-node-button').forEach((button) => {
-        button.addEventListener('click', () => selectNode(button.dataset.nodeId));
-      });
-    }
-
-    function renderEdgeList() {
-      const nodeLabel = new Map((state.schema.nodes || []).map((node) => [node.id, node.label || node.id]));
-      document.getElementById('edgeList').innerHTML = (state.schema.edges || []).map((edge) => `
-        <div class="qwen-edge-card">
-          <strong>${escapeHtml(nodeLabel.get(edge.source) || edge.source)} to ${escapeHtml(nodeLabel.get(edge.target) || edge.target)}</strong>
-          <span>${escapeHtml(tensorSummary(edge))}</span>
-        </div>
-      `).join('');
     }
 
     function setStatus(message) {
@@ -1119,10 +948,12 @@
       });
       state.graph.nodes.forEach((node) => {
         if (!MODULE_NODE_IDS.has(node.id) || !state.collapsedModules.has(node.id)) return;
-        appendOverlayToggle(svg, node.x + node.width / 2 - 24, node.y, node.id, false);
+        appendOverlayToggle(svg, node.x + node.width / 2 - 14, node.y, node.id, false);
       });
-      if (!state.collapsedModules.has('transformer')) {
-        appendLayerTag(svg, 242, 170, '32 layers');
+      const decoderBox = state.graph.clusters.find((cluster) => cluster.id === 'decoder-stack');
+      if (decoderBox) {
+        // Top-left, below the cluster title — matches DeepSeek's repeat badge (x:18, y:42).
+        appendLayerTag(svg, decoderBox.x + 16, decoderBox.y + 42, '32 layers');
       }
     }
 
@@ -1181,8 +1012,6 @@
     function selectNode(id) {
       if (!id) return;
       state.selectedNodeId = id;
-      renderDetail();
-      renderNodeList();
       syncGraphSelection();
     }
 
@@ -1195,52 +1024,73 @@
       const availableWidth = Math.max(640, stage.clientWidth - 72);
       const availableHeight = Math.max(640, stage.clientHeight - 72);
       const graphWidth = state.graph?.width || 1280;
-      const graphHeight = state.graph?.height || 1220;
+      const graphHeight = state.graph?.height || 1600;
       const fitScale = Math.min(availableWidth / graphWidth, availableHeight / graphHeight);
       return clampZoom(Math.min(1.08, fitScale));
     }
 
-    function applyZoom() {
-      const stage = document.getElementById('graphStage');
-      const svg = state.svg || stage.querySelector('svg');
+    // Transform-based pan/zoom: svg is sized 1:1 to the graph and moved with a
+    // CSS transform (translate + scale). Pan adjusts tx/ty; zoom keeps the graph
+    // point under the cursor fixed. This anchors correctly regardless of size.
+    function applyTransform() {
+      const svg = state.svg || document.getElementById('graphStage').querySelector('svg');
       if (!svg || !state.graph) return;
-      stage.style.setProperty('--qwen-svg-width', `${Math.round(state.graph.width * state.zoom)}px`);
-      svg.style.width = `${Math.round(state.graph.width * state.zoom)}px`;
-      svg.style.maxWidth = 'none';
-      svg.style.minWidth = '0';
+      svg.style.width = `${state.graph.width}px`;
+      svg.style.height = `${state.graph.height}px`;
+      svg.style.transform = `translate(${state.tx}px, ${state.ty}px) scale(${state.zoom})`;
     }
 
-    function setZoom(nextZoom, statusPrefix = 'Zoom') {
-      state.zoom = clampZoom(nextZoom);
-      applyZoom();
-      setStatus(`${statusPrefix} ${Math.round(state.zoom * 100)}%.`);
+    function setStatusZoom(prefix = 'Zoom') {
+      setStatus(`${prefix} ${Math.round(state.zoom * 100)}%.`);
+    }
+
+    // Zoom about a point given in stage-local coordinates (px from stage top-left).
+    function zoomAtStagePoint(factor, px, py, prefix = 'Zoom') {
+      const z0 = state.zoom;
+      const z1 = clampZoom(z0 * factor);
+      if (z1 === z0) return;
+      state.tx = px - (px - state.tx) * (z1 / z0);
+      state.ty = py - (py - state.ty) * (z1 / z0);
+      state.zoom = z1;
+      applyTransform();
+      setStatusZoom(prefix);
+    }
+
+    function zoomAtPoint(factor, clientX, clientY) {
+      const rect = document.getElementById('graphStage').getBoundingClientRect();
+      zoomAtStagePoint(factor, clientX - rect.left, clientY - rect.top);
     }
 
     function zoomBy(factor) {
-      setZoom(state.zoom * factor);
+      const stage = document.getElementById('graphStage');
+      zoomAtStagePoint(factor, stage.clientWidth / 2, stage.clientHeight / 2);
+    }
+
+    function centerView() {
+      const stage = document.getElementById('graphStage');
+      state.tx = (stage.clientWidth - state.graph.width * state.zoom) / 2;
+      state.ty = Math.max(24, (stage.clientHeight - state.graph.height * state.zoom) / 2);
+      applyTransform();
     }
 
     function resetZoom() {
-      setZoom(computeFitZoom(), 'Fit zoom');
+      state.zoom = computeFitZoom();
+      centerView();
+      setStatusZoom('Fit zoom');
     }
 
     function beginPan(event) {
       if (event.button !== 0) return;
-      const stage = document.getElementById('graphStage');
-      const interactive = event.target.closest?.(
-        '.qwen-overlay-toggle, .pto-model-graphviz-node, .pto-model-graphviz-cluster, button, a, input, label'
-      );
-      if (interactive) return;
+      state.suppressClick = false;
+      if (event.target.closest?.('.qwen-overlay-toggle, a, button, input, label')) return;
       state.pan = {
         pointerId: event.pointerId,
         x: event.clientX,
         y: event.clientY,
-        left: stage.scrollLeft,
-        top: stage.scrollTop,
+        tx: state.tx,
+        ty: state.ty,
+        moved: false,
       };
-      stage.classList.add('is-panning');
-      stage.setPointerCapture(event.pointerId);
-      event.preventDefault();
     }
 
     function movePan(event) {
@@ -1248,13 +1098,22 @@
       if (!state.pan || state.pan.pointerId !== event.pointerId) return;
       const dx = event.clientX - state.pan.x;
       const dy = event.clientY - state.pan.y;
-      stage.scrollLeft = state.pan.left - dx;
-      stage.scrollTop = state.pan.top - dy;
+      if (!state.pan.moved) {
+        if (Math.hypot(dx, dy) < 4) return; // distinguish click from drag
+        state.pan.moved = true;
+        stage.classList.add('is-panning');
+        try { stage.setPointerCapture(event.pointerId); } catch (e) {}
+      }
+      state.tx = state.pan.tx + dx;
+      state.ty = state.pan.ty + dy;
+      applyTransform();
+      event.preventDefault();
     }
 
     function endPan(event) {
       const stage = document.getElementById('graphStage');
       if (!state.pan || state.pan.pointerId !== event.pointerId) return;
+      if (state.pan.moved) state.suppressClick = true; // swallow the click a drag would fire
       state.pan = null;
       stage.classList.remove('is-panning');
       if (stage.hasPointerCapture(event.pointerId)) {
@@ -1269,30 +1128,42 @@
         state.graph,
         { ariaLabel: `${state.schema.model?.name || 'Model'} architecture graph` }
       );
-      state.zoom = options.preserveZoom ? clampZoom(state.zoom) : computeFitZoom();
-      applyZoom();
-      renderSummary();
-      renderFacts();
-      renderDetail();
-      renderNodeList();
-      renderEdgeList();
+      if (options.preserveZoom) {
+        state.zoom = clampZoom(state.zoom);
+        applyTransform();
+      } else {
+        state.zoom = computeFitZoom();
+        centerView();
+      }
       wireGraphSelection();
       appendToggleOverlay();
       setStatus(status || `${state.schema.model?.name || 'Model'} architecture loaded.`);
     }
 
-    document.getElementById('graphStage').addEventListener('wheel', (event) => {
-      if (!event.metaKey && !event.ctrlKey) return;
+    const graphStage = document.getElementById('graphStage');
+    graphStage.addEventListener('wheel', (event) => {
       event.preventDefault();
-      zoomBy(event.deltaY < 0 ? 1.12 : 1 / 1.12);
+      if (event.metaKey || event.ctrlKey) {
+        zoomAtPoint(event.deltaY < 0 ? 1.12 : 1 / 1.12, event.clientX, event.clientY);
+      } else {
+        state.tx -= event.deltaX;
+        state.ty -= event.deltaY;
+        applyTransform();
+      }
     }, { passive: false });
 
-    const graphStage = document.getElementById('graphStage');
     graphStage.addEventListener('pointerdown', beginPan);
     graphStage.addEventListener('pointermove', movePan);
     graphStage.addEventListener('pointerup', endPan);
     graphStage.addEventListener('pointercancel', endPan);
     graphStage.addEventListener('lostpointercapture', endPan);
+    // Capture-phase: suppress the click that follows a drag so it doesn't select.
+    graphStage.addEventListener('click', (event) => {
+      if (!state.suppressClick) return;
+      state.suppressClick = false;
+      event.stopPropagation();
+      event.preventDefault();
+    }, true);
 
     window.addEventListener('keydown', (event) => {
       if (!event.metaKey && !event.ctrlKey) return;

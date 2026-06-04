@@ -334,7 +334,7 @@
   function drawCluster(svg, cluster, color) {
     const group = createSvgElement('g', { class: 'pto-model-graphviz-cluster' });
     const isRepeat = Boolean(cluster.repeat);
-    const radius = Math.min(24, Math.max(12, Math.min(cluster.width, cluster.height) * 0.08));
+    const radius = 16; // --radius-xl, matches DeepSeek parent-radius; keeps corner toggle inside
     group.appendChild(createSvgElement('rect', {
       x: cluster.x,
       y: cluster.y,
@@ -342,8 +342,8 @@
       height: cluster.height,
       rx: radius,
       ry: radius,
-      fill: isRepeat ? color : '#FFFFFF',
-      'fill-opacity': isRepeat ? '0.12' : '0.10',
+      fill: '#FFFFFF',
+      'fill-opacity': '0.10',
       stroke: isRepeat ? LINE_COLOR : 'var(--model-graphviz-line-soft)',
       'stroke-width': isRepeat ? '1.2' : '1.6',
       'stroke-dasharray': isRepeat ? '3 2' : null,
@@ -360,7 +360,7 @@
     }
 
     const toggleX = cluster.x + cluster.width - 13;
-    const toggleY = cluster.y + cluster.height / 2;
+    const toggleY = cluster.y + 13; // top-right corner anchor
     group.appendChild(createSvgElement('circle', {
       class: 'pto-model-graphviz-toggle',
       cx: toggleX,
@@ -507,7 +507,7 @@
     const label = createSvgElement('text', {
       class: 'pto-model-graphviz-node-label',
       x: node.collapsed ? -8 : 0,
-      y: visualKind === 'tensor' ? 0 : -5,
+      y: visualKind === 'tensor' ? 0 : -4,
       fill: NODE_TEXT_COLOR,
     });
     label.textContent = node.label || node.id;
@@ -517,7 +517,7 @@
       const type = createSvgElement('text', {
         class: 'pto-model-graphviz-node-type',
         x: node.collapsed ? -8 : 0,
-        y: 20,
+        y: 12,
         fill: NODE_TYPE_COLOR,
       });
       type.textContent = node.typeLabel || 'Op';
