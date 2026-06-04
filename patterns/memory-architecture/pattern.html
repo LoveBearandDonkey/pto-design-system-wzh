@@ -26,10 +26,10 @@
   <link rel="stylesheet" href="../../tokens/foundation.css">
   <link rel="stylesheet" href="../../tokens/semantic.css">
   <link rel="stylesheet" href="../../tokens/components.css">
-  <link rel="stylesheet" href="../../css/style.css?v=memory-direct-focus-v7">
-  <link rel="stylesheet" href="../aic-core-object/pattern.css?v=memory-direct-focus-v7">
-  <link rel="stylesheet" href="../aiv-core-object/pattern.css?v=memory-direct-focus-v7">
-  <link rel="stylesheet" href="./pattern.css?v=memory-direct-focus-v7">
+  <link rel="stylesheet" href="../../css/style.css?v=memory-nd-dma-cache-v1">
+  <link rel="stylesheet" href="../aic-core-object/pattern.css?v=memory-nd-dma-cache-v1">
+  <link rel="stylesheet" href="../aiv-core-object/pattern.css?v=memory-nd-dma-cache-v1">
+  <link rel="stylesheet" href="./pattern.css?v=memory-nd-dma-cache-v1">
 </head>
 <body class="pto-pattern-memory-arch__page">
   <main class="pto-pattern-memory-arch__main">
@@ -81,9 +81,9 @@
     </section>
   </main>
 
-  <script src="../aiv-core-object/pattern.js?v=memory-direct-focus-v7"></script>
-  <script src="../aic-core-object/pattern.js?v=memory-direct-focus-v7"></script>
-  <script src="./pattern.js?v=memory-direct-focus-v7"></script>
+  <script src="../aiv-core-object/pattern.js?v=memory-nd-dma-cache-v1"></script>
+  <script src="../aic-core-object/pattern.js?v=memory-nd-dma-cache-v1"></script>
+  <script src="./pattern.js?v=memory-nd-dma-cache-v1"></script>
   <script>
     (function renderMemoryArchitecturePattern() {
       const helper = window.PtoMemoryArchitecturePattern;
@@ -143,6 +143,7 @@
         vector: {
           selectors: [
             '[data-mem950-node="rail:GM"]',
+            '#mem950-aiv1 [data-aiv-node="cache:ND-DMA Cache"]',
             '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
             '#mem950-aiv1 [data-aiv-node="exec:SIMD"]',
             '#mem950-aiv1 [data-aiv-node="vector:Vector"]',
@@ -162,6 +163,7 @@
         simt: {
           selectors: [
             '[data-mem950-node="rail:GM"]',
+            '#mem950-aiv1 [data-aiv-node="cache:ND-DMA Cache"]',
             '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
             '#mem950-aiv1 [data-aiv-node="exec:SIMT"]',
           ],

@@ -16,6 +16,7 @@
       title: 'AIV',
       routes: [
         { from: 'cache:DCache', to: 'buffer:UB', color: 'cache', style: 'elbow-h', fromSide: 'right', toSide: 'left', toBias: 0.60 },
+        { from: 'cache:ND-DMA Cache', to: 'buffer:UB', color: 'cache', style: 'elbow-h', fromSide: 'right', toSide: 'bottom', fromBias: 0.50, toBias: 0.34, offset: -8 },
         { from: 'cache:ICache', to: 'exec:SIMT', color: 'cache', style: 'elbow-h', fromSide: 'right', toSide: 'top', fromBias: 0.38, toBias: 0.14, dashArray: '4 3', offset: -12 },
         { from: 'cache:ICache', to: 'exec:SIMD', color: 'cache', style: 'elbow-h', fromSide: 'right', toSide: 'top', fromBias: 0.62, toBias: 0.14, dashArray: '4 3', offset: -12 },
         { from: 'scalar:Scalar', to: 'exec:SIMT', color: 'control', style: 'elbow-h', fromSide: 'right', toSide: 'top', fromBias: 0.5, toBias: 0.26 },
@@ -41,6 +42,11 @@
                 kind: 'cache',
                 label: 'ICache',
                 grid: { rows: 4, cols: 12, cellSize: 12, gap: 1 }
+              },
+              {
+                kind: 'cache',
+                label: 'ND-DMA Cache',
+                grid: { rows: 3, cols: 10, cellSize: 12, gap: 1 }
               }
             ]
           },

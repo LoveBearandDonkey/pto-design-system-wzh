@@ -2,7 +2,7 @@
   "id": "aiv-core-object",
   "name": "AIV Core Object",
   "type": "hybrid",
-  "description": "Design-driven AIV internal object pattern with cache cards, a Scalar bar, a Unified Buffer card, SIMT and SIMD execution cards, and a Vector compute block. Routes follow official Ascend AIV topology notes for shared ICache, shared Vector execution, Unified Buffer staging, and SIMT DCache flow.",
+  "description": "Design-driven AIV internal object pattern with DCache, ICache, ND-DMA Cache, a Scalar bar, a Unified Buffer card, SIMT and SIMD execution cards, and a Vector compute block. Routes follow official Ascend AIV topology notes for shared ICache, shared Vector execution, ND-DMA Cache to Unified Buffer staging, and SIMT DCache flow.",
   "source": {
     "visualContract": [
       "user-supplied AIV draft in conversation",

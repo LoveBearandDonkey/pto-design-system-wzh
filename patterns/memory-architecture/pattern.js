@@ -109,10 +109,10 @@
           label: 'MTE2',
           tone: 'transport',
           from: '[data-mem950-node="rail:L2"]',
-          to: '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
+          to: '#mem950-aiv1 [data-aiv-node="cache:ND-DMA Cache"]',
           fromSide: 'right',
           toSide: 'left',
-          toBias: 0.58,
+          toBias: 0.50,
           style: 'lane-h-target',
           labelDy: 0,
         },
@@ -130,13 +130,13 @@
         },
         {
           id: 'gm-to-aiv1-ub',
-          label: 'GM→UB',
+          label: 'GM→ND-DMA',
           tone: 'transport',
           from: '[data-mem950-node="rail:GM"]',
-          to: '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
+          to: '#mem950-aiv1 [data-aiv-node="cache:ND-DMA Cache"]',
           fromSide: 'right',
           toSide: 'left',
-          toBias: 0.40,
+          toBias: 0.48,
           style: 'lane-h-target',
           labelDy: -12,
           defaultHidden: true,
@@ -265,22 +265,22 @@
           label: 'MTE2',
           tone: 'transport',
           from: '[data-mem950-node="rail:L2"]',
-          to: '#mem950-aiv2 [data-aiv-node="buffer:UB"]',
+          to: '#mem950-aiv2 [data-aiv-node="cache:ND-DMA Cache"]',
           fromSide: 'right',
           toSide: 'left',
-          toBias: 0.58,
+          toBias: 0.50,
           style: 'lane-h-target',
           labelDy: 0,
         },
         {
           id: 'gm-to-aiv2-ub',
-          label: 'GM→UB',
+          label: 'GM→ND-DMA',
           tone: 'transport',
           from: '[data-mem950-node="rail:GM"]',
-          to: '#mem950-aiv2 [data-aiv-node="buffer:UB"]',
+          to: '#mem950-aiv2 [data-aiv-node="cache:ND-DMA Cache"]',
           fromSide: 'right',
           toSide: 'left',
-          toBias: 0.40,
+          toBias: 0.48,
           style: 'lane-h-target',
           labelDy: -12,
           defaultHidden: true,
@@ -338,7 +338,8 @@
       ],
       notes: [
         '1 AIC + 2 AIV memory-stage layout',
-        'L2/GM → DCache, L1, or UB via MTE2',
+        'L2/GM → DCache, L1, or ND-DMA Cache via MTE2',
+        'ND-DMA Cache → UB for GM/L2 input staging',
         'UB → L2/GM via MTE3',
         'GM → UB → SIMT RF / GM → SIMT RF',
         'GM ↔ UB ↔ Vector RF; GM → L0A/L0B',
@@ -350,7 +351,7 @@
           rows: [
             ['bank', '8组 x 2个/组'],
             ['单bank', '16KB'],
-            ['cache', 'SIMT DCache'],
+            ['cache', 'ND-DMA Cache / SIMT DCache'],
             ['对齐', '32B'],
             ['搬运', 'MTE2/MTE3'],
           ],
@@ -407,11 +408,11 @@
         },
         'rail:L2': {
           title: '二级缓存（L2）',
-          body: '共享缓存层，连接 AIV 的 DCache/UB 与 AIC 的 DCache/L1，MTE2 等数据搬运通路会经过这里。',
+          body: '共享缓存层，连接 AIV 的 DCache、ND-DMA Cache 与 AIC 的 DCache/L1。GM/L2 到 UB 的 MTE2 搬运先进入 ND-DMA Cache，再写入 UB。',
         },
         'core:AIV1': {
           title: 'AIV 1',
-          body: '向量侧计算核心，包含 DCache、ICache、Scalar、UB、SIMT、SIMD 和 Vector Reg File，用于规则向量计算与离散 SIMT 场景。',
+          body: '向量侧计算核心，包含 DCache、ICache、ND-DMA Cache、Scalar、UB、SIMT、SIMD 和 Vector Reg File，用于规则向量计算与离散 SIMT 场景。',
         },
         'core:AIC': {
           title: 'AIC',
@@ -423,7 +424,7 @@
         },
         'buffer:UB': {
           title: '统一缓冲区（UB）',
-          body: 'AIV 本地数据暂存区。950 场景中，UB 可承接 GM 搬入的数据，并与 SIMT Reg File 或 Vector Reg File 形成关键通路。',
+          body: 'AIV 本地数据暂存区。950 场景中，GM/L2 输入经 ND-DMA Cache 进入 UB，UB 再与 SIMT Reg File 或 Vector Reg File 形成关键通路。',
         },
         'buffer:L1': {
           title: '一级片上缓存（L1）',
@@ -456,6 +457,10 @@
         'cache:ICache': {
           title: '指令缓存（ICache）',
           body: '指令访问缓存，为 Scalar 或调度侧控制路径提供指令流。',
+        },
+        'cache:ND-DMA Cache': {
+          title: 'ND-DMA Cache',
+          body: '面向 ND 数据搬运的 DMA 缓存单元，位于 GM/L2 到 UB 的 MTE2 输入路径上。它不是计算 buffer，而是 CopyIn 进入 UB 前的搬运缓存节点。',
         },
         'scalar:Scalar': {
           title: '标量控制单元',
@@ -1232,6 +1237,7 @@
     return {
       selectors: [
         '[data-mem950-node="rail:GM"]',
+        `${prefix} [data-aiv-node="cache:ND-DMA Cache"]`,
         `${prefix} [data-aiv-node="buffer:UB"]`,
         `${prefix} [data-aiv-node="exec:SIMD"]`,
         `${prefix} [data-aiv-node="vector:Vector"]`,
@@ -1246,6 +1252,7 @@
     return {
       selectors: [
         '[data-mem950-node="rail:GM"]',
+        `${prefix} [data-aiv-node="cache:ND-DMA Cache"]`,
         `${prefix} [data-aiv-node="buffer:UB"]`,
         `${prefix} [data-aiv-node="exec:SIMT"]`,
       ],
@@ -1319,6 +1326,14 @@
       return {
         selectors: ['[data-mem950-node="rail:L2"]', exactSelector],
         routes: [`${routePrefix}-dcache`],
+      };
+    }
+
+    if (key === 'cache:ND-DMA Cache' && coreId.includes('aiv')) {
+      const routePrefix = coreId === 'mem950-aiv2' ? 'l2-to-aiv2' : 'l2-to-aiv1';
+      return {
+        selectors: ['[data-mem950-node="rail:L2"]', exactSelector, `${coreId ? `#${attrValue(coreId)} ` : ''}[data-aiv-node="buffer:UB"]`],
+        routes: [routePrefix],
       };
     }
 
