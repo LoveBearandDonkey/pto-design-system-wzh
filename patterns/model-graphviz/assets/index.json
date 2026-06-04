@@ -15,6 +15,7 @@
       "id": "qwen7b",
       "model": "Qwen-7B",
       "schema": "qwen7b_model_architecture.json",
+      "preview": "qwen7b_modelviz.html",
       "nodes": 22,
       "edges": 22,
       "fullMainLayers": 32,

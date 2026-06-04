@@ -609,6 +609,7 @@
     defaultDotLayout: { ...DEFAULT_DOT_LAYOUT },
     sourcePages: {
       deepseekV32: './assets/deepseek_v32_modelviz.html',
+      qwen7b: './assets/qwen7b_modelviz.html',
     },
     schemaAssets: {
       deepseekV32: './assets/deepseek_v32_model_architecture.json',
