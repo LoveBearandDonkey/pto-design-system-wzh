@@ -26,52 +26,15 @@
   <link rel="stylesheet" href="../../tokens/foundation.css">
   <link rel="stylesheet" href="../../tokens/semantic.css">
   <link rel="stylesheet" href="../../tokens/components.css">
-  <link rel="stylesheet" href="../../css/style.css?v=memory-nd-dma-cache-v1">
-  <link rel="stylesheet" href="../aic-core-object/pattern.css?v=memory-nd-dma-cache-v1">
-  <link rel="stylesheet" href="../aiv-core-object/pattern.css?v=memory-nd-dma-cache-v1">
-  <link rel="stylesheet" href="./pattern.css?v=memory-nd-dma-cache-v1">
+  <link rel="stylesheet" href="../../css/style.css?v=memory-graph-only-scalar-v1">
+  <link rel="stylesheet" href="../aic-core-object/pattern.css?v=memory-graph-only-scalar-v1">
+  <link rel="stylesheet" href="../aiv-core-object/pattern.css?v=memory-graph-only-scalar-v1">
+  <link rel="stylesheet" href="./pattern.css?v=memory-graph-only-scalar-v1">
 </head>
 <body class="pto-pattern-memory-arch__page">
   <main class="pto-pattern-memory-arch__main">
-    <h1 class="pto-pattern-memory-arch__title">950B Memory Architecture Pattern</h1>
-    <p class="pto-pattern-memory-arch__subtitle">
-      Full-stage PTO memory architecture preview built from the shared <code>aic-core-object</code> and
-      <code>aiv-core-object</code> renderers. The chip-level routes follow the official AIC/AIV split memory model,
-      and the 950-specific direct CV lanes are added from the local 950 slide extracts.
-    </p>
-    <div class="pto-pattern-memory-arch__meta">
-      <span class="pto-pattern-memory-arch__badge">pattern id: memory-architecture-layout</span>
-      <span class="pto-pattern-memory-arch__badge">default preset: ascend950b</span>
-      <span class="pto-pattern-memory-arch__badge">contract: full-stage DOM shell + shared AIC/AIV renderers + SVG route overlay + path focus hover</span>
-    </div>
-    <div class="pto-pattern-memory-arch__focus-strip" aria-label="path focus hover examples">
-      <button class="pto-pattern-memory-arch__focus-chip" type="button" data-focus-flow="vector">
-        <strong>AIV Vector</strong>
-        <span>GM ↔ UB ↔ Vector RF</span>
-      </button>
-      <button class="pto-pattern-memory-arch__focus-chip" type="button" data-focus-flow="cube">
-        <strong>AIC Cube</strong>
-        <span>GM → L0A/B → Cube</span>
-      </button>
-      <button class="pto-pattern-memory-arch__focus-chip" type="button" data-focus-flow="simt">
-        <strong>AIV SIMT</strong>
-        <span>GM → UB → SIMT RF / GM → SIMT RF</span>
-      </button>
-      <button class="pto-pattern-memory-arch__focus-chip" type="button" data-focus-flow="direct-cv">
-        <strong>950 CV lanes</strong>
-        <span>L0C → UB / UB → L1</span>
-      </button>
-    </div>
-    <div class="pto-pattern-memory-arch__toolbar" aria-label="Memory architecture viewport controls">
-      <div class="zoom-control-group pto-pattern-memory-arch__zoom-controls" aria-label="Memory architecture zoom controls">
-        <button class="btn btn-icon btn-ghost btn-sm" type="button" data-pto-mem-zoom="out" aria-label="Zoom out" title="Zoom out">−</button>
-        <span class="zoom-control-readout" data-pto-mem-zoom-readout>60%</span>
-        <button class="btn btn-icon btn-ghost btn-sm" type="button" data-pto-mem-zoom="in" aria-label="Zoom in" title="Zoom in">+</button>
-        <button class="btn btn-icon btn-ghost btn-sm" type="button" data-pto-mem-zoom="reset" aria-label="Reset zoom" title="Reset zoom">↺</button>
-      </div>
-    </div>
     <section class="pto-pattern-memory-arch__stage">
-      <div class="pto-memory-architecture-viewport" data-pto-mem-arch-viewport data-default-zoom="0.6">
+      <div class="pto-memory-architecture-viewport" data-pto-mem-arch-viewport data-default-zoom="0.6" aria-label="950B memory architecture diagram">
         <div class="pto-memory-architecture-sizer" data-pto-mem-arch-sizer>
           <div class="pto-memory-architecture-canvas" data-pto-mem-arch-canvas>
             <div id="pattern-memory-arch-stage"></div>
@@ -81,9 +44,9 @@
     </section>
   </main>
 
-  <script src="../aiv-core-object/pattern.js?v=memory-nd-dma-cache-v1"></script>
-  <script src="../aic-core-object/pattern.js?v=memory-nd-dma-cache-v1"></script>
-  <script src="./pattern.js?v=memory-nd-dma-cache-v1"></script>
+  <script src="../aiv-core-object/pattern.js?v=memory-graph-only-scalar-v1"></script>
+  <script src="../aic-core-object/pattern.js?v=memory-graph-only-scalar-v1"></script>
+  <script src="./pattern.js?v=memory-graph-only-scalar-v1"></script>
   <script>
     (function renderMemoryArchitecturePattern() {
       const helper = window.PtoMemoryArchitecturePattern;
@@ -113,95 +76,34 @@
 
       helper.renderArchitecture(stage, 'ascend950b');
       const overlay = helper.createRouteOverlay(stage, 'ascend950b');
-      helper.attachHoverInteractions?.(stage, 'ascend950b');
-      helper.attachPathFocusInteractions?.(stage, 'ascend950b');
       helper.setBufferBlocks?.(stage, [
         { core: 'mem950-aiv1', buffer: 'UB', label: 'xLocal', state: 'enqueued', tone: 'input', cellRange: [0, 15], sourceTile: 'x[block0,progress0,:]' },
         { core: 'mem950-aic', buffer: 'L0C', label: 'C partial', state: 'accumulating', tone: 'accumulator', cellRange: [20, 35], sourceTile: 'C[m0,n0]' },
       ]);
       overlay?.render();
+      const hoverInteractions = helper.attachHoverInteractions?.(stage, 'ascend950b');
+      helper.attachPathFocusInteractions?.(stage, 'ascend950b');
       const zoomController = helper.createZoomController?.({
         viewport,
         sizer,
         canvas,
-        readout: document.querySelector('[data-pto-mem-zoom-readout]'),
-        outButton: document.querySelector('[data-pto-mem-zoom="out"]'),
-        inButton: document.querySelector('[data-pto-mem-zoom="in"]'),
-        resetButton: document.querySelector('[data-pto-mem-zoom="reset"]'),
         defaultZoom: 0.6,
-        min: 0.4,
-        max: 1.2,
+        min: 0.35,
+        max: 1.4,
         step: 0.1,
-        onZoom: () => {
+        pan: true,
+        wheelZoom: true,
+        centerOnReset: true,
+        centerTarget: '.pto-mem950__rails, .pto-mem950__engine-stack, .pto-mem950__stack',
+        onZoom: ({ zoom }) => {
+          hoverInteractions?.setViewportScale?.(zoom);
           overlay?.render();
           syncFrameHeight();
         },
+        onPan: () => syncFrameHeight(),
       });
       zoomController?.render();
-
-      const focusFlows = {
-        vector: {
-          selectors: [
-            '[data-mem950-node="rail:GM"]',
-            '#mem950-aiv1 [data-aiv-node="cache:ND-DMA Cache"]',
-            '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
-            '#mem950-aiv1 [data-aiv-node="exec:SIMD"]',
-            '#mem950-aiv1 [data-aiv-node="vector:Vector"]',
-          ],
-          routes: ['gm-to-aiv1-ub', 'aiv1-ub-to-gm'],
-        },
-        cube: {
-          selectors: [
-            '[data-mem950-node="rail:GM"]',
-            '#mem950-aic [data-aic-node="buffer:L0A"]',
-            '#mem950-aic [data-aic-node="buffer:L0B"]',
-            '#mem950-aic [data-aic-node="cube:CUBE"]',
-            '#mem950-aic [data-aic-node="buffer:L0C"]',
-          ],
-          routes: ['gm-to-aic-l0a', 'gm-to-aic-l0b'],
-        },
-        simt: {
-          selectors: [
-            '[data-mem950-node="rail:GM"]',
-            '#mem950-aiv1 [data-aiv-node="cache:ND-DMA Cache"]',
-            '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
-            '#mem950-aiv1 [data-aiv-node="exec:SIMT"]',
-          ],
-          routes: ['gm-to-aiv1-ub', 'gm-to-aiv1-simt'],
-        },
-        'direct-cv': {
-          selectors: [
-            '#mem950-aic [data-aic-node="buffer:L0C"]',
-            '#mem950-aiv1 [data-aiv-node="buffer:UB"]',
-            '#mem950-aiv2 [data-aiv-node="buffer:UB"]',
-            '#mem950-aic [data-aic-node="buffer:L1"]',
-          ],
-          routes: ['aic-to-aiv1', 'aiv2-to-aic'],
-        },
-      };
-
-      function setFocusChip(chip, active) {
-        document.querySelectorAll('.pto-pattern-memory-arch__focus-chip').forEach((node) => {
-          node.classList.toggle('is-active', active && node === chip);
-        });
-      }
-
-      document.querySelectorAll('.pto-pattern-memory-arch__focus-chip').forEach((chip) => {
-        const focusPayload = focusFlows[chip.dataset.focusFlow];
-        const activate = () => {
-          if (!focusPayload) return;
-          helper.setPathFocus?.(stage, 'ascend950b', focusPayload);
-          setFocusChip(chip, true);
-        };
-        const clear = () => {
-          helper.clearPathFocus?.(stage);
-          setFocusChip(chip, false);
-        };
-        chip.addEventListener('mouseenter', activate);
-        chip.addEventListener('mouseleave', clear);
-        chip.addEventListener('focus', activate);
-        chip.addEventListener('blur', clear);
-      });
+      window.requestAnimationFrame(() => zoomController?.center?.());
 
       if (isEmbedPreview && 'ResizeObserver' in window) {
         const resizeObserver = new ResizeObserver(() => syncFrameHeight());

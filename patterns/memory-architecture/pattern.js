@@ -1025,7 +1025,12 @@
       ZOOM_DEFAULTS.defaultZoom,
     ), min, max);
     let zoom = clamp(finiteNumber(options.zoom, defaultZoom), min, max);
+    let panX = finiteNumber(options.panX, 0);
+    let panY = finiteNumber(options.panY, 0);
+    let activePan = null;
     let frame = 0;
+    const panEnabled = options.pan !== false && Boolean(viewport);
+    const wheelZoomEnabled = options.wheelZoom !== false && Boolean(viewport);
 
     const naturalSize = () => {
       const content = canvas.firstElementChild || canvas;
@@ -1035,11 +1040,25 @@
       };
     };
 
+    const syncPanVars = () => {
+      const nextX = Number(panX.toFixed(2));
+      const nextY = Number(panY.toFixed(2));
+      canvas.style.setProperty('--pto-memory-architecture-pan-x', `${nextX}px`);
+      canvas.style.setProperty('--pto-memory-architecture-pan-y', `${nextY}px`);
+      canvas.dataset.ptoMemoryArchitecturePanX = String(nextX);
+      canvas.dataset.ptoMemoryArchitecturePanY = String(nextY);
+      if (viewport) {
+        viewport.dataset.ptoMemoryArchitecturePanX = String(nextX);
+        viewport.dataset.ptoMemoryArchitecturePanY = String(nextY);
+      }
+    };
+
     const apply = () => {
       const nextZoom = Number(zoom.toFixed(3));
       canvas.style.setProperty('--pto-memory-architecture-zoom', String(nextZoom));
       canvas.dataset.ptoMemoryArchitectureZoom = String(nextZoom);
       if (viewport) viewport.dataset.ptoMemoryArchitectureZoom = String(nextZoom);
+      syncPanVars();
 
       const size = naturalSize();
       const scaledWidth = Math.max(1, Math.ceil(size.width * nextZoom));
@@ -1054,6 +1073,8 @@
       if (inButton) inButton.disabled = nextZoom >= max - 0.001;
       options.onZoom?.({
         zoom: nextZoom,
+        panX,
+        panY,
         width: scaledWidth,
         height: scaledHeight,
       });
@@ -1072,7 +1093,80 @@
       apply();
     };
     const increment = (direction) => setZoom(zoom + step * direction);
-    const reset = () => setZoom(defaultZoom);
+    const setPan = (nextX, nextY) => {
+      panX = finiteNumber(nextX, panX);
+      panY = finiteNumber(nextY, panY);
+      syncPanVars();
+      options.onPan?.({
+        zoom: Number(zoom.toFixed(3)),
+        panX,
+        panY,
+      });
+    };
+    const centerTargets = () => {
+      if (!options.centerTarget) return [canvas.firstElementChild || canvas];
+      const targetOption = Array.isArray(options.centerTarget)
+        ? options.centerTarget
+        : [options.centerTarget];
+      const targets = targetOption.flatMap((target) => {
+        if (!target) return [];
+        if (typeof target === 'string') return Array.from(canvas.querySelectorAll(target));
+        return [target];
+      });
+      return targets.filter((target) => target instanceof Element && canvas.contains(target));
+    };
+    const center = () => {
+      if (!viewport) return;
+      const targets = centerTargets();
+      if (targets.length === 0) return;
+      const rect = viewport.getBoundingClientRect();
+      const boxes = targets.map((target) => target.getBoundingClientRect())
+        .filter((box) => box.width > 0 && box.height > 0);
+      if (boxes.length === 0) return;
+      const bounds = {
+        left: Math.min(...boxes.map((box) => box.left)),
+        top: Math.min(...boxes.map((box) => box.top)),
+        right: Math.max(...boxes.map((box) => box.right)),
+        bottom: Math.max(...boxes.map((box) => box.bottom)),
+      };
+      const targetWidth = bounds.right - bounds.left;
+      const targetHeight = bounds.bottom - bounds.top;
+      const currentLeft = bounds.left - rect.left;
+      const currentTop = bounds.top - rect.top;
+      setPan(
+        panX + Math.max(0, (rect.width - targetWidth) / 2) - currentLeft,
+        panY + Math.max(0, (rect.height - targetHeight) / 2) - currentTop,
+      );
+    };
+    const reset = () => {
+      zoom = defaultZoom;
+      apply();
+      if (options.centerOnReset === true) {
+        center();
+      } else {
+        setPan(0, 0);
+      }
+    };
+
+    const zoomAtPoint = (next, clientX, clientY) => {
+      const nextZoom = clamp(finiteNumber(next, zoom), min, max);
+      if (!viewport || nextZoom === zoom) {
+        setZoom(nextZoom);
+        return;
+      }
+      const rect = viewport.getBoundingClientRect();
+      const anchorX = (clientX - rect.left - panX) / zoom;
+      const anchorY = (clientY - rect.top - panY) / zoom;
+      zoom = nextZoom;
+      panX = clientX - rect.left - anchorX * zoom;
+      panY = clientY - rect.top - anchorY * zoom;
+      apply();
+      options.onPan?.({
+        zoom: Number(zoom.toFixed(3)),
+        panX,
+        panY,
+      });
+    };
 
     const onOut = () => increment(-1);
     const onIn = () => increment(1);
@@ -1080,6 +1174,49 @@
     outButton?.addEventListener('click', onOut);
     inButton?.addEventListener('click', onIn);
     resetButton?.addEventListener('click', onReset);
+
+    const canPanTarget = (target) => !target?.closest?.('button, a, input, select, textarea, [data-no-pan]');
+    const onPointerDown = (event) => {
+      if (!panEnabled || event.button !== 0 || !canPanTarget(event.target)) return;
+      activePan = {
+        pointerId: event.pointerId,
+        clientX: event.clientX,
+        clientY: event.clientY,
+        panX,
+        panY,
+      };
+      viewport.classList.add('is-panning');
+      viewport.setPointerCapture?.(event.pointerId);
+      event.preventDefault();
+    };
+    const onPointerMove = (event) => {
+      if (!activePan || activePan.pointerId !== event.pointerId) return;
+      setPan(
+        activePan.panX + event.clientX - activePan.clientX,
+        activePan.panY + event.clientY - activePan.clientY,
+      );
+    };
+    const stopPointerPan = (event) => {
+      if (!activePan || activePan.pointerId !== event.pointerId) return;
+      viewport.releasePointerCapture?.(event.pointerId);
+      activePan = null;
+      viewport.classList.remove('is-panning');
+    };
+    const onWheel = (event) => {
+      if (!wheelZoomEnabled || !event.metaKey) return;
+      event.preventDefault();
+      const direction = event.deltaY > 0 ? -1 : 1;
+      const magnitude = Math.min(3, Math.max(1, Math.abs(event.deltaY) / 120));
+      zoomAtPoint(zoom + step * direction * magnitude, event.clientX, event.clientY);
+    };
+
+    if (viewport) {
+      viewport.addEventListener('pointerdown', onPointerDown);
+      viewport.addEventListener('pointermove', onPointerMove);
+      viewport.addEventListener('pointerup', stopPointerPan);
+      viewport.addEventListener('pointercancel', stopPointerPan);
+      viewport.addEventListener('wheel', onWheel, { passive: false });
+    }
 
     const resizeObserver = typeof ResizeObserver === 'function'
       ? new ResizeObserver(schedule)
@@ -1091,7 +1228,11 @@
 
     return {
       getZoom: () => zoom,
+      getPan: () => ({ x: panX, y: panY }),
       setZoom,
+      setPan,
+      center,
+      zoomAtPoint,
       increment,
       reset,
       render: apply,
@@ -1099,6 +1240,11 @@
         outButton?.removeEventListener('click', onOut);
         inButton?.removeEventListener('click', onIn);
         resetButton?.removeEventListener('click', onReset);
+        viewport?.removeEventListener('pointerdown', onPointerDown);
+        viewport?.removeEventListener('pointermove', onPointerMove);
+        viewport?.removeEventListener('pointerup', stopPointerPan);
+        viewport?.removeEventListener('pointercancel', stopPointerPan);
+        viewport?.removeEventListener('wheel', onWheel);
         resizeObserver?.disconnect();
         if (frame) global.cancelAnimationFrame?.(frame);
       },
@@ -1285,6 +1431,36 @@
     };
   }
 
+  function scalarFocusForCore(coreId, exactSelector) {
+    if (coreId.includes('aiv')) {
+      const prefix = coreId === 'mem950-aiv2' ? '#mem950-aiv2' : '#mem950-aiv1';
+      return {
+        selectors: [
+          exactSelector,
+          `${prefix} [data-aiv-node="exec:SIMT"]`,
+          `${prefix} [data-aiv-node="exec:SIMD"]`,
+        ],
+        routes: [],
+      };
+    }
+
+    if (coreId === 'mem950-aic') {
+      return {
+        selectors: [
+          exactSelector,
+          '#mem950-aic [data-aic-node="cache:DCache"]',
+          '#mem950-aic [data-aic-node="cache:ICache"]',
+          '#mem950-aic [data-aic-node="scheduler:Dispatch"]',
+        ],
+        routes: [],
+      };
+    }
+
+    return exactSelector
+      ? { selectors: [exactSelector], routes: [] }
+      : { selectors: [], routes: [] };
+  }
+
   function pathFocusForTarget(target, preset) {
     const key = target?.dataset?.mem950Node || target?.dataset?.aicNode || target?.dataset?.aivNode || '';
     const coreId = target?.closest?.('.pto-mem950__core-slot')?.id || '';
@@ -1319,6 +1495,10 @@
 
     if (key === 'vector:Vector' || key === 'exec:SIMD') {
       return vectorFocusForCore(coreId);
+    }
+
+    if (key === 'scalar:Scalar') {
+      return scalarFocusForCore(coreId, exactSelector);
     }
 
     if (key === 'cache:DCache' && coreId.includes('aiv')) {

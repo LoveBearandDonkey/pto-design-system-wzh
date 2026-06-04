@@ -4,14 +4,16 @@
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  overflow: hidden;
 }
 
 .pto-pattern-memory-arch__main {
-  width: 100%;
-  padding: 28px 24px 44px;
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 0;
   box-sizing: border-box;
 }
 
@@ -110,14 +112,26 @@
 }
 
 .pto-pattern-memory-arch__stage {
+  width: 100%;
+  height: 100%;
   overflow: hidden;
-  padding-bottom: 8px;
+  padding: 0;
 }
 
 .pto-memory-architecture-viewport {
   --pto-memory-architecture-zoom: 0.6;
+  --pto-memory-architecture-pan-x: 0px;
+  --pto-memory-architecture-pan-y: 0px;
   width: 100%;
-  overflow: auto;
+  height: 100%;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.pto-memory-architecture-viewport.is-panning {
+  cursor: grabbing;
 }
 
 .pto-memory-architecture-sizer {
@@ -129,7 +143,13 @@
 .pto-memory-architecture-canvas {
   width: max-content;
   min-width: max-content;
-  transform: scale(var(--pto-memory-architecture-zoom));
+  transform:
+    translate3d(
+      var(--pto-memory-architecture-pan-x),
+      var(--pto-memory-architecture-pan-y),
+      0
+    )
+    scale(var(--pto-memory-architecture-zoom));
   transform-origin: top left;
   will-change: transform;
 }
@@ -161,8 +181,8 @@ html[data-embed-preview='true'] .pto-pattern-memory-arch__toolbar {
 
 html[data-embed-preview='true'] .pto-pattern-memory-arch__stage {
   box-sizing: border-box;
-  padding: 22px 24px 30px;
-  overflow: visible;
+  padding: 0;
+  overflow: hidden;
 }
 
 [data-pto-mem-arch="true"] {
