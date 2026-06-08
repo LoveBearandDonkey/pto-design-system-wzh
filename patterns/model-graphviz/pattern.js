@@ -183,12 +183,32 @@
     return rgbToHsl(rgb.r, rgb.g, rgb.b);
   }
 
-  function normalizeColormapColor(hex) {
-    const hsl = hexToHsl(hex);
-    return hslToHex(snapToValidHue(hsl.h), COLORMAP_SATURATION, COLORMAP_LIGHTNESS);
+  function resolvedColormapOptions(options) {
+    const colormap = options && options.colormap ? options.colormap : (options || {});
+    const saturation = Number.isFinite(Number(colormap.saturation))
+      ? Number(colormap.saturation)
+      : COLORMAP_SATURATION;
+    const lightness = Number.isFinite(Number(colormap.lightness))
+      ? Number(colormap.lightness)
+      : COLORMAP_LIGHTNESS;
+    return {
+      coreColors: Array.isArray(colormap.coreColors) && colormap.coreColors.length
+        ? colormap.coreColors
+        : CORE_COLORS,
+      saturation,
+      lightness,
+      ioColors: colormap.ioColors || {},
+    };
   }
 
-  function expandPalette(baseHexes, targetCount) {
+  function normalizeColormapColor(hex, options) {
+    const resolved = resolvedColormapOptions(options);
+    const hsl = hexToHsl(hex);
+    return hslToHex(snapToValidHue(hsl.h), resolved.saturation, resolved.lightness);
+  }
+
+  function expandPalette(baseHexes, targetCount, options) {
+    const resolved = resolvedColormapOptions(options);
     const hues = baseHexes.map((hex) => snapToValidHue(hexToHsl(hex).h));
     const coreHueSet = new Set(hues.map((hue) => Math.round(hue * 1e6)));
     const maxHuePositions = 100;
@@ -220,31 +240,32 @@
       hues.splice(insertIndex + 1, 0, midpoint);
     }
 
-    const colors = baseHexes.map(normalizeColormapColor);
+    const colors = baseHexes.map((hex) => normalizeColormapColor(hex, resolved));
     const extraHues = hues.filter((hue) => !coreHueSet.has(Math.round(hue * 1e6)));
     for (const hue of extraHues) {
       if (colors.length >= targetCount) break;
-      colors.push(hslToHex(hue, COLORMAP_SATURATION, COLORMAP_LIGHTNESS));
+      colors.push(hslToHex(hue, resolved.saturation, resolved.lightness));
     }
     while (colors.length < targetCount) {
       for (const hue of hues) {
         if (colors.length >= targetCount) break;
-        colors.push(hslToHex(hue, COLORMAP_SATURATION, COLORMAP_LIGHTNESS));
+        colors.push(hslToHex(hue, resolved.saturation, resolved.lightness));
       }
     }
 
     return colors.slice(0, targetCount);
   }
 
-  function buildColorMap(keys) {
+  function buildColorMap(keys, options) {
+    const resolved = resolvedColormapOptions(options);
     const unique = Array.from(new Set(keys || []));
     const semanticKeys = unique.filter((key) => !String(key).startsWith('io:')).sort();
-    const colors = expandPalette(CORE_COLORS, Math.max(semanticKeys.length, CORE_COLORS.length));
+    const colors = expandPalette(resolved.coreColors, Math.max(semanticKeys.length, resolved.coreColors.length), resolved);
     const map = new Map();
-    map.set('io:input', normalizeColormapColor('#A855F7'));
-    map.set('io:output', normalizeColormapColor('#34D399'));
-    map.set('io:constant', normalizeColormapColor('#64748B'));
-    map.set('io:parameter', normalizeColormapColor('#3B82F6'));
+    map.set('io:input', normalizeColormapColor(resolved.ioColors.input || '#A855F7', resolved));
+    map.set('io:output', normalizeColormapColor(resolved.ioColors.output || '#34D399', resolved));
+    map.set('io:constant', normalizeColormapColor(resolved.ioColors.constant || '#64748B', resolved));
+    map.set('io:parameter', normalizeColormapColor(resolved.ioColors.parameter || '#3B82F6', resolved));
     semanticKeys.forEach((key, index) => map.set(key, colors[index]));
     return map;
   }
@@ -260,11 +281,13 @@
     return keys;
   }
 
-  function resolveClusterColors(graph, colorMap) {
+  function resolveClusterColors(graph, colorMap, options) {
+    const resolved = resolvedColormapOptions(options);
+    const fallback = normalizeColormapColor(resolved.coreColors[0] || CORE_COLORS[0], resolved);
     const colors = new Map();
     (graph.clusters || []).forEach((cluster) => {
       const key = cluster.colorKey || `parent:${cluster.id}`;
-      colors.set(cluster.id, colorMap.get(key) || CORE_COLORS[0]);
+      colors.set(cluster.id, colorMap.get(key) || fallback);
     });
     return colors;
   }
@@ -565,12 +588,13 @@
     drawMarker(defs, markerId);
     svg.appendChild(defs);
 
-    const colorMap = buildColorMap(collectColorKeys(data));
-    const clusterColors = resolveClusterColors(data, colorMap);
+    const colorMapOptions = resolvedColormapOptions(resolvedOptions);
+    const colorMap = buildColorMap(collectColorKeys(data), colorMapOptions);
+    const clusterColors = resolveClusterColors(data, colorMap, colorMapOptions);
     const nodeMap = new Map((data.nodes || []).map((node) => [node.id, node]));
 
     (data.clusters || []).forEach((cluster) => {
-      drawCluster(svg, cluster, clusterColors.get(cluster.id) || CORE_COLORS[0]);
+      drawCluster(svg, cluster, clusterColors.get(cluster.id) || normalizeColormapColor(CORE_COLORS[0], colorMapOptions));
     });
 
     const renderedEdges = new Set();
