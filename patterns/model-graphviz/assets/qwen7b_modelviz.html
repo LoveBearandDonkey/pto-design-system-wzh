@@ -11,6 +11,9 @@
       if (theme === 'light' || theme === 'dark' || theme === 'glass') {
         document.documentElement.dataset.theme = theme;
       }
+      if (params.get('embed') === '1' || params.get('debug') !== '1') {
+        document.documentElement.dataset.embed = '1';
+      }
     })();
   </script>
   <link rel="stylesheet" href="../../../tokens/foundation.css">
@@ -54,6 +57,19 @@
       --model-graphviz-panel-shadow: none;
     }
 
+    :root[data-theme='light'] {
+      --qwen-panel-bg: color-mix(in srgb, var(--panel-shell-bg) 96%, white);
+      --qwen-panel-soft: color-mix(in srgb, var(--surface-1) 88%, white);
+      --qwen-selected: #111827;
+      --qwen-accent: color-mix(in srgb, var(--highlight-copy-blue-300) 54%, white);
+      --model-graphviz-line: color-mix(in srgb, var(--qwen-muted) 72%, transparent);
+      --model-graphviz-line-soft: color-mix(in srgb, var(--qwen-border-strong) 58%, transparent);
+      --model-graphviz-toggle-bg: color-mix(in srgb, var(--qwen-accent) 42%, white);
+      --model-graphviz-toggle-border: color-mix(in srgb, var(--qwen-border-strong) 58%, transparent);
+      --model-graphviz-tensor-fill: color-mix(in srgb, var(--qwen-accent) 22%, white);
+      --model-graphviz-tensor-stroke: color-mix(in srgb, var(--qwen-border-strong) 58%, transparent);
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -72,6 +88,15 @@
       grid-template-rows: auto 1fr;
       height: 100vh;
       min-height: 720px;
+    }
+
+    :root[data-embed='1'] .qwen-app {
+      grid-template-rows: 1fr;
+      min-height: 0;
+    }
+
+    :root[data-embed='1'] .qwen-topbar {
+      display: none;
     }
 
     .qwen-topbar {
@@ -1015,6 +1040,23 @@
       syncGraphSelection();
     }
 
+    function focusExternalNode(id) {
+      const node = getNode(id);
+      if (!node) return;
+      selectNode(id);
+      setStatus(`Focused ${node.label || id}.`);
+    }
+
+    window.PtoQwenModelViz = {
+      selectNode: focusExternalNode,
+    };
+
+    window.addEventListener('message', (event) => {
+      const data = event.data || {};
+      if (data.type !== 'pto-model-graphviz-select-node') return;
+      focusExternalNode(data.nodeId);
+    });
+
     function clampZoom(value) {
       return Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, value));
     }
@@ -1126,7 +1168,12 @@
       state.svg = window.PtoModelGraphvizPattern.render(
         document.getElementById('graphStage'),
         state.graph,
-        { ariaLabel: `${state.schema.model?.name || 'Model'} architecture graph` }
+        {
+          ariaLabel: `${state.schema.model?.name || 'Model'} architecture graph`,
+          colormap: document.documentElement.dataset.theme === 'light'
+            ? { saturation: 0.32, lightness: 0.84 }
+            : undefined,
+        }
       );
       if (options.preserveZoom) {
         state.zoom = clampZoom(state.zoom);
@@ -1145,10 +1192,6 @@
       event.preventDefault();
       if (event.metaKey || event.ctrlKey) {
         zoomAtPoint(event.deltaY < 0 ? 1.12 : 1 / 1.12, event.clientX, event.clientY);
-      } else {
-        state.tx -= event.deltaX;
-        state.ty -= event.deltaY;
-        applyTransform();
       }
     }, { passive: false });
 

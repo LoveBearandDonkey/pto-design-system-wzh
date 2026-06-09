@@ -29,46 +29,13 @@
   <link rel="stylesheet" href="./pattern.css">
 </head>
 <body class="pto-model-graphviz-pattern-page">
-  <main class="pto-model-graphviz-pattern-main">
-    <h1 class="pto-model-graphviz-pattern-title">Model Graphviz</h1>
-    <p class="pto-model-graphviz-pattern-subtitle">
-      Renderer-driven model graph visual contract extracted from the source-checked DeepSeek V3.2 graph.
-      The bundled assets include the final V3.2 visualizer and extracted architecture schemas for DeepSeek V3.2, Qwen7B, and Gemma.
-    </p>
-    <div class="pto-model-graphviz-pattern-meta">
-      <span class="pto-model-graphviz-pattern-badge">pattern id: model-graphviz</span>
-      <span class="pto-model-graphviz-pattern-badge">type: rendered SVG</span>
-      <span class="pto-model-graphviz-pattern-badge">source: graphviz renderer style</span>
-      <span class="pto-model-graphviz-pattern-badge">op radius: height / 2</span>
-      <span class="pto-model-graphviz-pattern-badge">tensor: rounded rect</span>
-      <span class="pto-model-graphviz-pattern-badge">default fold: depth 2</span>
-      <span class="pto-model-graphviz-pattern-badge">colormap: s=.82 l=.40</span>
-      <span class="pto-model-graphviz-pattern-badge">DOT layout: graph pad + cluster margin</span>
+  <main class="pto-model-graphviz-pattern-main" data-view="graph-only">
+    <div class="pto-model-graphviz-iframe-stage pto-model-graphviz-iframe-stage-v32">
+      <iframe
+        class="pto-model-graphviz-source-frame"
+        src="./assets/deepseek_v32_modelviz.html?embed=1"
+        title="DeepSeek V3.2 Graphviz Source Page"></iframe>
     </div>
-
-    <section class="pto-model-graphviz-pattern-section">
-      <h2 class="pto-model-graphviz-pattern-section-title">Architecture Schema Assets</h2>
-      <div class="pto-model-graphviz-pattern-assets">
-        <a href="./assets/deepseek_v32_model_architecture.json">DeepSeek V3.2 JSON</a>
-        <a href="./assets/qwen7b_model_architecture.json">Qwen7B JSON</a>
-        <a href="./assets/qwen7b_modelviz.html">Qwen7B Preview</a>
-        <a href="./assets/gemma_model_architecture.json">Gemma JSON</a>
-        <a href="./assets/index.json">Asset index</a>
-      </div>
-    </section>
-
-    <section class="pto-model-graphviz-pattern-section">
-      <h2 class="pto-model-graphviz-pattern-section-title">DeepSeek V3.2 Source Page</h2>
-      <p class="pto-model-graphviz-pattern-section-note">
-        Direct iframe of the bundled final V3.2 architecture visualizer. This is the source-checked page with clean Module / Op / State node semantics and the approved default depth-2 opening state.
-      </p>
-      <div class="pto-model-graphviz-iframe-stage pto-model-graphviz-iframe-stage-v32">
-        <iframe
-          class="pto-model-graphviz-source-frame"
-          src="./assets/deepseek_v32_modelviz.html"
-          title="DeepSeek V3.2 Graphviz Source Page"></iframe>
-      </div>
-    </section>
   </main>
 
   <script>

@@ -59,6 +59,12 @@
   gap: var(--space-5);
 }
 
+.pto-model-graphviz-pattern-main[data-view='graph-only'] {
+  min-height: 100vh;
+  padding: 0;
+  display: block;
+}
+
 .pto-model-graphviz-pattern-title {
   margin: 0;
   font: var(--text-display);
@@ -165,6 +171,13 @@
 
 .pto-model-graphviz-iframe-stage-v32 {
   height: 1040px;
+}
+
+.pto-model-graphviz-pattern-main[data-view='graph-only'] .pto-model-graphviz-iframe-stage {
+  height: 100vh;
+  min-height: 720px;
+  border: 0;
+  border-radius: 0;
 }
 
 .pto-model-graphviz-source-frame {

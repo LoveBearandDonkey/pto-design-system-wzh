@@ -1,4 +1,16 @@
 <!-- Generated from /Users/yin/gitcode/deepseekv3.2源码 by generate_deepseek_v32_source_graph.py -->
+<script>
+    (() => {
+        const params = new URLSearchParams(window.location.search);
+        const theme = params.get("theme");
+        if (theme === "light" || theme === "dark" || theme === "glass") {
+            document.documentElement.dataset.theme = theme;
+        }
+        if (params.get("embed") === "1" || params.get("debug") !== "1") {
+            document.documentElement.dataset.embed = "1";
+        }
+    })();
+</script>
 <div id="graph-container_8738e552-e764-4a57-839a-6321bc3ae7d3">
     <div id="graph_8738e552-e764-4a57-839a-6321bc3ae7d3"></div>
     <div class="logo_8738e552-e764-4a57-839a-6321bc3ae7d3">
@@ -94,6 +106,24 @@
             --graphviz-button-bg-hover: var(--button-solid-bg-hover);
             --graphviz-button-fg: var(--button-solid-fg);
             --graphviz-logo-opacity: 0.6;
+        }
+        :root[data-theme='light'] {
+            --graphviz-surface: color-mix(in srgb, var(--panel-shell-bg) 96%, white);
+            --graphviz-surface-soft: color-mix(in srgb, var(--surface-1) 88%, white);
+            --graphviz-line: color-mix(in srgb, var(--foreground-secondary) 72%, transparent);
+            --graphviz-line-soft: color-mix(in srgb, var(--border-strong) 58%, transparent);
+            --graphviz-toggle-bg: color-mix(in srgb, var(--highlight-copy-blue-300) 24%, white);
+            --graphviz-toggle-bg-hover: color-mix(in srgb, var(--highlight-copy-blue-300) 32%, white);
+            --graphviz-toggle-border: color-mix(in srgb, var(--border-strong) 58%, transparent);
+            --graphviz-tensor-fill: color-mix(in srgb, var(--highlight-copy-blue-300) 18%, white);
+            --graphviz-tensor-stroke: color-mix(in srgb, var(--border-strong) 58%, transparent);
+            --graphviz-code-bg: color-mix(in srgb, var(--surface-1) 94%, white);
+            --graphviz-popup-section-bg: color-mix(in srgb, var(--surface-1) 82%, white);
+        }
+        :root[data-embed='1'] .logo_8738e552-e764-4a57-839a-6321bc3ae7d3,
+        :root[data-embed='1'] .source-validation_8738e552-e764-4a57-839a-6321bc3ae7d3,
+        :root[data-embed='1'] .modelviz-toolbar_8738e552-e764-4a57-839a-6321bc3ae7d3 {
+            display: none;
         }
         .node_8738e552-e764-4a57-839a-6321bc3ae7d3 rect {
             stroke: var(--graphviz-line-soft);
@@ -1058,8 +1088,9 @@ function ptoNormalizeColormapColor(hex) {
   });
 }
 
-const PTO_COLORMAP_SATURATION = 0.82;
-const PTO_COLORMAP_LIGHTNESS = 0.40;
+const PTO_GRAPHVIZ_THEME = document.documentElement.dataset.theme || "dark";
+const PTO_COLORMAP_SATURATION = PTO_GRAPHVIZ_THEME === "light" ? 0.32 : 0.82;
+const PTO_COLORMAP_LIGHTNESS = PTO_GRAPHVIZ_THEME === "light" ? 0.84 : 0.40;
 
 function ptoExpandPalette(baseHexes, targetCount) {
   const hues = baseHexes.map(c => ptoSnapToValidHue(ptoHexToHsl(c).h));
@@ -1131,7 +1162,7 @@ function ptoBuildColorMap(keys) {
     const node_to_attr_name = {"dsv32arch_attention_call_612a5ae9": "inference_副本/model.py:498", "dsv32arch_attn_norm_9eedf758": "inference_副本/model.py:272", "dsv32arch_block_out_821a34da": "inference_副本/model.py:831", "dsv32arch_cache_b0359280": "inference_副本/model.py:514", "dsv32arch_dense_act_88b5a19d": "inference_副本/model.py:633", "dsv32arch_dense_w1w3_0b7a312e": "inference_副本/model.py:611", "dsv32arch_dense_w2_8e01455d": "inference_副本/model.py:237", "dsv32arch_embedding_2f81ba1b": "inference_副本/model.py:92", "dsv32arch_experts_cfbede3c": "inference_副本/model.py:712", "dsv32arch_ffn_choice_710c2f62": "inference_副本/model.py:817", "dsv32arch_ffn_norm_6d0e622d": "inference_副本/model.py:272", "dsv32arch_final_norm_2010d80f": "inference_副本/model.py:272", "dsv32arch_indexer_dfa17da7": "inference_副本/model.py:435", "dsv32arch_kv_path_a69fbb2b": "inference_副本/model.py:545", "dsv32arch_lm_head_2b98b847": "inference_副本/model.py:208", "dsv32arch_moe_sum_50118d9a": "inference_副本/model.py:780", "dsv32arch_o_proj_652c0be4": "inference_副本/model.py:237", "dsv32arch_q_path_b399f580": "inference_副本/model.py:545", "dsv32arch_router_77eb1db6": "inference_副本/model.py:646", "dsv32arch_shared_d18aac96": "inference_副本/model.py:611", "dsv32arch_sparse_attn_f5c98e92": "inference_副本/model.py:545", "dsv32arch_top_experts_dedfd965": "inference_副本/model.py:677", "dsv32arch_topk_e1fd5d33": "inference_副本/model.py:457"};
     const ancestor_map = {"dsv32arch_attention_call_612a5ae9": "dsv32arch_block_0214b4b3", "dsv32arch_attention_d0278de5": "dsv32arch_block_0214b4b3", "dsv32arch_attn_norm_9eedf758": "dsv32arch_block_0214b4b3", "dsv32arch_block_0214b4b3": "dsv32arch_transformer_9236e026", "dsv32arch_block_entry_90eb6882": "dsv32arch_block_0214b4b3", "dsv32arch_block_out_821a34da": "dsv32arch_block_0214b4b3", "dsv32arch_cache_b0359280": "dsv32arch_attention_d0278de5", "dsv32arch_dense_act_88b5a19d": "dsv32arch_dense_c8e834d8", "dsv32arch_dense_c8e834d8": "dsv32arch_ffn_a2b90028", "dsv32arch_dense_w1w3_0b7a312e": "dsv32arch_dense_c8e834d8", "dsv32arch_dense_w2_8e01455d": "dsv32arch_dense_c8e834d8", "dsv32arch_embedding_2f81ba1b": "dsv32arch_transformer_9236e026", "dsv32arch_experts_cfbede3c": "dsv32arch_moe_63e885ca", "dsv32arch_ffn_a2b90028": "dsv32arch_block_0214b4b3", "dsv32arch_ffn_choice_710c2f62": "dsv32arch_ffn_a2b90028", "dsv32arch_ffn_norm_6d0e622d": "dsv32arch_block_0214b4b3", "dsv32arch_final_norm_2010d80f": "dsv32arch_transformer_9236e026", "dsv32arch_indexer_dfa17da7": "dsv32arch_attention_d0278de5", "dsv32arch_kv_path_a69fbb2b": "dsv32arch_attention_d0278de5", "dsv32arch_lm_head_2b98b847": "dsv32arch_transformer_9236e026", "dsv32arch_moe_63e885ca": "dsv32arch_ffn_a2b90028", "dsv32arch_moe_sum_50118d9a": "dsv32arch_moe_63e885ca", "dsv32arch_o_proj_652c0be4": "dsv32arch_attention_d0278de5", "dsv32arch_q_path_b399f580": "dsv32arch_attention_d0278de5", "dsv32arch_router_77eb1db6": "dsv32arch_moe_63e885ca", "dsv32arch_shared_d18aac96": "dsv32arch_moe_63e885ca", "dsv32arch_sparse_attn_f5c98e92": "dsv32arch_attention_d0278de5", "dsv32arch_top_experts_dedfd965": "dsv32arch_moe_63e885ca", "dsv32arch_topk_e1fd5d33": "dsv32arch_attention_d0278de5"};
     const repeat_containers = new Set([]);
-    const REPEAT_CONTAINER_COLOR = "#FA8334";
+    const REPEAT_CONTAINER_COLOR = PTO_GRAPHVIZ_THEME === "light" ? "#FED7AA" : "#FA8334";
     const url_params = new URLSearchParams(window.location.search);
     const requested_collapse_depth = url_params.has("collapseDepth") ? Number(url_params.get("collapseDepth")) : NaN;
     const collapse_modules_after_depth = Number.isFinite(requested_collapse_depth) ? requested_collapse_depth : 2;

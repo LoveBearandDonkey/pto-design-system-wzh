@@ -15,6 +15,8 @@
   ];
   const COLORMAP_SATURATION = 0.82;
   const COLORMAP_LIGHTNESS = 0.40;
+  const LIGHT_COLORMAP_SATURATION = 0.32;
+  const LIGHT_COLORMAP_LIGHTNESS = 0.84;
   const FORBIDDEN_HUES = { from: 300 / 360, to: 150 / 360, wraps: true };
   const LINE_COLOR = 'var(--model-graphviz-line)';
   const NODE_TEXT_COLOR = 'var(--model-graphviz-node-label)';
@@ -185,12 +187,13 @@
 
   function resolvedColormapOptions(options) {
     const colormap = options && options.colormap ? options.colormap : (options || {});
+    const isLightTheme = global.document?.documentElement?.dataset?.theme === 'light';
     const saturation = Number.isFinite(Number(colormap.saturation))
       ? Number(colormap.saturation)
-      : COLORMAP_SATURATION;
+      : isLightTheme ? LIGHT_COLORMAP_SATURATION : COLORMAP_SATURATION;
     const lightness = Number.isFinite(Number(colormap.lightness))
       ? Number(colormap.lightness)
-      : COLORMAP_LIGHTNESS;
+      : isLightTheme ? LIGHT_COLORMAP_LIGHTNESS : COLORMAP_LIGHTNESS;
     return {
       coreColors: Array.isArray(colormap.coreColors) && colormap.coreColors.length
         ? colormap.coreColors

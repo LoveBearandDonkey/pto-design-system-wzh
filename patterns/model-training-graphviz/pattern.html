@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Model Training Graphviz Pattern</title>
+  <script>
+    (() => {
+      const theme = new URLSearchParams(window.location.search).get('theme');
+      if (theme === 'light' || theme === 'dark' || theme === 'glass') {
+        document.documentElement.dataset.theme = theme;
+      }
+      if (new URLSearchParams(window.location.search).get('embed') === '1') {
+        document.documentElement.dataset.embed = '1';
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="../../tokens/foundation.css">
+  <link rel="stylesheet" href="../../tokens/semantic.css">
+  <link rel="stylesheet" href="../../tokens/components.css">
+  <link rel="stylesheet" href="../model-graphviz/pattern.css">
+  <link rel="stylesheet" href="./pattern.css">
+  <style>
+    * { box-sizing: border-box; }
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      background: var(--background);
+      color: var(--foreground);
+      font-family: var(--font-sans);
+    }
+    body {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      height: 100vh;
+      overflow: hidden;
+    }
+    :root[data-embed='1'] body {
+      grid-template-rows: 1fr;
+    }
+    :root[data-embed='1'] .preview-topbar {
+      display: none;
+    }
+    .preview-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--background);
+    }
+    .preview-topbar h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    .preview-topbar p {
+      margin: 3px 0 0;
+      color: var(--foreground-secondary);
+      font-size: 14px;
+    }
+    .preview-actions {
+      display: flex;
+      gap: var(--space-2);
+    }
+    .preview-actions button {
+      min-height: 32px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background: var(--surface-1);
+      color: var(--foreground);
+      padding: 0 var(--space-3);
+      font: var(--text-body);
+      cursor: pointer;
+    }
+    .preview-actions button.is-selected {
+      background: var(--state-selected);
+    }
+    .preview-stage {
+      min-height: 0;
+    }
+  </style>
+</head>
+<body>
+  <header class="preview-topbar">
+    <div>
+      <h1>模型架构图 · 训练版本</h1>
+      <p>复用 model-graphviz 节点/边渲染，并叠加训练阶段、证据、edge tag 与 hover 解释。</p>
+    </div>
+    <div class="preview-actions">
+      <button type="button" data-node="scaled_attention">Attention</button>
+      <button type="button" data-node="silu_multiply">SwiGLU</button>
+      <button type="button" data-node="lm_head">LM Head</button>
+    </div>
+  </header>
+  <main class="preview-stage" id="previewStage"></main>
+
+  <script src="../model-graphviz/pattern.js"></script>
+  <script src="./pattern.js"></script>
+  <script>
+    const graph = {
+      width: 760,
+      height: 980,
+      clusters: [
+        { id: 'transformer', label: 'Transformer', x: 118, y: 90, width: 524, height: 720, colorKey: 'module:transformer' },
+        { id: 'decoder', label: 'Decoder Layer x N', x: 156, y: 252, width: 448, height: 430, repeat: 32, colorKey: 'module:decoder' },
+        { id: 'attention-box', label: 'Self Attention', x: 196, y: 310, width: 368, height: 176, colorKey: 'module:attention' },
+        { id: 'mlp-box', label: 'SwiGLU MLP', x: 196, y: 520, width: 368, height: 126, colorKey: 'module:mlp' },
+      ],
+      nodes: [
+        { id: 'input_tokens', label: 'Token IDs', typeLabel: 'Input', kind: 'tensor', x: 380, y: 48, width: 176, height: 48, colorKey: 'io:input' },
+        { id: 'token_embedding', label: 'Embedding Lookup', typeLabel: 'Op', kind: 'op', x: 380, y: 158, width: 246, height: 56, colorKey: 'sem:embedding' },
+        { id: 'attn_norm', label: 'Attention RMSNorm', typeLabel: 'Op', kind: 'op', x: 380, y: 268, width: 232, height: 54, colorKey: 'sem:norm' },
+        { id: 'qkv_linear', label: 'QKV Linear', typeLabel: 'Op', kind: 'op', x: 380, y: 350, width: 204, height: 54, colorKey: 'sem:linear' },
+        { id: 'scaled_attention', label: 'Scaled Attention', typeLabel: 'Op', kind: 'op', x: 380, y: 430, width: 224, height: 54, colorKey: 'sem:attention' },
+        { id: 'mlp_norm', label: 'MLP RMSNorm', typeLabel: 'Op', kind: 'op', x: 380, y: 520, width: 214, height: 54, colorKey: 'sem:norm' },
+        { id: 'silu_multiply', label: 'SiLU Multiply', typeLabel: 'Op', kind: 'op', x: 380, y: 608, width: 214, height: 54, colorKey: 'sem:mlp' },
+        { id: 'final_norm', label: 'Final RMSNorm', typeLabel: 'Op', kind: 'op', x: 380, y: 764, width: 214, height: 54, colorKey: 'sem:norm' },
+        { id: 'lm_head', label: 'LM Head Linear', typeLabel: 'Op', kind: 'op', x: 380, y: 854, width: 224, height: 54, colorKey: 'sem:head' },
+        { id: 'logits', label: 'Logits', typeLabel: 'Output', kind: 'tensor', x: 380, y: 942, width: 176, height: 48, colorKey: 'io:output' },
+      ],
+      edges: [
+        { source: 'input_tokens', target: 'token_embedding', tag: 'ACT', edgeType: 'activation' },
+        { source: 'token_embedding', target: 'attn_norm', tag: 'ACT', edgeType: 'activation' },
+        { source: 'attn_norm', target: 'qkv_linear', tag: 'QKV', edgeType: 'parameter' },
+        { source: 'qkv_linear', target: 'scaled_attention', tag: 'KV', edgeType: 'cache' },
+        { source: 'scaled_attention', target: 'mlp_norm', tag: 'ACT', edgeType: 'activation' },
+        { source: 'mlp_norm', target: 'silu_multiply', tag: 'FFN', edgeType: 'parameter' },
+        { source: 'silu_multiply', target: 'final_norm', tag: 'ACT', edgeType: 'activation' },
+        { source: 'final_norm', target: 'lm_head', tag: 'W', edgeType: 'parameter' },
+        { source: 'lm_head', target: 'logits', tag: 'LOSS', edgeType: 'gradient' },
+      ],
+      trainingEvidence: {
+        scaled_attention: {
+          priority: 'P1',
+          dimension: 'compute / memory',
+          metric: 'SEQ_LENGTH',
+          what: 'Attention 是序列长度最敏感的训练节点。',
+          evidence: ['SEQ_LENGTH 放大 QK^T 计算与 KV/激活显存。', 'TP 切分必须与 QKV / output projection 对齐。'],
+          action: '观察 MFU、HBM 和通信等待，判断是否需要重算或并行参数调整。',
+          relatedNodeIds: ['qkv_linear', 'mlp_norm'],
+        },
+        silu_multiply: {
+          priority: 'P2',
+          dimension: 'compute',
+          metric: 'hidden -> intermediate',
+          what: 'SwiGLU MLP 是 Dense decoder 的主要算力消耗之一。',
+          evidence: ['Gate / Up projection 后再执行 SiLU Multiply。'],
+          action: '如果 MFU 偏低但通信正常，优先看 MLP 算子融合与重算策略。',
+        },
+        lm_head: {
+          priority: 'P2',
+          dimension: 'loss / backward',
+          metric: 'vocab projection',
+          what: 'LM Head 把 hidden 投影到词表 logits，随后进入 loss 和反向传播。',
+          evidence: ['词表越大，logits 与交叉熵路径越容易成为显存压力点。'],
+          action: '关注 loss spike、梯度范数和最后投影的通信/显存占用。',
+        },
+      },
+    };
+
+    const controller = window.PtoModelTrainingGraphvizPattern.render(
+      document.getElementById('previewStage'),
+      graph,
+      {
+        activeNodeId: 'scaled_attention',
+        activeRelatedNodeIds: ['qkv_linear', 'mlp_norm'],
+      },
+    );
+
+    document.querySelectorAll('[data-node]').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('[data-node]').forEach((item) => item.classList.remove('is-selected'));
+        button.classList.add('is-selected');
+        controller.selectNode(button.dataset.node, { source: 'preview' });
+      });
+    });
+  </script>
+</body>
+</html>
