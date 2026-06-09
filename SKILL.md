@@ -18,6 +18,8 @@ This bundle lets any AI generate or retrofit pages in PTO visual style.
 
 The rule: pages must consume the existing PTO design system. Do not invent a new button, toggle, badge, card, panel, spacing scale, or color language.
 
+Page chrome baseline: generated PTO app/workbench pages should use a transparent top header by default. Do not add a filled header background, decorative header band, or outer margin/gap below the header unless the user explicitly asks for separated page chrome. The first content shell should start flush under the header and use token-derived spacing inside the shell or pane, not an extra page-level gap.
+
 ## Required baseline (read in this order)
 
 1. `DESIGN.md` — full system spec: theme, surfaces, palette, typography, spacing, components, governance. **Read this first.**
